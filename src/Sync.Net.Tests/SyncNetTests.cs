@@ -9,14 +9,40 @@ namespace Sync.Net.Tests
     [TestClass]
     public class SyncNetTests
     {
+        private IDirectoryObject _sourceDirectory;
+        private string _fileName;
+        private string _fileName2;
+        private string _subDirectoryName;
+        private string _contents;
+        private string _subFileName;
+        private string _subFileName2;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            _fileName = "file.txt";
+            _fileName2 = "file2.txt";
+            _subFileName = "subFile.txt";
+            _subFileName2 = "subfile2.txt";
+            _subDirectoryName = "dir";
+            _contents = "This is file content";
+
+            _sourceDirectory = new MemoryDirectoryObject("directory")
+                .AddFile(_fileName, _contents)
+                .AddFile(_fileName2, _contents)
+                .AddDirectory(new MemoryDirectoryObject(_subDirectoryName)
+                    .AddFile(_subFileName, _contents)
+                    .AddFile(_subFileName2, _contents));
+        }
+
         [TestMethod]
         public void CreatesFileInTargetDirectory()
         {
             SyncNet syncNet = new SyncNet();
-            var memoryDirectoryObject = new MemoryDirectoryObject("directory");
+            var targetDirectory = new MemoryDirectoryObject("directory");
 
-            syncNet.Backup(new MemoryFileObject("file.txt"), memoryDirectoryObject);
-            Assert.IsTrue(memoryDirectoryObject.ContainsFile("file.txt"));
+            syncNet.Backup(new MemoryFileObject("file.txt"), targetDirectory);
+            Assert.IsTrue(targetDirectory.ContainsFile("file.txt"));
         }
 
         [TestMethod]
@@ -41,55 +67,41 @@ namespace Sync.Net.Tests
         [TestMethod]
         public void CreatesDirectoryStructure()
         {
-            var fileName = "file.txt";
-            var fileName2 = "file2.txt";
-            var subDirectoryName = "dir";
-            var contents = "This is file content";
-
-            IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
-                .AddDirectory(new MemoryDirectoryObject(subDirectoryName)
-                    .AddFile(fileName, contents)
-                    .AddFile(fileName2, contents));
-
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
             SyncNet syncNet = new SyncNet();
-            syncNet.Backup(sourceDirectory, targetDirectory);
-
-            Assert.AreEqual(0, targetDirectory.GetFiles().Count());
+            syncNet.Backup(_sourceDirectory, targetDirectory);
 
             IEnumerable<IDirectoryObject> subDirectories = targetDirectory.GetDirectories();
             Assert.AreEqual(1, subDirectories.Count());
-            Assert.AreEqual(subDirectoryName, subDirectories.First().Name);
+            Assert.AreEqual(_subDirectoryName, subDirectories.First().Name);
 
             IEnumerable<IFileObject> files = subDirectories.First().GetFiles();
             Assert.AreEqual(2, files.Count());
 
-            Assert.IsTrue(files.Any(x => x.Name == fileName));
-            Assert.IsTrue(files.Any(x => x.Name == fileName2));
+            Assert.IsTrue(files.Any(x => x.Name == _subFileName));
+            Assert.IsTrue(files.Any(x => x.Name == _subFileName2));
         }
 
         [TestMethod]
         public void UploadsFilesToDirectory()
         {
-            var fileName = "file.txt";
-            var fileName2 = "file2.txt";
-            var contents = "This is file content";
-
-            IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
-                .AddFile(fileName, contents)
-                .AddFile(fileName2, contents);
-
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
             SyncNet syncNet = new SyncNet();
-            syncNet.Backup(sourceDirectory, targetDirectory);
+            syncNet.Backup(_sourceDirectory, targetDirectory);
 
             IEnumerable<IFileObject> files = targetDirectory.GetFiles();
             Assert.AreEqual(2, files.Count());
 
-            Assert.IsTrue(files.Any(x => x.Name == fileName));
-            Assert.IsTrue(files.Any(x => x.Name == fileName2));
+            Assert.IsTrue(files.Any(x => x.Name == _fileName));
+            Assert.IsTrue(files.Any(x => x.Name == _fileName2));
+        }
+
+        [TestMethod]
+        public void BackupUpdatesProgress()
+        {
+
         }
     }
 }
