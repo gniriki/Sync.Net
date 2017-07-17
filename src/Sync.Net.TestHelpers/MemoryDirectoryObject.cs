@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Sync.Net.IO;
 
-namespace Sync.Net.Tests
+namespace Sync.Net.TestHelpers
 {
     public class MemoryDirectoryObject : IDirectoryObject
     {

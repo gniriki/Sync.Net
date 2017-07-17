@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sync.Net.IO;
+using Sync.Net.TestHelpers;
 
 namespace Sync.Net.Tests
 {

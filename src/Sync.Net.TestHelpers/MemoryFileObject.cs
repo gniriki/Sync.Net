@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using Sync.Net.IO;
 
-namespace Sync.Net.Tests
+namespace Sync.Net.TestHelpers
 {
     public class MemoryFileObject : IFileObject
     {

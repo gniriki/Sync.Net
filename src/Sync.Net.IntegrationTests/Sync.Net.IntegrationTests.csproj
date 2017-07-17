@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{919760CD-D186-42F1-B22D-5EEB7E99D19C}</ProjectGuid>
+    <ProjectGuid>{678CD9B1-E425-403C-BBF4-D06BAF686E20}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sync.Net.Tests</RootNamespace>
-    <AssemblyName>Sync.Net.Tests</AssemblyName>
+    <RootNamespace>Sync.Net.IntegrationTests</RootNamespace>
+    <AssemblyName>Sync.Net.IntegrationTests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -50,7 +50,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="SyncNetTests.cs" />
+    <Compile Include="LocalFileSystemTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

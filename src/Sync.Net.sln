@@ -7,6 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sync.Net", "Sync.Net\Sync.N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sync.Net.Tests", "Sync.Net.Tests\Sync.Net.Tests.csproj", "{919760CD-D186-42F1-B22D-5EEB7E99D19C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D6031172-31E1-48A7-9A30-F351DA6E38EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sync.Net.IntegrationTests", "Sync.Net.IntegrationTests\Sync.Net.IntegrationTests.csproj", "{678CD9B1-E425-403C-BBF4-D06BAF686E20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sync.Net.TestHelpers", "Sync.Net.TestHelpers\Sync.Net.TestHelpers.csproj", "{B9196387-37CF-4B59-B5AF-A68C94633D9A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,8 +27,20 @@ Global
 		{919760CD-D186-42F1-B22D-5EEB7E99D19C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{919760CD-D186-42F1-B22D-5EEB7E99D19C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{919760CD-D186-42F1-B22D-5EEB7E99D19C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{678CD9B1-E425-403C-BBF4-D06BAF686E20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{678CD9B1-E425-403C-BBF4-D06BAF686E20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{678CD9B1-E425-403C-BBF4-D06BAF686E20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{678CD9B1-E425-403C-BBF4-D06BAF686E20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9196387-37CF-4B59-B5AF-A68C94633D9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9196387-37CF-4B59-B5AF-A68C94633D9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9196387-37CF-4B59-B5AF-A68C94633D9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9196387-37CF-4B59-B5AF-A68C94633D9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{919760CD-D186-42F1-B22D-5EEB7E99D19C} = {D6031172-31E1-48A7-9A30-F351DA6E38EE}
+		{678CD9B1-E425-403C-BBF4-D06BAF686E20} = {D6031172-31E1-48A7-9A30-F351DA6E38EE}
 	EndGlobalSection
 EndGlobal
