@@ -5,7 +5,7 @@ namespace Sync.Net
     public interface IDirectoryObject
     {
         IFileObject GetFile(string fileName);
-        IEnumerable<IFileObject> GetFiles();
+        IEnumerable<IFileObject> GetFiles(bool recursive = false);
         string Name { get; }
         bool Exists { get; }
         IEnumerable<IDirectoryObject> GetDirectories();

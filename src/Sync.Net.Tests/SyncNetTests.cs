@@ -101,6 +101,27 @@ namespace Sync.Net.Tests
         public void FiresProgressEvent()
         {
             IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
+                .AddFile(_fileName, _contents);
+
+            IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
+
+            SyncNet syncNet = new SyncNet(sourceDirectory, targetDirectory);
+
+            var fired = false;
+            syncNet.ProgressChanged += delegate
+            {
+                fired = true;
+            };
+
+            syncNet.Backup();
+
+            Assert.IsTrue(fired);
+        }
+
+        [TestMethod]
+        public void CountsUploadedFiles()
+        {
+            IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
                 .AddFile(_fileName, _contents)
                 .AddFile(_fileName2, _contents)
                 .AddDirectory(new MemoryDirectoryObject(_subDirectoryName)

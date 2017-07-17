@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sync.Net.Tests
 {
@@ -60,9 +61,18 @@ namespace Sync.Net.Tests
             return file;
         }
 
-        public IEnumerable<IFileObject> GetFiles()
+        public IEnumerable<IFileObject> GetFiles(bool recursive = false)
         {
-            return Files.Values;
+            List<IFileObject> list = Files.Values.Cast<IFileObject>().ToList();
+            if (recursive)
+            {
+                foreach (var directoryObject in GetDirectories())
+                {
+                    list.AddRange(directoryObject.GetFiles(true));
+                }
+            }
+
+            return list;
         }
 
         public MemoryDirectoryObject AddFile(MemoryFileObject memoryFileObject)

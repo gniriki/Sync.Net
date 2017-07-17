@@ -19,11 +19,15 @@ namespace Sync.Net
         private IDirectoryObject _sourceDirectory;
         private IDirectoryObject _targetDirectory;
         private IFileObject _sourceFile;
+        private int _totalFiles;
+        private int _processedFiles;
 
         public SyncNet(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
         {
             _sourceDirectory = sourceDirectory;
             _targetDirectory = targetDirectory;
+            IEnumerable<IFileObject> files = sourceDirectory.GetFiles(true);
+            _totalFiles = files.Count();
         }
 
         public SyncNet(IFileObject sourceFile, IDirectoryObject targetDirectory)
@@ -47,6 +51,19 @@ namespace Sync.Net
                     stream.CopyTo(destination);
                 }
             }
+
+            UpdateProgess();
+        }
+
+        private void UpdateProgess()
+        {
+            _processedFiles++;
+            OnProgressChanged(
+                new SyncNetProgressChangedEventArgs
+                {
+                    ProcessedFiles = _processedFiles,
+                    TotalFiles = _totalFiles
+                });
         }
 
         public void Backup()
@@ -79,5 +96,10 @@ namespace Sync.Net
         }
 
         public event SyncNetProgressChangedDelegate ProgressChanged;
+
+        protected virtual void OnProgressChanged(SyncNetProgressChangedEventArgs e)
+        {
+            ProgressChanged?.Invoke(this, e);
+        }
     }
 }
