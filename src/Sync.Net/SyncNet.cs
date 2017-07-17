@@ -50,7 +50,7 @@ namespace Sync.Net
             foreach (var sourceFile in sourceFiles)
             {
                 var targetFile = target.GetFile(sourceFile.Name);
-                if (!targetFile.Exists || sourceFile.ModifiedDate != targetFile.ModifiedDate)
+                if (!targetFile.Exists || sourceFile.ModifiedDate >= targetFile.ModifiedDate)
                     filesToUpload.Add(sourceFile);
             }
 
