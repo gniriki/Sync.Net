@@ -40,8 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IDirectoryObject.cs" />
-    <Compile Include="IFileObject.cs" />
+    <Compile Include="IO\IDirectoryObject.cs" />
+    <Compile Include="IO\IFileObject.cs" />
     <Compile Include="SyncNet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Sync.Net
+namespace Sync.Net.IO
 {
     public interface IDirectoryObject
     {

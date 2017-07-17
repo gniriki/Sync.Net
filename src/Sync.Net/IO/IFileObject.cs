@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Sync.Net
+namespace Sync.Net.IO
 {
     public interface IFileObject
     {
