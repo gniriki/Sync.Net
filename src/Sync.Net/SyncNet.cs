@@ -25,5 +25,10 @@ namespace Sync.Net
                 }
             }
         }
+
+        public void Backup(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

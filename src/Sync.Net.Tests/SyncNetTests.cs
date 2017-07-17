@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Sync.Net.Tests
@@ -9,7 +10,7 @@ namespace Sync.Net.Tests
     public class SyncNetTests
     {
         [TestMethod]
-        public void CreatesFileOnTargetFileSystem()
+        public void CreatesFileInTargetDirectory()
         {
             SyncNet syncNet = new SyncNet();
             var memoryDirectoryObject = new MemoryDirectoryObject();
@@ -36,59 +37,29 @@ namespace Sync.Net.Tests
                 Assert.AreEqual(contents, targetFileContents);
             }
         }
-    }
 
-    public class MemoryDirectoryObject : IDirectoryObject
-    {
-        public Dictionary<string, MemoryFileObject> Files = new Dictionary<string, MemoryFileObject>();
-
-        public bool ContainsFile(string name)
+        [TestMethod]
+        public void UploadsFilesToDirectory()
         {
-            return Files.ContainsKey(name);
-        }
 
-        public void CreateFile(string name)
-        {
-            Files.Add(name, new MemoryFileObject(name));
-        }
+            var fileName = "file.txt";
+            var fileName2 = "file2.txt";
+            var contents = "This is file content";
 
-        public IFileObject GetFile(string name)
-        {
-            return Files[name];
-        }
-    }
-    
-    public class MemoryFileObject : IFileObject
-    {
-        private string _contents;
-        private byte[] _buffer = new byte[1024];
+            IDirectoryObject sourceDirectory = new MemoryDirectoryObject()
+                .AddFile(fileName, contents)
+                .AddFile(fileName2, contents);
 
-        public MemoryFileObject(string name)
-        {
-            this.Name = name;
-        }
+            IDirectoryObject targetDirectory = new MemoryDirectoryObject();
 
-        public MemoryFileObject(string name, string contents) : this(name)
-        {
-            this._contents = contents;
+            SyncNet syncNet = new SyncNet();
+            syncNet.Backup(sourceDirectory, targetDirectory);
 
-            using (MemoryStream stream = new MemoryStream(_buffer))
-            {
-                StreamWriter writer = new StreamWriter(stream);
-                writer.Write(_contents);
-                writer.Flush();
-            }
-        }
+            IEnumerable<IFileObject> files = targetDirectory.GetFiles();
+            Assert.AreEqual(2, files.Count());
 
-        public string Name { get; set; }
-        public Stream GetStream()
-        {
-            MemoryStream stream = new MemoryStream(_buffer);
-            StreamWriter writer = new StreamWriter(stream);
-            writer.Write(_contents);
-            writer.Flush();
-            stream.Position = 0;
-            return stream;
+            Assert.IsTrue(files.Any(x => x.Name == fileName));
+            Assert.IsTrue(files.Any(x => x.Name == fileName2));
         }
     }
 }
