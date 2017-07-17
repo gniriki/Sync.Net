@@ -4,7 +4,18 @@ namespace Sync.Net.Tests
 {
     public class MemoryDirectoryObject : IDirectoryObject
     {
-        public Dictionary<string, MemoryFileObject> Files = new Dictionary<string, MemoryFileObject>();
+        public Dictionary<string, MemoryFileObject> Files 
+            = new Dictionary<string, MemoryFileObject>();
+
+        public Dictionary<string, MemoryDirectoryObject> Directories 
+            = new Dictionary<string, MemoryDirectoryObject>();
+
+        public string Name { get; set; }
+
+        public IEnumerable<IDirectoryObject> GetDirectories()
+        {
+            return Directories.Values;
+        }
 
         public bool ContainsFile(string name)
         {
@@ -38,5 +49,12 @@ namespace Sync.Net.Tests
             Files.Add(memoryFileObject.Name, memoryFileObject);
             return this;
         }
+
+        public IDirectoryObject AddDirectory(MemoryDirectoryObject subDirectory)
+        {
+            Directories.Add(subDirectory.Name, subDirectory);
+            return this;
+        }
+
     }
 }

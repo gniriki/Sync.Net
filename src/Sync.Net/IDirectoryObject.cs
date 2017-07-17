@@ -8,5 +8,7 @@ namespace Sync.Net
         void CreateFile(string name);
         IFileObject GetFile(string fileName);
         IEnumerable<IFileObject> GetFiles();
+        string Name { get; }
+        IEnumerable<IDirectoryObject> GetDirectories();
     }
 }

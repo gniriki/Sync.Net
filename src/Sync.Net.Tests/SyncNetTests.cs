@@ -39,9 +39,38 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
+        public void CreatesDirectoryStructure()
+        {
+            var fileName = "file.txt";
+            var fileName2 = "file2.txt";
+            var subDirectory = "dir";
+            var contents = "This is file content";
+
+            IDirectoryObject sourceDirectory = new MemoryDirectoryObject()
+                .AddDirectory(new MemoryDirectoryObject()
+                    .AddFile(fileName, contents)
+                    .AddFile(fileName2, contents));
+
+            IDirectoryObject targetDirectory = new MemoryDirectoryObject();
+
+            SyncNet syncNet = new SyncNet();
+            syncNet.Backup(sourceDirectory, targetDirectory);
+
+            Assert.AreEqual(0, targetDirectory.GetFiles().Count());
+
+            IEnumerable<IDirectoryObject> subDirectories = targetDirectory.GetDirectories();
+            Assert.AreEqual(1, subDirectories.Count());
+
+            IEnumerable<IFileObject> files = subDirectories.First().GetFiles();
+            Assert.AreEqual(2, files.Count());
+
+            Assert.IsTrue(files.Any(x => x.Name == fileName));
+            Assert.IsTrue(files.Any(x => x.Name == fileName2));
+        }
+
+        [TestMethod]
         public void UploadsFilesToDirectory()
         {
-
             var fileName = "file.txt";
             var fileName2 = "file2.txt";
             var contents = "This is file content";
