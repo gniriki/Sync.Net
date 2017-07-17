@@ -10,11 +10,38 @@ namespace Sync.Net.Tests
         public Dictionary<string, MemoryDirectoryObject> Directories 
             = new Dictionary<string, MemoryDirectoryObject>();
 
+        public MemoryDirectoryObject(string name)
+        {
+            Name = name;
+        }
+
         public string Name { get; set; }
+        public bool Exists => true;
 
         public IEnumerable<IDirectoryObject> GetDirectories()
         {
             return Directories.Values;
+        }
+
+        public void Create()
+        {
+            
+        }
+
+        public IDirectoryObject GetDirectory(string name)
+        {
+            MemoryDirectoryObject directory = null;
+            if (!Directories.ContainsKey(name))
+            {
+                directory = new MemoryDirectoryObject(name);
+                AddDirectory(directory);
+            }
+            else
+            {
+                directory = Directories[name];
+            }
+
+            return directory;
         }
 
         public bool ContainsFile(string name)

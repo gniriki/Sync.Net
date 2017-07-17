@@ -13,7 +13,7 @@ namespace Sync.Net.Tests
         public void CreatesFileInTargetDirectory()
         {
             SyncNet syncNet = new SyncNet();
-            var memoryDirectoryObject = new MemoryDirectoryObject();
+            var memoryDirectoryObject = new MemoryDirectoryObject("directory");
 
             syncNet.Backup(new MemoryFileObject("file.txt"), memoryDirectoryObject);
             Assert.IsTrue(memoryDirectoryObject.ContainsFile("file.txt"));
@@ -23,7 +23,7 @@ namespace Sync.Net.Tests
         public void WritesFileContentToTargetFile()
         {
             SyncNet syncNet = new SyncNet();
-            IDirectoryObject memoryDirectoryObject = new MemoryDirectoryObject();
+            IDirectoryObject memoryDirectoryObject = new MemoryDirectoryObject("directory");
 
             var fileName = "file.txt";
             var contents = "This is file content";
@@ -43,15 +43,15 @@ namespace Sync.Net.Tests
         {
             var fileName = "file.txt";
             var fileName2 = "file2.txt";
-            var subDirectory = "dir";
+            var subDirectoryName = "dir";
             var contents = "This is file content";
 
-            IDirectoryObject sourceDirectory = new MemoryDirectoryObject()
-                .AddDirectory(new MemoryDirectoryObject()
+            IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
+                .AddDirectory(new MemoryDirectoryObject(subDirectoryName)
                     .AddFile(fileName, contents)
                     .AddFile(fileName2, contents));
 
-            IDirectoryObject targetDirectory = new MemoryDirectoryObject();
+            IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
             SyncNet syncNet = new SyncNet();
             syncNet.Backup(sourceDirectory, targetDirectory);
@@ -60,6 +60,7 @@ namespace Sync.Net.Tests
 
             IEnumerable<IDirectoryObject> subDirectories = targetDirectory.GetDirectories();
             Assert.AreEqual(1, subDirectories.Count());
+            Assert.AreEqual(subDirectoryName, subDirectories.First().Name);
 
             IEnumerable<IFileObject> files = subDirectories.First().GetFiles();
             Assert.AreEqual(2, files.Count());
@@ -75,11 +76,11 @@ namespace Sync.Net.Tests
             var fileName2 = "file2.txt";
             var contents = "This is file content";
 
-            IDirectoryObject sourceDirectory = new MemoryDirectoryObject()
+            IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
                 .AddFile(fileName, contents)
                 .AddFile(fileName2, contents);
 
-            IDirectoryObject targetDirectory = new MemoryDirectoryObject();
+            IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
             SyncNet syncNet = new SyncNet();
             syncNet.Backup(sourceDirectory, targetDirectory);

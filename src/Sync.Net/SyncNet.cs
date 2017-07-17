@@ -33,6 +33,16 @@ namespace Sync.Net
             {
                 Backup(fileObject, targetDirectory);
             }
+
+            var subDirectories = sourceDirectory.GetDirectories();
+            foreach (var subDirectory in subDirectories)
+            {
+                var targetSubDirectory = targetDirectory.GetDirectory(subDirectory.Name);
+                if (!targetSubDirectory.Exists)
+                    targetSubDirectory.Create();
+
+                Backup(subDirectory, targetSubDirectory);
+            }
         }
     }
 }
