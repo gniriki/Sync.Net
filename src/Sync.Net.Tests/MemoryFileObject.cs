@@ -25,6 +25,8 @@ namespace Sync.Net.Tests
         }
 
         public string Name { get; set; }
+        public bool Exists => true;
+
         public Stream GetStream()
         {
             MemoryStream stream = new MemoryStream(_buffer);
@@ -33,6 +35,11 @@ namespace Sync.Net.Tests
             writer.Flush();
             stream.Position = 0;
             return stream;
+        }
+
+        public void Create()
+        {
+            
         }
     }
 }

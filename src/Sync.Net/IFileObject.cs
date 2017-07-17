@@ -4,7 +4,9 @@ namespace Sync.Net
 {
     public interface IFileObject
     {
-        string Name { get; set; }
+        string Name { get; }
+        bool Exists { get; }
         Stream GetStream();
+        void Create();
     }
 }

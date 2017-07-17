@@ -10,12 +10,11 @@ namespace Sync.Net
     {
         public void Backup(IFileObject file, IDirectoryObject targetDirectory)
         {
-            if (!targetDirectory.ContainsFile(file.Name))
-            {
-                targetDirectory.CreateFile(file.Name);
-            }
-
             IFileObject targetFile = targetDirectory.GetFile(file.Name);
+            if (!targetFile.Exists)
+            {
+                targetFile.Create();
+            }
 
             using (var stream = file.GetStream())
             {

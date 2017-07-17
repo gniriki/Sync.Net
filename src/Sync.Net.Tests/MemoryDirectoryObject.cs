@@ -44,19 +44,20 @@ namespace Sync.Net.Tests
             return directory;
         }
 
-        public bool ContainsFile(string name)
-        {
-            return Files.ContainsKey(name);
-        }
-
-        public void CreateFile(string name)
-        {
-            Files.Add(name, new MemoryFileObject(name));
-        }
-
         public IFileObject GetFile(string name)
         {
-            return Files[name];
+            MemoryFileObject file = null;
+            if (!Files.ContainsKey(name))
+            {
+                file = new MemoryFileObject(name);
+                AddFile(file);
+            }
+            else
+            {
+                file = Files[name];
+            }
+
+            return file;
         }
 
         public IEnumerable<IFileObject> GetFiles()
@@ -83,5 +84,9 @@ namespace Sync.Net.Tests
             return this;
         }
 
+        public bool ContainsFile(string name)
+        {
+            return Files.ContainsKey(name);
+        }
     }
 }
