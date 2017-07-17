@@ -14,6 +14,16 @@ namespace Sync.Net
             {
                 targetDirectory.CreateFile(file.Name);
             }
+
+            IFileObject targetFile = targetDirectory.GetFile(file.Name);
+
+            using (var stream = file.GetStream())
+            {
+                using (var destination = targetFile.GetStream())
+                {
+                    stream.CopyTo(destination);
+                }
+            }
         }
     }
 }

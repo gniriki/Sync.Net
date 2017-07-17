@@ -2,7 +2,8 @@ namespace Sync.Net
 {
     public interface IDirectoryObject
     {
-        bool ContainsFile(string fileName);
-        void CreateFile(string fileName);
+        bool ContainsFile(string name);
+        void CreateFile(string name);
+        IFileObject GetFile(string name);
     }
 }
