@@ -17,7 +17,8 @@ namespace Sync.Net.Tests
         public MemoryFileObject(string name, string contents) : this(name)
         {
             this._contents = contents;
-
+            this.ModifiedDate = DateTime.Now;
+            
             using (MemoryStream stream = new MemoryStream())
             {
                 StreamWriter writer = new StreamWriter(stream);
@@ -27,10 +28,16 @@ namespace Sync.Net.Tests
             }
         }
 
+        public MemoryFileObject(string name, string contents, DateTime modifiedDate) : this(name, contents)
+        {
+            this.ModifiedDate = modifiedDate;
+        }
+
         public string Name { get; set; }
         public bool Exists => true;
 
         public long Size => _buffer.Length;
+        public DateTime ModifiedDate { get; set; }
 
         public Stream GetStream()
         {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -84,6 +85,13 @@ namespace Sync.Net.Tests
         public MemoryDirectoryObject AddFile(string fileName, string contents)
         {
             var memoryFileObject = new MemoryFileObject(fileName, contents);
+            Files.Add(memoryFileObject.Name, memoryFileObject);
+            return this;
+        }
+
+        public MemoryDirectoryObject AddFile(string fileName, string contents, DateTime modifiedDate)
+        {
+            var memoryFileObject = new MemoryFileObject(fileName, contents, modifiedDate);
             Files.Add(memoryFileObject.Name, memoryFileObject);
             return this;
         }

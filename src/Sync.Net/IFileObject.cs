@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace Sync.Net
@@ -7,6 +8,7 @@ namespace Sync.Net
         string Name { get; }
         bool Exists { get; }
         long Size { get; }
+        DateTime ModifiedDate { get; set; }
         Stream GetStream();
         void Create();
     }

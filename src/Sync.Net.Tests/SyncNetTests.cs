@@ -134,7 +134,7 @@ namespace Sync.Net.Tests
             SyncNet syncNet = new SyncNet(sourceDirectory, targetDirectory);
 
             var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
-            syncNet.ProgressChanged += delegate (SyncNet sender, SyncNetProgressChangedEventArgs e)
+            syncNet.ProgressChanged += delegate(SyncNet sender, SyncNetProgressChangedEventArgs e)
             {
                 progressUpdates.Add(e);
             };
@@ -166,7 +166,7 @@ namespace Sync.Net.Tests
             SyncNet syncNet = new SyncNet(sourceDirectory, targetDirectory);
 
             var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
-            syncNet.ProgressChanged += delegate (SyncNet sender, SyncNetProgressChangedEventArgs e)
+            syncNet.ProgressChanged += delegate(SyncNet sender, SyncNetProgressChangedEventArgs e)
             {
                 progressUpdates.Add(e);
             };
@@ -175,13 +175,64 @@ namespace Sync.Net.Tests
 
             Assert.AreEqual(4, progressUpdates.Count);
 
-            Assert.AreEqual(4* bytes, progressUpdates[0].TotalBytes);
+            Assert.AreEqual(4 * bytes, progressUpdates[0].TotalBytes);
             Assert.AreEqual(bytes, progressUpdates[0].ProcessedBytes);
             Assert.AreEqual(2 * bytes, progressUpdates[1].ProcessedBytes);
             Assert.AreEqual(3 * bytes, progressUpdates[2].ProcessedBytes);
             Assert.AreEqual(4 * bytes, progressUpdates[3].ProcessedBytes);
         }
-    }
 
-   
+        [TestMethod]
+        public void ReportsCurrentlyUploadedFileName()
+        {
+            IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
+                .AddFile(_fileName, _contents)
+                .AddFile(_fileName2, _contents)
+                .AddDirectory(new MemoryDirectoryObject(_subDirectoryName)
+                    .AddFile(_subFileName, _contents)
+                    .AddFile(_subFileName2, _contents));
+
+            IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
+
+            SyncNet syncNet = new SyncNet(sourceDirectory, targetDirectory);
+
+            var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
+            syncNet.ProgressChanged += delegate(SyncNet sender, SyncNetProgressChangedEventArgs e)
+            {
+                progressUpdates.Add(e);
+            };
+
+            syncNet.Backup();
+
+            Assert.AreEqual(_fileName, progressUpdates[0].CurrentFile.Name);
+            Assert.AreEqual(_fileName2, progressUpdates[1].CurrentFile.Name);
+            Assert.AreEqual(_subFileName, progressUpdates[2].CurrentFile.Name);
+            Assert.AreEqual(_subFileName2, progressUpdates[3].CurrentFile.Name);
+        }
+
+        [TestMethod]
+        public void UploadsOnlyNewerFile()
+        {
+            var now = DateTime.Now;
+
+            var lastUpdated = now.AddDays(-1);
+            var lastUpdated2 = now.AddDays(1);
+
+            IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
+                .AddFile(_fileName, _contents, lastUpdated)
+                .AddFile(_fileName2, _contents, lastUpdated2);
+
+            IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory")
+                .AddFile(_fileName, _contents, now)
+                .AddFile(_fileName2, _contents, now);
+
+            SyncNet syncNet = new SyncNet(sourceDirectory, targetDirectory);
+            syncNet.Backup();
+
+            var files = targetDirectory.GetFiles();
+
+            Assert.AreEqual(now, files.First().ModifiedDate);
+            Assert.AreEqual(lastUpdated2, files.Last().ModifiedDate);
+        }
+    }
 }
