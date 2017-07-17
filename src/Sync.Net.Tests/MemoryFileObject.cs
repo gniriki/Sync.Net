@@ -1,37 +1,36 @@
 using System;
 using System.IO;
-using System.Linq;
 using Sync.Net.IO;
 
 namespace Sync.Net.Tests
 {
     public class MemoryFileObject : IFileObject
     {
-        private string _contents;
-        private byte[] _buffer = new byte[1024];
+        private readonly byte[] _buffer = new byte[1024];
+        private readonly string _contents;
 
         public MemoryFileObject(string name)
         {
-            this.Name = name;
+            Name = name;
         }
 
         public MemoryFileObject(string name, string contents) : this(name)
         {
-            this._contents = contents;
-            this.ModifiedDate = DateTime.Now;
-            
-            using (MemoryStream stream = new MemoryStream())
+            _contents = contents;
+            ModifiedDate = DateTime.Now;
+
+            using (var stream = new MemoryStream())
             {
-                StreamWriter writer = new StreamWriter(stream);
+                var writer = new StreamWriter(stream);
                 writer.Write(_contents);
                 writer.Flush();
-               _buffer = stream.ToArray();
+                _buffer = stream.ToArray();
             }
         }
 
         public MemoryFileObject(string name, string contents, DateTime modifiedDate) : this(name, contents)
         {
-            this.ModifiedDate = modifiedDate;
+            ModifiedDate = modifiedDate;
         }
 
         public string Name { get; set; }
@@ -47,7 +46,6 @@ namespace Sync.Net.Tests
 
         public void Create()
         {
-            
         }
     }
 }

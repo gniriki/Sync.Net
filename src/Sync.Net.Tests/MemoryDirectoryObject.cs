@@ -7,11 +7,11 @@ namespace Sync.Net.Tests
 {
     public class MemoryDirectoryObject : IDirectoryObject
     {
-        public Dictionary<string, MemoryFileObject> Files 
-            = new Dictionary<string, MemoryFileObject>();
-
-        public Dictionary<string, MemoryDirectoryObject> Directories 
+        public Dictionary<string, MemoryDirectoryObject> Directories
             = new Dictionary<string, MemoryDirectoryObject>();
+
+        public Dictionary<string, MemoryFileObject> Files
+            = new Dictionary<string, MemoryFileObject>();
 
         public MemoryDirectoryObject(string name)
         {
@@ -28,7 +28,6 @@ namespace Sync.Net.Tests
 
         public void Create()
         {
-            
         }
 
         public IDirectoryObject GetDirectory(string name)
@@ -65,14 +64,10 @@ namespace Sync.Net.Tests
 
         public IEnumerable<IFileObject> GetFiles(bool recursive = false)
         {
-            List<IFileObject> list = Files.Values.Cast<IFileObject>().ToList();
+            var list = Files.Values.Cast<IFileObject>().ToList();
             if (recursive)
-            {
                 foreach (var directoryObject in GetDirectories())
-                {
                     list.AddRange(directoryObject.GetFiles(true));
-                }
-            }
 
             return list;
         }

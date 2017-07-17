@@ -4,10 +4,10 @@ namespace Sync.Net.IO
 {
     public interface IDirectoryObject
     {
-        IFileObject GetFile(string fileName);
-        IEnumerable<IFileObject> GetFiles(bool recursive = false);
         string Name { get; }
         bool Exists { get; }
+        IFileObject GetFile(string fileName);
+        IEnumerable<IFileObject> GetFiles(bool recursive = false);
         IEnumerable<IDirectoryObject> GetDirectories();
         void Create();
         IDirectoryObject GetDirectory(string name);
