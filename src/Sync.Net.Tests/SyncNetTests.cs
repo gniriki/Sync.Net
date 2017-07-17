@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Sync.Net.Tests
@@ -147,6 +148,38 @@ namespace Sync.Net.Tests
             Assert.AreEqual(2, progressUpdates[1].ProcessedFiles);
             Assert.AreEqual(3, progressUpdates[2].ProcessedFiles);
             Assert.AreEqual(4, progressUpdates[3].ProcessedFiles);
+        }
+
+        [TestMethod]
+        public void CountsUploadedData()
+        {
+            var bytes = Encoding.UTF8.GetBytes(_contents).Length;
+            IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
+                .AddFile(_fileName, _contents)
+                .AddFile(_fileName2, _contents)
+                .AddDirectory(new MemoryDirectoryObject(_subDirectoryName)
+                    .AddFile(_subFileName, _contents)
+                    .AddFile(_subFileName2, _contents));
+
+            IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
+
+            SyncNet syncNet = new SyncNet(sourceDirectory, targetDirectory);
+
+            var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
+            syncNet.ProgressChanged += delegate (SyncNet sender, SyncNetProgressChangedEventArgs e)
+            {
+                progressUpdates.Add(e);
+            };
+
+            syncNet.Backup();
+
+            Assert.AreEqual(4, progressUpdates.Count);
+
+            Assert.AreEqual(4* bytes, progressUpdates[0].TotalBytes);
+            Assert.AreEqual(bytes, progressUpdates[0].ProcessedBytes);
+            Assert.AreEqual(2 * bytes, progressUpdates[1].ProcessedBytes);
+            Assert.AreEqual(3 * bytes, progressUpdates[2].ProcessedBytes);
+            Assert.AreEqual(4 * bytes, progressUpdates[3].ProcessedBytes);
         }
     }
 

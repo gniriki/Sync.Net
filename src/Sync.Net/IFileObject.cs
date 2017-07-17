@@ -6,6 +6,7 @@ namespace Sync.Net
     {
         string Name { get; }
         bool Exists { get; }
+        long Size { get; }
         Stream GetStream();
         void Create();
     }

@@ -10,6 +10,8 @@ namespace Sync.Net
     {
         public int TotalFiles;
         public int ProcessedFiles;
+        public long TotalBytes { get; set; }
+        public long ProcessedBytes { get; set; }
     }
 
     public delegate void SyncNetProgressChangedDelegate(SyncNet sender, SyncNetProgressChangedEventArgs e);
@@ -21,6 +23,8 @@ namespace Sync.Net
         private IFileObject _sourceFile;
         private int _totalFiles;
         private int _processedFiles;
+        private long _totalBytes;
+        private long _processedBytes;
 
         public SyncNet(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
         {
@@ -28,6 +32,10 @@ namespace Sync.Net
             _targetDirectory = targetDirectory;
             IEnumerable<IFileObject> files = sourceDirectory.GetFiles(true);
             _totalFiles = files.Count();
+            foreach (var fileObject in files)
+            {
+                _totalBytes += fileObject.Size;
+            }
         }
 
         public SyncNet(IFileObject sourceFile, IDirectoryObject targetDirectory)
@@ -44,25 +52,30 @@ namespace Sync.Net
                 targetFile.Create();
             }
 
+            var uploadedBytes = (long)0;
             using (var stream = file.GetStream())
             {
+                uploadedBytes += stream.Length;
                 using (var destination = targetFile.GetStream())
                 {
                     stream.CopyTo(destination);
                 }
             }
 
-            UpdateProgess();
+            UpdateProgess(uploadedBytes);
         }
 
-        private void UpdateProgess()
+        private void UpdateProgess(long bytesUploaded)
         {
             _processedFiles++;
+            _processedBytes += bytesUploaded;
             OnProgressChanged(
                 new SyncNetProgressChangedEventArgs
                 {
                     ProcessedFiles = _processedFiles,
-                    TotalFiles = _totalFiles
+                    TotalFiles = _totalFiles,
+                    ProcessedBytes = _processedBytes,
+                    TotalBytes = _totalBytes
                 });
         }
 

@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using System.Linq;
 
 namespace Sync.Net.Tests
 {
@@ -16,25 +18,23 @@ namespace Sync.Net.Tests
         {
             this._contents = contents;
 
-            using (MemoryStream stream = new MemoryStream(_buffer))
+            using (MemoryStream stream = new MemoryStream())
             {
                 StreamWriter writer = new StreamWriter(stream);
                 writer.Write(_contents);
                 writer.Flush();
+               _buffer = stream.ToArray();
             }
         }
 
         public string Name { get; set; }
         public bool Exists => true;
 
+        public long Size => _buffer.Length;
+
         public Stream GetStream()
         {
-            MemoryStream stream = new MemoryStream(_buffer);
-            StreamWriter writer = new StreamWriter(stream);
-            writer.Write(_contents);
-            writer.Flush();
-            stream.Position = 0;
-            return stream;
+            return new MemoryStream(_buffer);
         }
 
         public void Create()
