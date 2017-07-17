@@ -6,9 +6,33 @@ using System.Threading.Tasks;
 
 namespace Sync.Net
 {
+    public class SyncNetProgressChangedEventArgs : EventArgs
+    {
+        public int TotalFiles;
+        public int ProcessedFiles;
+    }
+
+    public delegate void SyncNetProgressChangedDelegate(SyncNet sender, SyncNetProgressChangedEventArgs e);
+
     public class SyncNet
     {
-        public void Backup(IFileObject file, IDirectoryObject targetDirectory)
+        private IDirectoryObject _sourceDirectory;
+        private IDirectoryObject _targetDirectory;
+        private IFileObject _sourceFile;
+
+        public SyncNet(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
+        {
+            _sourceDirectory = sourceDirectory;
+            _targetDirectory = targetDirectory;
+        }
+
+        public SyncNet(IFileObject sourceFile, IDirectoryObject targetDirectory)
+        {
+            _sourceFile = sourceFile;
+            _targetDirectory = targetDirectory;
+        }
+
+        private void Backup(IFileObject file, IDirectoryObject targetDirectory)
         {
             IFileObject targetFile = targetDirectory.GetFile(file.Name);
             if (!targetFile.Exists)
@@ -25,7 +49,17 @@ namespace Sync.Net
             }
         }
 
-        public void Backup(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
+        public void Backup()
+        {
+            if(_sourceDirectory != null)
+                Backup(_sourceDirectory, _targetDirectory);
+            else
+            {
+                Backup(_sourceFile, _targetDirectory);
+            }
+        }
+
+        private void Backup(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
         {
             var files = sourceDirectory.GetFiles();
             foreach (var fileObject in files)
@@ -43,5 +77,7 @@ namespace Sync.Net
                 Backup(subDirectory, targetSubDirectory);
             }
         }
+
+        public event SyncNetProgressChangedDelegate ProgressChanged;
     }
 }
