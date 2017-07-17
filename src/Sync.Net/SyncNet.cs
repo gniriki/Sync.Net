@@ -28,7 +28,11 @@ namespace Sync.Net
 
         public void Backup(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
         {
-            throw new NotImplementedException();
+            var files = sourceDirectory.GetFiles();
+            foreach (var fileObject in files)
+            {
+                Backup(fileObject, targetDirectory);
+            }
         }
     }
 }
