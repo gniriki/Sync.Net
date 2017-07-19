@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,25 +24,33 @@ namespace Sync.Net.UI
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly SynchronizationContext synchronizationContext;
+
         public MainWindow()
         {
             InitializeComponent();
+            synchronizationContext = SynchronizationContext.Current;
         }
 
-        private void Sync_Click(object sender, RoutedEventArgs e)
+        private async void Sync_Click(object sender, RoutedEventArgs e)
         {
             var configuration = AppContainer.Container.Resolve<SyncNetConfiguration>();
             var factory = new SyncNetTaskFactory();
             var task = factory.Create(configuration);
             task.ProgressChanged += Task_ProgressChanged;
             textBox.AppendText("Preparing...\n");
-            task.Backup();
+            await Task.Run(() => task.Backup());
             textBox.AppendText("Finished!\n");
         }
 
         private void Task_ProgressChanged(SyncNetBackupTask sender, SyncNetProgressChangedEventArgs e)
         {
-            textBox.AppendText($"{DateTime.Now}: Uploaded {e.CurrentFile.Name}. {e.ProcessedFiles}/{e.TotalFiles} processed.\n");
+            synchronizationContext.Post(o =>
+            {
+                var args = (SyncNetProgressChangedEventArgs) o;
+                textBox.AppendText(
+                    $"{DateTime.Now}: Uploaded {args.CurrentFile.Name}. {args.ProcessedFiles}/{args.TotalFiles} processed.\n");
+            }, e);
         }
     }
 }
