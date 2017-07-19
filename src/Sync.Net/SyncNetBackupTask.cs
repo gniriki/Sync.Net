@@ -14,29 +14,43 @@ namespace Sync.Net
         public IFileObject CurrentFile { get; set; }
     }
 
-    public delegate void SyncNetProgressChangedDelegate(SyncNet sender, SyncNetProgressChangedEventArgs e);
+    public delegate void SyncNetProgressChangedDelegate(SyncNetBackupTask sender, SyncNetProgressChangedEventArgs e);
 
-    public class SyncNet
+    public class SyncNetBackupTask
     {
         private long _processedBytes;
         private int _processedFiles;
         private readonly IDirectoryObject _sourceDirectory;
         private readonly IFileObject _sourceFile;
         private readonly IDirectoryObject _targetDirectory;
-        private readonly long _totalBytes;
-        private readonly int _totalFiles;
+        private long _totalBytes;
+        private int _totalFiles;
 
-        public SyncNet(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
+        public SyncNetBackupTask(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
         {
             _sourceDirectory = sourceDirectory;
             _targetDirectory = targetDirectory;
-            var files = GetFilesToUpload(sourceDirectory, targetDirectory);
-            _totalFiles = files.Count();
-            foreach (var fileObject in files)
-                _totalBytes += fileObject.Size;
         }
 
-        public SyncNet(IFileObject sourceFile, IDirectoryObject targetDirectory)
+        public void Backup()
+        {
+            if (_sourceDirectory != null)
+            {
+                var files = GetFilesToUpload(_sourceDirectory, _targetDirectory);
+                _totalFiles = files.Count();
+                foreach (var fileObject in files)
+                    _totalBytes += fileObject.Size;
+
+                Backup(_sourceDirectory, _targetDirectory);
+            }
+            else
+            {
+                _totalBytes += _sourceFile.Size;
+                Backup(_sourceFile, _targetDirectory);
+            }
+        }
+
+        public SyncNetBackupTask(IFileObject sourceFile, IDirectoryObject targetDirectory)
         {
             _sourceFile = sourceFile;
             _targetDirectory = targetDirectory;
@@ -100,14 +114,6 @@ namespace Sync.Net
                     TotalBytes = _totalBytes,
                     CurrentFile = currentFile
                 });
-        }
-
-        public void Backup()
-        {
-            if (_sourceDirectory != null)
-                Backup(_sourceDirectory, _targetDirectory);
-            else
-                Backup(_sourceFile, _targetDirectory);
         }
 
         private void Backup(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)

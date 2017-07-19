@@ -10,7 +10,7 @@ using Sync.Net.TestHelpers;
 namespace Sync.Net.Tests
 {
     [TestClass]
-    public class SyncNetTests
+    public class SyncNetBackupTaskTests
     {
         private string _contents;
         private string _fileName;
@@ -35,7 +35,7 @@ namespace Sync.Net.Tests
         {
             var targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new SyncNet(new MemoryFileObject("file.txt"), targetDirectory);
+            var syncNet = new SyncNetBackupTask(new MemoryFileObject("file.txt"), targetDirectory);
             syncNet.Backup();
             Assert.IsTrue(targetDirectory.ContainsFile("file.txt"));
         }
@@ -44,7 +44,7 @@ namespace Sync.Net.Tests
         public void WritesFileContentToTargetFile()
         {
             IDirectoryObject memoryDirectoryObject = new MemoryDirectoryObject("directory");
-            var syncNet = new SyncNet(new MemoryFileObject(_fileName, _contents), memoryDirectoryObject);
+            var syncNet = new SyncNetBackupTask(new MemoryFileObject(_fileName, _contents), memoryDirectoryObject);
             syncNet.Backup();
 
             var targetFile = memoryDirectoryObject.GetFile(_fileName);
@@ -65,7 +65,7 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new SyncNet(sourceDirectory, targetDirectory);
+            var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
             syncNet.Backup();
 
             Assert.AreEqual(0, targetDirectory.GetFiles().Count());
@@ -90,7 +90,7 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new SyncNet(sourceDirectory, targetDirectory);
+            var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
             syncNet.Backup();
 
             var files = targetDirectory.GetFiles();
@@ -108,7 +108,7 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new SyncNet(sourceDirectory, targetDirectory);
+            var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
 
             var fired = false;
             syncNet.ProgressChanged += delegate { fired = true; };
@@ -130,10 +130,10 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new SyncNet(sourceDirectory, targetDirectory);
+            var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
 
             var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
-            syncNet.ProgressChanged += delegate(SyncNet sender, SyncNetProgressChangedEventArgs e)
+            syncNet.ProgressChanged += delegate(SyncNetBackupTask sender, SyncNetProgressChangedEventArgs e)
             {
                 progressUpdates.Add(e);
             };
@@ -162,10 +162,10 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new SyncNet(sourceDirectory, targetDirectory);
+            var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
 
             var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
-            syncNet.ProgressChanged += delegate(SyncNet sender, SyncNetProgressChangedEventArgs e)
+            syncNet.ProgressChanged += delegate(SyncNetBackupTask sender, SyncNetProgressChangedEventArgs e)
             {
                 progressUpdates.Add(e);
             };
@@ -193,10 +193,10 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new SyncNet(sourceDirectory, targetDirectory);
+            var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
 
             var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
-            syncNet.ProgressChanged += delegate(SyncNet sender, SyncNetProgressChangedEventArgs e)
+            syncNet.ProgressChanged += delegate(SyncNetBackupTask sender, SyncNetProgressChangedEventArgs e)
             {
                 progressUpdates.Add(e);
             };
@@ -225,7 +225,7 @@ namespace Sync.Net.Tests
                 .AddFile(_fileName, _contents, now)
                 .AddFile(_fileName2, _contents, now);
 
-            var syncNet = new SyncNet(sourceDirectory, targetDirectory);
+            var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
             syncNet.Backup();
 
             var files = targetDirectory.GetFiles();
