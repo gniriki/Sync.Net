@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sync.Net.TestHelpers", "Syn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sync.Net.UI", "Sync.Net.UI\Sync.Net.UI.csproj", "{DE635EA7-DE60-47C2-A38D-A2570DBA6DA1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sync.Net.UI.UnitTests", "Sync.Net.UI.UnitTests\Sync.Net.UI.UnitTests.csproj", "{8B7986FE-4CC2-4401-8C53-CC3A55231489}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{DE635EA7-DE60-47C2-A38D-A2570DBA6DA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE635EA7-DE60-47C2-A38D-A2570DBA6DA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE635EA7-DE60-47C2-A38D-A2570DBA6DA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B7986FE-4CC2-4401-8C53-CC3A55231489}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B7986FE-4CC2-4401-8C53-CC3A55231489}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B7986FE-4CC2-4401-8C53-CC3A55231489}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B7986FE-4CC2-4401-8C53-CC3A55231489}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,5 +54,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{919760CD-D186-42F1-B22D-5EEB7E99D19C} = {D6031172-31E1-48A7-9A30-F351DA6E38EE}
 		{678CD9B1-E425-403C-BBF4-D06BAF686E20} = {D6031172-31E1-48A7-9A30-F351DA6E38EE}
+		{8B7986FE-4CC2-4401-8C53-CC3A55231489} = {D6031172-31E1-48A7-9A30-F351DA6E38EE}
 	EndGlobalSection
 EndGlobal

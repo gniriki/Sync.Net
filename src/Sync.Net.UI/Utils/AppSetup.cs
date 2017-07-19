@@ -21,6 +21,8 @@ namespace Sync.Net.UI.Utils
                 .Where(x => x.Name.EndsWith("ViewModel"))
                 .SingleInstance();
 
+            cb.RegisterAssemblyTypes(assembly).AsImplementedInterfaces();
+
             cb.RegisterType<SyncNetConfiguration>().SingleInstance();
         }
     }

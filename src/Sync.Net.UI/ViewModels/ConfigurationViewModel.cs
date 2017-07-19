@@ -15,18 +15,17 @@ namespace Sync.Net.UI.ViewModels
     public class ConfigurationViewModel : INotifyPropertyChanged
     {
         private SyncNetConfiguration _configuration;
+        private IWindowManager _windowManager;
 
-        public ConfigurationViewModel(SyncNetConfiguration configuration)
+        public ConfigurationViewModel(SyncNetConfiguration configuration, IWindowManager windowManager)
         {
             _configuration = configuration;
+            _windowManager = windowManager;
             SelectFile = new RelayCommand(
                 p => true,
                 p =>
                 {
-                    var dialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog();
-                    var result = dialog.ShowDialog();
-                    if (result.HasValue && result.Value)
-                        LocalDirectory = dialog.SelectedPath;
+                    LocalDirectory = _windowManager.ShowDirectoryDialog();
                 });
         }
 
