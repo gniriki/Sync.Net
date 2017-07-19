@@ -23,7 +23,13 @@ namespace Sync.Net.UI.Utils
 
             cb.RegisterAssemblyTypes(assembly).AsImplementedInterfaces();
 
-            cb.RegisterType<SyncNetConfiguration>().SingleInstance();
+            using (var stream = new ConfigFile().GetStream())
+            {
+                SyncNetConfiguration configuration = SyncNetConfiguration.Load(stream);
+                //cb.RegisterType<SyncNetConfiguration>().SingleInstance();
+                cb.RegisterInstance(configuration).As<SyncNetConfiguration>();
+            }
+
         }
     }
 }

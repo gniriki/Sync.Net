@@ -14,29 +14,30 @@ namespace Sync.Net.Tests
     [TestClass]
     public class SyncNetConfigurationTests
     {
+        private readonly string _configLocalDirectory = "testLocal";
+        private readonly string _configS3Bucket = "testBucket";
+        private readonly RegionEndpoint _configRegionEndpoint = RegionEndpoint.APNortheast1;
+
         [TestMethod]
         public void SaveLoadTest()
         {
-            var configLocalDirectory = "testLocal";
-            var configS3Bucket = "testBucket";
-            var configRegionEndpoint = RegionEndpoint.APNortheast1;
-
             var config = new SyncNetConfiguration
             {
-                LocalDirectory = configLocalDirectory,
-                S3Bucket = configS3Bucket,
-                RegionEndpoint = configRegionEndpoint
+                LocalDirectory = _configLocalDirectory,
+                S3Bucket = _configS3Bucket,
+                RegionEndpoint = _configRegionEndpoint
             };
-
 
             var memoryStream = new MemoryStream();
             config.Save(memoryStream);
             memoryStream.Seek(0, SeekOrigin.Begin);
 
-            var loadedConfiguration = SyncNetConfiguration.Load(memoryStream);
-            Assert.AreEqual(configLocalDirectory, loadedConfiguration.LocalDirectory);
-            Assert.AreEqual(configS3Bucket, loadedConfiguration.S3Bucket);
-            Assert.AreEqual(configRegionEndpoint, loadedConfiguration.RegionEndpoint);
+            var loadedConfiguration1 = SyncNetConfiguration.Load(memoryStream);
+            var loadedConfiguration = loadedConfiguration1;
+
+            Assert.AreEqual(_configLocalDirectory, loadedConfiguration.LocalDirectory);
+            Assert.AreEqual(_configS3Bucket, loadedConfiguration.S3Bucket);
+            Assert.AreEqual(_configRegionEndpoint, loadedConfiguration.RegionEndpoint);
         }
     }
 }

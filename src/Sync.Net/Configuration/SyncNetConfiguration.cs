@@ -41,9 +41,8 @@ namespace Sync.Net.Configuration
             set { RegionEndpointSystemName = value.SystemName; }
         }
 
-        public void Save(Stream stream)
+        public virtual void Save(Stream stream)
         {
-            
             Serializer.WriteObject(stream, this);
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -16,11 +17,13 @@ namespace Sync.Net.UI.ViewModels
     {
         private SyncNetConfiguration _configuration;
         private IWindowManager _windowManager;
+        private IConfigFile _configFile;
 
-        public ConfigurationViewModel(SyncNetConfiguration configuration, IWindowManager windowManager)
+        public ConfigurationViewModel(SyncNetConfiguration configuration, IWindowManager windowManager, IConfigFile configFile)
         {
             _configuration = configuration;
             _windowManager = windowManager;
+            _configFile = configFile;
             SelectFile = new RelayCommand(
                 p => true,
                 p =>
@@ -67,6 +70,8 @@ namespace Sync.Net.UI.ViewModels
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
+            using(var stream = _configFile.GetStream())
+                _configuration.Save(stream);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
