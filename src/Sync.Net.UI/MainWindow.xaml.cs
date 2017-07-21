@@ -55,5 +55,10 @@ namespace Sync.Net.UI
                     $"{DateTime.Now}: Uploaded {args.CurrentFile.Name}. {args.ProcessedFiles}/{args.TotalFiles} processed.\n");
             }, e);
         }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
     }
 }
