@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Amazon;
 using Microsoft.Win32;
 using Sync.Net.Configuration;
@@ -60,10 +61,9 @@ namespace Sync.Net.UI.ViewModels
             }
         }
 
-        public RelayCommand SelectFile
+        public ICommand SelectFile
         {
             get;
-            private set;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -59,6 +59,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ConfigurationViewModelTests.cs" />
+    <Compile Include="MainWindowViewModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

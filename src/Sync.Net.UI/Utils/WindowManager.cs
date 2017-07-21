@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Sync.Net.UI.Utils
 {
@@ -15,6 +16,11 @@ namespace Sync.Net.UI.Utils
             if (result.HasValue && result.Value)
                 return dialog.SelectedPath;
             return null;
+        }
+
+        public void ShutdownApplication()
+        {
+            Application.Current.Shutdown();
         }
     }
 }

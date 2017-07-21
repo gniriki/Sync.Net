@@ -16,6 +16,7 @@ namespace Sync.Net.UI.ViewModels
         }
 
         public ConfigurationViewModel Configuration => AppContainer.Container.Resolve<ConfigurationViewModel>();
+        public MainWindowViewModel MainWindow => AppContainer.Container.Resolve<MainWindowViewModel>();
 
         public static void Cleanup()
         {
