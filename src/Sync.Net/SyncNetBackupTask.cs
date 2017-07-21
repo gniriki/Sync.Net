@@ -16,7 +16,13 @@ namespace Sync.Net
 
     public delegate void SyncNetProgressChangedDelegate(SyncNetBackupTask sender, SyncNetProgressChangedEventArgs e);
 
-    public class SyncNetBackupTask
+    public interface ISyncNetTask
+    {
+        void Run();
+        event SyncNetProgressChangedDelegate ProgressChanged;
+    }
+
+    public class SyncNetBackupTask : ISyncNetTask
     {
         private long _processedBytes;
         private int _processedFiles;
@@ -32,7 +38,7 @@ namespace Sync.Net
             _targetDirectory = targetDirectory;
         }
 
-        public void Backup()
+        public void Run()
         {
             if (_sourceDirectory != null)
             {

@@ -42,7 +42,7 @@ namespace Sync.Net.UI
             var task = factory.Create(configuration);
             task.ProgressChanged += Task_ProgressChanged;
             textBox.AppendText("Preparing...\n");
-            await Task.Run(() => task.Backup());
+            await Task.Run(() => task.Run());
             textBox.AppendText("Finished!\n");
         }
 

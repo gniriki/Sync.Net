@@ -10,14 +10,14 @@ using Sync.Net.IO;
 
 namespace Sync.Net
 {
-    public class SyncNetTaskFactory
+    public class SyncNetTaskFactory : ISyncNetTaskFactory
     {
-        public SyncNetBackupTask Create(SyncNetConfiguration configuration)
+        public ISyncNetTask Create(SyncNetConfiguration configuration)
         {
             return Create(configuration.LocalDirectory, configuration.S3Bucket, configuration.RegionEndpoint);
         }
 
-        public SyncNetBackupTask Create(string localDirectory, string s3Bucket, RegionEndpoint regionEndpoint)
+        public ISyncNetTask Create(string localDirectory, string s3Bucket, RegionEndpoint regionEndpoint)
         {
             var localDirectoryObject = new LocalDirectoryObject(localDirectory);
             var s3DirectoryObject = new S3DirectoryObject(new AmazonS3Client(regionEndpoint), s3Bucket);
