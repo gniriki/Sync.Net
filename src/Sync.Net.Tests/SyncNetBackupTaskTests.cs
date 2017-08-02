@@ -233,5 +233,27 @@ namespace Sync.Net.Tests
             Assert.AreEqual(now, files.First().ModifiedDate);
             Assert.AreEqual(lastUpdated2, files.Last().ModifiedDate);
         }
+
+        [TestMethod]
+        public void UploadsFileByName()
+        {
+            var sourceDirectory = new MemoryDirectoryObject("directory")
+                .AddFile(_fileName, _contents)
+                .AddFile(_fileName2, _contents)
+                .AddDirectory(new MemoryDirectoryObject(_subDirectoryName)
+                    .AddFile(_subFileName, _contents)
+                    .AddFile(_subFileName2, _contents));
+
+            IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
+
+            var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
+
+            syncNet.UpdateFile(_fileName);
+
+            var files = targetDirectory.GetFiles();
+
+            Assert.IsTrue(files.Count() == 1);
+            Assert.AreEqual(_fileName, files.First().Name);
+        }
     }
 }

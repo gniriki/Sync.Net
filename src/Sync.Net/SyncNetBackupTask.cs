@@ -145,5 +145,10 @@ namespace Sync.Net
         {
             ProgressChanged?.Invoke(this, e);
         }
+
+        public void UpdateFile(string fileName)
+        {
+            Backup(_sourceDirectory.GetFile(fileName), _targetDirectory);
+        }
     }
 }
