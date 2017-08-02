@@ -87,8 +87,11 @@
     <Compile Include="Properties\Annotations2.cs" />
     <Compile Include="Utils\AppContainer.cs" />
     <Compile Include="Utils\AppSetup.cs" />
+    <Compile Include="Utils\AsyncCommand.cs" />
     <Compile Include="Utils\ConfigFile.cs" />
+    <Compile Include="Utils\FileWatcher.cs" />
     <Compile Include="Utils\IConfigFile.cs" />
+    <Compile Include="Utils\IFileWatcher.cs" />
     <Compile Include="Utils\IWindowManager.cs" />
     <Compile Include="Utils\RelayCommand.cs" />
     <Compile Include="Utils\WindowManager.cs" />

@@ -17,18 +17,32 @@ namespace Sync.Net.UI.ViewModels
         private IWindowManager _windowManager;
         private ISyncNetTaskFactory _taskFactory;
         private string _log;
+        private IFileWatcher _watcher;
+        private ISyncNetTask _task;
         public ICommand ExitCommand { get; }
-        public ICommand SyncCommand { get; }
+        public AsyncCommand SyncCommand { get; }
 
         public string Log => _log;
 
         public MainWindowViewModel(IWindowManager windowManager, 
             ISyncNetTaskFactory taskFactory,
-            SyncNetConfiguration configuration)
+            SyncNetConfiguration configuration,
+            IFileWatcher watcher)
         {
             _windowManager = windowManager;
             _taskFactory = taskFactory;
             _log = string.Empty;
+            _watcher = watcher;
+            _task = _taskFactory.Create(configuration);
+            _task.ProgressChanged += Task_ProgressChanged;
+
+            _watcher.Created += (sender, args) =>
+            {
+                _task.UpdateFile(args.FullPath);
+            };
+
+            _watcher.WatchForChanges(configuration.LocalDirectory);
+
             ExitCommand = new RelayCommand(
                 p => true,
                 p =>
@@ -36,16 +50,16 @@ namespace Sync.Net.UI.ViewModels
                     _windowManager.ShutdownApplication();
                 });
 
-            SyncCommand = new RelayCommand(
-                p => true,
-                async p =>
-                {
-                    var task = _taskFactory.Create(configuration);
-                    task.ProgressChanged += Task_ProgressChanged;
-                    WriteToLog("Preparing...\n");
-                    await Task.Run(() => task.Run());
-                    WriteToLog("Finished!\n");
-                });
+            SyncCommand = new AsyncCommand(
+                Sync,
+                () => true);
+        }
+
+        private async Task Sync()
+        {
+            WriteToLog("Preparing...\n");
+            await Task.Run(() => _task.Run());
+            WriteToLog("Finished!\n");
         }
 
         private void WriteToLog(string line)

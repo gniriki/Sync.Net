@@ -20,6 +20,7 @@ namespace Sync.Net
     {
         void Run();
         event SyncNetProgressChangedDelegate ProgressChanged;
+        void UpdateFile(string fileName);
     }
 
     public class SyncNetBackupTask : ISyncNetTask
