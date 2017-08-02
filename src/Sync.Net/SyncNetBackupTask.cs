@@ -148,7 +148,21 @@ namespace Sync.Net
 
         public void UpdateFile(string fileName)
         {
-            Backup(_sourceDirectory.GetFile(fileName), _targetDirectory);
+            var sourceDirectory = _sourceDirectory;
+            var targetDirectory = _targetDirectory;
+
+            if (fileName.Contains('\\'))
+            {
+                var parts = fileName.Split('\\');
+                for (int i = 0; i < parts.Length - 1; i++)
+                {
+                    sourceDirectory = sourceDirectory.GetDirectory(parts[i]);
+                    targetDirectory = targetDirectory.GetDirectory(parts[i]);
+                }
+                fileName = parts[parts.Length - 1];
+            }
+
+            Backup(sourceDirectory.GetFile(fileName), targetDirectory);
         }
     }
 }

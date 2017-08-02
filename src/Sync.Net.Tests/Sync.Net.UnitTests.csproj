@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="SyncNetBackupTaskTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SyncNetBackupTaskUploadFileTests.cs" />
     <Compile Include="SyncNetConfigurationTests.cs" />
   </ItemGroup>
   <ItemGroup>
