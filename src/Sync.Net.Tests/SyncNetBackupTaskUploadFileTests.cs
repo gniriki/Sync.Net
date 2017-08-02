@@ -56,7 +56,7 @@ namespace Sync.Net.Tests
         [TestMethod]
         public void UploadsFileFromSubfolderDoesntCreateAFileInMainDirectory()
         {
-            _syncNet.UpdateFile(_subDirectoryName + "\\" + _subFileName);
+            _syncNet.UpdateFile(".\\" + _subDirectoryName + "\\" + _subFileName);
 
             var files = _targetDirectory.GetFiles();
 
@@ -66,7 +66,7 @@ namespace Sync.Net.Tests
         [TestMethod]
         public void UploadsFileFromSubfolderCreatesASubDirectory()
         {
-            _syncNet.UpdateFile(_subDirectoryName + "\\" + _subFileName);
+            _syncNet.UpdateFile(".\\" + _subDirectoryName + "\\" + _subFileName);
 
             var dirs = _targetDirectory.GetDirectories();
 

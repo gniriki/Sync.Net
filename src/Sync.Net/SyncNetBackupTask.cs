@@ -153,7 +153,11 @@ namespace Sync.Net
 
             if (fileName.Contains('\\'))
             {
+                if (fileName.StartsWith(".\\"))
+                    fileName = fileName.Substring(2);
+
                 var parts = fileName.Split('\\');
+
                 for (int i = 0; i < parts.Length - 1; i++)
                 {
                     sourceDirectory = sourceDirectory.GetDirectory(parts[i]);
