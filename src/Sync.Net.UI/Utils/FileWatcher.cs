@@ -13,6 +13,7 @@ namespace Sync.Net.UI.Utils
 
         public FileWatcher()
         {
+            _watcher = new FileSystemWatcher();
         }
 
         public event FileSystemEventHandler Changed
@@ -47,8 +48,7 @@ namespace Sync.Net.UI.Utils
 
         public void WatchForChanges(string path)
         {
-            _watcher?.Dispose();
-            _watcher = new FileSystemWatcher(path);
+            _watcher.Path = path;
             _watcher.EnableRaisingEvents = true;
         }
     }

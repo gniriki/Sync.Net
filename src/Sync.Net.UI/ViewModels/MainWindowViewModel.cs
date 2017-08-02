@@ -38,7 +38,9 @@ namespace Sync.Net.UI.ViewModels
 
             _watcher.Created += (sender, args) =>
             {
+                WriteToLog($"File created: {args.FullPath}, uploading.");
                 _task.UpdateFile(args.FullPath);
+                WriteToLog($"Done uploading {args.FullPath}");
             };
 
             _watcher.WatchForChanges(configuration.LocalDirectory);
