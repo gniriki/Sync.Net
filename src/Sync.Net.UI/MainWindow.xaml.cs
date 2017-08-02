@@ -27,38 +27,9 @@ namespace Sync.Net.UI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly SynchronizationContext synchronizationContext;
-
         public MainWindow()
         {
             InitializeComponent();
-            synchronizationContext = SynchronizationContext.Current;
-        }
-
-        private async void Sync_Click(object sender, RoutedEventArgs e)
-        {
-            var configuration = AppContainer.Container.Resolve<SyncNetConfiguration>();
-            var factory = new SyncNetTaskFactory();
-            var task = factory.Create(configuration);
-            task.ProgressChanged += Task_ProgressChanged;
-            textBox.AppendText("Preparing...\n");
-            await Task.Run(() => task.Run());
-            textBox.AppendText("Finished!\n");
-        }
-
-        private void Task_ProgressChanged(SyncNetBackupTask sender, SyncNetProgressChangedEventArgs e)
-        {
-            synchronizationContext.Post(o =>
-            {
-                var args = (SyncNetProgressChangedEventArgs) o;
-                textBox.AppendText(
-                    $"{DateTime.Now}: Uploaded {args.CurrentFile.Name}. {args.ProcessedFiles}/{args.TotalFiles} processed.\n");
-            }, e);
-        }
-
-        private void button_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
         }
     }
 }

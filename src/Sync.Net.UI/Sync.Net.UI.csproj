@@ -84,6 +84,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Properties\Annotations2.cs" />
     <Compile Include="Utils\AppContainer.cs" />
     <Compile Include="Utils\AppSetup.cs" />
     <Compile Include="Utils\ConfigFile.cs" />
