@@ -84,12 +84,34 @@ namespace Sync.Net.UI.UnitTests
 
             var taskFactory = new Moq.Mock<ISyncNetTaskFactory>();
             taskFactory.Setup(x => x.Create(It.IsAny<SyncNetConfiguration>())).Returns(_task.Object);
-            MainWindowViewModel model =
+
+            var model =
                 new MainWindowViewModel(null, taskFactory.Object, _configuration, _fileWatcher.Object);
 
             _fileWatcher.Raise(x => x.Created += null, new FileSystemEventArgs(WatcherChangeTypes.Created, _configuration.LocalDirectory, filename));
 
             Assert.IsTrue(wasUploaded);
+        }
+
+        [TestMethod]
+        public void MakesRelativePathWhenUploadingTheFile()
+        {
+            _configuration.LocalDirectory = "c:\\dir";
+            var raiseDir = _configuration.LocalDirectory + "\\sub";
+            var raiseFilename = "file";
+
+            var uploadedFilePath = string.Empty;
+            _task.Setup(x => x.UpdateFile(It.IsAny<string>())).Callback<string>(path => uploadedFilePath = path);
+
+            var taskFactory = new Moq.Mock<ISyncNetTaskFactory>();
+            taskFactory.Setup(x => x.Create(It.IsAny<SyncNetConfiguration>())).Returns(_task.Object);
+
+            var model =
+                new MainWindowViewModel(null, taskFactory.Object, _configuration, _fileWatcher.Object);
+
+            _fileWatcher.Raise(x => x.Created += null, new FileSystemEventArgs(WatcherChangeTypes.Created, raiseDir, raiseFilename));
+
+            Assert.AreEqual("\\sub\\file", uploadedFilePath);
         }
     }
 }

@@ -38,9 +38,10 @@ namespace Sync.Net.UI.ViewModels
 
             _watcher.Created += (sender, args) =>
             {
-                WriteToLog($"File created: {args.FullPath}, uploading.");
-                _task.UpdateFile(args.FullPath);
-                WriteToLog($"Done uploading {args.FullPath}");
+                var realivePath = args.FullPath.Substring(configuration.LocalDirectory.Length);
+                WriteToLog($"File created: {realivePath}, uploading.");
+                _task.UpdateFile(realivePath);
+                WriteToLog($"Done uploading {realivePath}");
             };
 
             _watcher.WatchForChanges(configuration.LocalDirectory);
@@ -59,20 +60,20 @@ namespace Sync.Net.UI.ViewModels
 
         private async Task Sync()
         {
-            WriteToLog("Preparing...\n");
+            WriteToLog("Preparing...");
             await Task.Run(() => _task.Run());
-            WriteToLog("Finished!\n");
+            WriteToLog("Finished!");
         }
 
         private void WriteToLog(string line)
         {
-            _log += line;
+            _log += $"{DateTime.Now}: {line}\n";
             OnPropertyChanged(nameof(Log));
         }
 
         private void Task_ProgressChanged(SyncNetBackupTask sender, SyncNetProgressChangedEventArgs args)
         {
-            WriteToLog($"{DateTime.Now}: Uploaded {args.CurrentFile.Name}. {args.ProcessedFiles}/{args.TotalFiles} processed.\n");
+            WriteToLog($"Uploaded {args.CurrentFile.Name}. {args.ProcessedFiles}/{args.TotalFiles} processed.\n");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

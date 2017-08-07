@@ -151,23 +151,25 @@ namespace Sync.Net
         {
             var sourceDirectory = _sourceDirectory;
             var targetDirectory = _targetDirectory;
+            var file = fileName;
 
-            if (fileName.Contains('\\'))
+            if (file.Contains('\\'))
             {
-                if (fileName.StartsWith(".\\"))
-                    fileName = fileName.Substring(2);
+                if (file.StartsWith(".\\"))
+                    file = file.Substring(2);
 
-                var parts = fileName.Split('\\');
+                var parts = file.Split('\\');
 
                 for (int i = 0; i < parts.Length - 1; i++)
                 {
                     sourceDirectory = sourceDirectory.GetDirectory(parts[i]);
                     targetDirectory = targetDirectory.GetDirectory(parts[i]);
                 }
-                fileName = parts[parts.Length - 1];
+
+                file = parts[parts.Length - 1];
             }
 
-            Backup(sourceDirectory.GetFile(fileName), targetDirectory);
+            Backup(sourceDirectory.GetFile(file), targetDirectory);
         }
     }
 }

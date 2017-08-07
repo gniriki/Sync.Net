@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sync.Net.IO;
 using Sync.Net.TestHelpers;
@@ -20,7 +22,7 @@ namespace Sync.Net.IntegrationTests
         public void WritesFileToLocalFileSystem()
         {
             var directoryInfo = new DirectoryInfo(_testDirectory);
-            if(!directoryInfo.Exists)
+            if (!directoryInfo.Exists)
                 directoryInfo.Create();
 
             var targetDirectory = new LocalDirectoryObject(directoryInfo);
@@ -46,6 +48,29 @@ namespace Sync.Net.IntegrationTests
             var localContents = File.ReadAllText(file.FullName);
 
             Assert.AreEqual(_contents, localContents);
+        }
+
+        [TestMethod]
+        public void UploadsFile()
+        {
+            File.WriteAllText(Path.Combine(_testDirectory, _subDirectoryName, _subFileName), _contents);
+
+            var sourceDirectory = new LocalDirectoryObject(_testDirectory);
+
+            var targetDirectory = new MemoryDirectoryObject("dir");
+            var sync = new SyncNetBackupTask(sourceDirectory, targetDirectory);
+
+            sync.UpdateFile(_subDirectoryName + "\\" + _subFileName);
+
+            var subDirectory = targetDirectory.GetDirectories().First();
+
+            Assert.AreEqual(_subDirectoryName, subDirectory.Name);
+
+            var fileObject = subDirectory.GetFiles().First();
+
+            Assert.AreEqual(_subFileName, fileObject.Name);
+            using(var sr = new StreamReader(fileObject.GetStream()))
+                Assert.AreEqual(_contents, sr.ReadToEnd().Replace("\0", String.Empty));
         }
     }
 }
