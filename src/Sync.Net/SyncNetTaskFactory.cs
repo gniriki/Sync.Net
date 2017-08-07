@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Amazon;
+﻿using Amazon;
 using Amazon.S3;
 using Sync.Net.Configuration;
 using Sync.Net.IO;
@@ -23,6 +18,6 @@ namespace Sync.Net
             var s3DirectoryObject = new S3DirectoryObject(new AmazonS3Client(regionEndpoint), s3Bucket);
 
             return new SyncNetBackupTask(localDirectoryObject, s3DirectoryObject);
-        } 
+        }
     }
 }

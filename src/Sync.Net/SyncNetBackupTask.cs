@@ -17,17 +17,23 @@ namespace Sync.Net
 
     public class SyncNetBackupTask : ISyncNetTask
     {
-        private long _processedBytes;
-        private int _processedFiles;
         private readonly IDirectoryObject _sourceDirectory;
         private readonly IFileObject _sourceFile;
         private readonly IDirectoryObject _targetDirectory;
+        private long _processedBytes;
+        private int _processedFiles;
         private long _totalBytes;
         private int _totalFiles;
 
         public SyncNetBackupTask(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
         {
             _sourceDirectory = sourceDirectory;
+            _targetDirectory = targetDirectory;
+        }
+
+        public SyncNetBackupTask(IFileObject sourceFile, IDirectoryObject targetDirectory)
+        {
+            _sourceFile = sourceFile;
             _targetDirectory = targetDirectory;
         }
 
@@ -53,10 +59,31 @@ namespace Sync.Net
             }
         }
 
-        public SyncNetBackupTask(IFileObject sourceFile, IDirectoryObject targetDirectory)
+        public event SyncNetProgressChangedDelegate ProgressChanged;
+
+        public void UpdateFile(string fileName)
         {
-            _sourceFile = sourceFile;
-            _targetDirectory = targetDirectory;
+            var sourceDirectory = _sourceDirectory;
+            var targetDirectory = _targetDirectory;
+            var file = fileName;
+
+            if (file.Contains('\\'))
+            {
+                if (file.StartsWith(".\\"))
+                    file = file.Substring(2);
+
+                var parts = file.Split('\\');
+
+                for (var i = 0; i < parts.Length - 1; i++)
+                {
+                    sourceDirectory = sourceDirectory.GetDirectory(parts[i]);
+                    targetDirectory = targetDirectory.GetDirectory(parts[i]);
+                }
+
+                file = parts[parts.Length - 1];
+            }
+
+            Backup(sourceDirectory.GetFile(file), targetDirectory);
         }
 
         private static IEnumerable<IFileObject> GetFilesToUpload(IDirectoryObject source, IDirectoryObject target)
@@ -136,36 +163,9 @@ namespace Sync.Net
             }
         }
 
-        public event SyncNetProgressChangedDelegate ProgressChanged;
-
         protected virtual void OnProgressChanged(SyncNetProgressChangedEventArgs e)
         {
             ProgressChanged?.Invoke(this, e);
-        }
-
-        public void UpdateFile(string fileName)
-        {
-            var sourceDirectory = _sourceDirectory;
-            var targetDirectory = _targetDirectory;
-            var file = fileName;
-
-            if (file.Contains('\\'))
-            {
-                if (file.StartsWith(".\\"))
-                    file = file.Substring(2);
-
-                var parts = file.Split('\\');
-
-                for (int i = 0; i < parts.Length - 1; i++)
-                {
-                    sourceDirectory = sourceDirectory.GetDirectory(parts[i]);
-                    targetDirectory = targetDirectory.GetDirectory(parts[i]);
-                }
-
-                file = parts[parts.Length - 1];
-            }
-
-            Backup(sourceDirectory.GetFile(file), targetDirectory);
         }
     }
 }

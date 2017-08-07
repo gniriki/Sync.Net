@@ -1,15 +1,13 @@
-using System;
-using System.Threading.Tasks;
 using Sync.Net.Configuration;
 
 namespace Sync.Net
 {
     public class SyncNetWatcher
     {
-        private ISyncNetTask _task;
-        private ISyncNetTaskFactory _taskFactory;
-        private SyncNetConfiguration _configuration;
-        private IFileWatcher _fileWatcher;
+        private readonly SyncNetConfiguration _configuration;
+        private readonly IFileWatcher _fileWatcher;
+        private readonly ISyncNetTask _task;
+        private readonly ISyncNetTaskFactory _taskFactory;
 
         public SyncNetWatcher(ISyncNetTaskFactory taskFactory, SyncNetConfiguration configuration,
             IFileWatcher watcher)

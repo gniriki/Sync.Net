@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Sync.Net.Configuration;
@@ -14,38 +10,37 @@ namespace Sync.Net.UI.ViewModels
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-        private string _log;
-        private ISyncNetTask _task;
-        private ILogger _logger;
-        public ICommand ExitCommand { get; }
-        public AsyncCommand SyncCommand { get; }
+        private readonly ILogger _logger;
+        private readonly ISyncNetTask _task;
 
-        public string Log => _log;
-
-        public MainWindowViewModel(IWindowManager windowManager, 
+        public MainWindowViewModel(IWindowManager windowManager,
             ISyncNetTaskFactory taskFactory,
             SyncNetConfiguration configuration,
             ILogger logger)
         {
             _logger = logger;
             _logger.LogUpdated += _logger_LogUpdated;
-            _log = logger.Contents;
+            Log = logger.Contents;
             _task = taskFactory.Create(configuration);
 
             ExitCommand = new RelayCommand(
                 p => true,
-                p =>
-                {
-                    windowManager.ShutdownApplication();
-                });
+                p => { windowManager.ShutdownApplication(); });
 
             SyncCommand = new AsyncCommand(Sync,
                 () => true);
         }
 
+        public ICommand ExitCommand { get; }
+        public AsyncCommand SyncCommand { get; }
+
+        public string Log { get; private set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private void _logger_LogUpdated(string newLine)
         {
-            _log += newLine;
+            Log += newLine;
             OnPropertyChanged(nameof(Log));
         }
 
@@ -53,8 +48,6 @@ namespace Sync.Net.UI.ViewModels
         {
             await Task.Run(() => _task.Run());
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sync.Net.IO
 {
     public class LocalFileObject : IFileObject
     {
-        private FileInfo _fileInfo;
+        private readonly FileInfo _fileInfo;
 
         public LocalFileObject(string path)
         {
@@ -18,7 +14,7 @@ namespace Sync.Net.IO
 
         public LocalFileObject(FileInfo fileInfo)
         {
-            this._fileInfo = fileInfo;
+            _fileInfo = fileInfo;
         }
 
         public string Name => _fileInfo.Name;
@@ -40,7 +36,10 @@ namespace Sync.Net.IO
 
         public void Create()
         {
-            using (var stream = _fileInfo.Create());
+            using (var stream = _fileInfo.Create())
+            {
+                ;
+            }
         }
     }
 }

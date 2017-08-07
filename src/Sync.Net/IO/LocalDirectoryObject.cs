@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sync.Net.IO
 {
     public class LocalDirectoryObject : IDirectoryObject
     {
-        private DirectoryInfo _directoryInfo;
+        private readonly DirectoryInfo _directoryInfo;
 
         public LocalDirectoryObject(string path)
         {

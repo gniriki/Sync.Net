@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Amazon;
-using Microsoft.Win32;
 using Sync.Net.Configuration;
 using Sync.Net.UI.Utils;
 
@@ -16,21 +9,19 @@ namespace Sync.Net.UI.ViewModels
 {
     public class ConfigurationViewModel : INotifyPropertyChanged
     {
-        private SyncNetConfiguration _configuration;
-        private IWindowManager _windowManager;
-        private IConfigFile _configFile;
+        private readonly IConfigFile _configFile;
+        private readonly SyncNetConfiguration _configuration;
+        private readonly IWindowManager _windowManager;
 
-        public ConfigurationViewModel(SyncNetConfiguration configuration, IWindowManager windowManager, IConfigFile configFile)
+        public ConfigurationViewModel(SyncNetConfiguration configuration, IWindowManager windowManager,
+            IConfigFile configFile)
         {
             _configuration = configuration;
             _windowManager = windowManager;
             _configFile = configFile;
             SelectFile = new RelayCommand(
                 p => true,
-                p =>
-                {
-                    LocalDirectory = _windowManager.ShowDirectoryDialog();
-                });
+                p => { LocalDirectory = _windowManager.ShowDirectoryDialog(); });
         }
 
         public string LocalDirectory
@@ -46,7 +37,9 @@ namespace Sync.Net.UI.ViewModels
         public string S3Bucket
         {
             get { return _configuration.S3Bucket; }
-            set { _configuration.S3Bucket = value;
+            set
+            {
+                _configuration.S3Bucket = value;
                 OnPropertyChanged();
             }
         }
@@ -61,17 +54,16 @@ namespace Sync.Net.UI.ViewModels
             }
         }
 
-        public ICommand SelectFile
-        {
-            get;
-        }
+        public ICommand SelectFile { get; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            using(var stream = _configFile.GetStream())
+            using (var stream = _configFile.GetStream())
+            {
                 _configuration.Save(stream);
+            }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }

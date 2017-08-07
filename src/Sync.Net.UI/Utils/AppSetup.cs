@@ -4,7 +4,7 @@ using Sync.Net.Configuration;
 
 namespace Sync.Net.UI.Utils
 {
-    class AppSetup
+    internal class AppSetup
     {
         public IContainer CreateContainer()
         {
@@ -28,7 +28,7 @@ namespace Sync.Net.UI.Utils
 
             using (var stream = new ConfigFile().GetStream())
             {
-                SyncNetConfiguration configuration = SyncNetConfiguration.Load(stream);
+                var configuration = SyncNetConfiguration.Load(stream);
                 cb.RegisterInstance(configuration).As<SyncNetConfiguration>();
             }
 

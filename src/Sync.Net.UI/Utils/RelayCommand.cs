@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Sync.Net.UI.Utils
 {
     public class RelayCommand : ICommand
     {
-        private Predicate<object> _canExecute;
-        private Action<object> _execute;
+        private readonly Predicate<object> _canExecute;
+        private readonly Action<object> _execute;
 
         public RelayCommand(Predicate<object> canExecute, Action<object> execute)
         {
-            this._canExecute = canExecute;
-            this._execute = execute;
+            _canExecute = canExecute;
+            _execute = execute;
         }
 
         public event EventHandler CanExecuteChanged

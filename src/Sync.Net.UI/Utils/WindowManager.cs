@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
+using Ookii.Dialogs.Wpf;
 
 namespace Sync.Net.UI.Utils
 {
@@ -11,7 +7,7 @@ namespace Sync.Net.UI.Utils
     {
         public string ShowDirectoryDialog()
         {
-            var dialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog();
+            var dialog = new VistaFolderBrowserDialog();
             var result = dialog.ShowDialog();
             if (result.HasValue && result.Value)
                 return dialog.SelectedPath;

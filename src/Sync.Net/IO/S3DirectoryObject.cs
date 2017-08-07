@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Amazon.S3;
 using Amazon.S3.IO;
 
@@ -10,17 +8,17 @@ namespace Sync.Net.IO
 {
     public class S3DirectoryObject : IDirectoryObject
     {
-        private string _bucketName;
-        private S3DirectoryInfo _s3DirectoryInfo;
-        private IAmazonS3 _s3Client;
+        private readonly string _bucketName;
+        private readonly IAmazonS3 _s3Client;
+        private readonly S3DirectoryInfo _s3DirectoryInfo;
         private string key;
 
-        public S3DirectoryObject(string bucketName) 
+        public S3DirectoryObject(string bucketName)
             : this(new AmazonS3Client(), bucketName)
         {
         }
 
-        public S3DirectoryObject(IAmazonS3 s3Client, string bucketName) 
+        public S3DirectoryObject(IAmazonS3 s3Client, string bucketName)
             : this(s3Client, new S3DirectoryInfo(s3Client, bucketName))
         {
             _bucketName = bucketName;
@@ -33,7 +31,7 @@ namespace Sync.Net.IO
             _s3Client = s3Client;
         }
 
-        public S3DirectoryObject(IAmazonS3 s3Client, string bucketName, string key) : 
+        public S3DirectoryObject(IAmazonS3 s3Client, string bucketName, string key) :
             this(s3Client, new S3DirectoryInfo(s3Client, bucketName, key))
         {
         }
@@ -72,8 +70,7 @@ namespace Sync.Net.IO
         {
             if (_s3DirectoryInfo.Bucket.Name == _s3DirectoryInfo.Name)
                 return key;
-            else
-                return _s3DirectoryInfo.Name + $"\\{key}";
+            return _s3DirectoryInfo.Name + $"\\{key}";
         }
     }
 }

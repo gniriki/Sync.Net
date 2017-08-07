@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 using Amazon;
-using Sync.Net.IO;
 
 namespace Sync.Net.Configuration
 {
@@ -16,18 +9,18 @@ namespace Sync.Net.Configuration
     {
         private static readonly DataContractSerializer Serializer;
 
-        [DataMember]
-        public string RegionEndpointSystemName { get; private set; }
+        static SyncNetConfiguration()
+        {
+            Serializer = new DataContractSerializer(typeof(SyncNetConfiguration));
+        }
 
         public SyncNetConfiguration()
         {
             RegionEndpoint = RegionEndpoint.USEast1;
         }
 
-        static SyncNetConfiguration()
-        {
-            Serializer = new DataContractSerializer(typeof(SyncNetConfiguration));
-        }
+        [DataMember]
+        public string RegionEndpointSystemName { get; private set; }
 
         [DataMember]
         public string LocalDirectory { get; set; }

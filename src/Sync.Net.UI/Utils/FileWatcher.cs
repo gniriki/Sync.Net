@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace Sync.Net.UI.Utils
 {
     public class FileWatcher : IFileWatcher
     {
-        private FileSystemWatcher _watcher = null;
+        private readonly FileSystemWatcher _watcher;
 
         public FileWatcher()
         {
