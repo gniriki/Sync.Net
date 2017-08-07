@@ -14,11 +14,8 @@ namespace Sync.Net.UI.ViewModels
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-        private IWindowManager _windowManager;
-        private ISyncNetTaskFactory _taskFactory;
         private string _log;
-        private IFileWatcher _watcher;
-        private ISyncNetTask _task;
+        private readonly SyncNetWatcher _syncNetWatcher;
         public ICommand ExitCommand { get; }
         public AsyncCommand SyncCommand { get; }
 
@@ -29,51 +26,27 @@ namespace Sync.Net.UI.ViewModels
             SyncNetConfiguration configuration,
             IFileWatcher watcher)
         {
-            _windowManager = windowManager;
-            _taskFactory = taskFactory;
             _log = string.Empty;
-            _watcher = watcher;
-            _task = _taskFactory.Create(configuration);
-            _task.ProgressChanged += Task_ProgressChanged;
 
-            _watcher.Created += (sender, args) =>
-            {
-                var realivePath = args.FullPath.Substring(configuration.LocalDirectory.Length);
-                WriteToLog($"File created: {realivePath}, uploading.");
-                _task.UpdateFile(realivePath);
-                WriteToLog($"Done uploading {realivePath}");
-            };
-
-            _watcher.WatchForChanges(configuration.LocalDirectory);
+            _syncNetWatcher = new SyncNetWatcher(taskFactory, configuration, watcher);
+            _syncNetWatcher.Log = WriteToLog;
+            _syncNetWatcher.Watch();
 
             ExitCommand = new RelayCommand(
                 p => true,
                 p =>
                 {
-                    _windowManager.ShutdownApplication();
+                    windowManager.ShutdownApplication();
                 });
 
-            SyncCommand = new AsyncCommand(
-                Sync,
+            SyncCommand = new AsyncCommand(_syncNetWatcher.Sync,
                 () => true);
-        }
-
-        private async Task Sync()
-        {
-            WriteToLog("Preparing...");
-            await Task.Run(() => _task.Run());
-            WriteToLog("Finished!");
         }
 
         private void WriteToLog(string line)
         {
             _log += $"{DateTime.Now}: {line}\n";
             OnPropertyChanged(nameof(Log));
-        }
-
-        private void Task_ProgressChanged(SyncNetBackupTask sender, SyncNetProgressChangedEventArgs args)
-        {
-            WriteToLog($"Uploaded {args.CurrentFile.Name}. {args.ProcessedFiles}/{args.TotalFiles} processed.\n");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

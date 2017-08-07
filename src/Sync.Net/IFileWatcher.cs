@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Sync.Net.UI.Utils
+namespace Sync.Net
 {
     public interface IFileWatcher
     {
