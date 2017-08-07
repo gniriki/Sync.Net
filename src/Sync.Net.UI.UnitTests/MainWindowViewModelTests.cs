@@ -21,6 +21,7 @@ namespace Sync.Net.UI.UnitTests
         private SyncNetConfiguration _configuration;
         private Mock<IFileWatcher> _fileWatcher;
         private Mock<ISyncNetTaskFactory> _taskFactory;
+        private Mock<ILogger> _logger;
 
         [TestInitialize]
         public void Initialize()
@@ -29,6 +30,7 @@ namespace Sync.Net.UI.UnitTests
             _task = new Moq.Mock<ISyncNetTask>();
             _configuration = new SyncNetConfiguration();
             _fileWatcher = new Mock<IFileWatcher>();
+            _logger = new Mock<ILogger>();
             _taskFactory = new Moq.Mock<ISyncNetTaskFactory>();
             _taskFactory.Setup(x => x.Create(It.IsAny<SyncNetConfiguration>())).Returns(_task.Object);
         }
@@ -41,7 +43,7 @@ namespace Sync.Net.UI.UnitTests
             _windowManager.Setup(x => x.ShutdownApplication()).Callback(() => shutdown = true);
 
             MainWindowViewModel model =
-                new MainWindowViewModel(_windowManager.Object, _taskFactory.Object, _configuration, _fileWatcher.Object);
+                new MainWindowViewModel(_windowManager.Object, _taskFactory.Object, _configuration, _logger.Object);
             model.ExitCommand.Execute(null);
 
             Assert.IsTrue(shutdown);
@@ -54,7 +56,7 @@ namespace Sync.Net.UI.UnitTests
             _task.Setup(x => x.Run()).Callback(() => wasRun = true);
 
             MainWindowViewModel model =
-                new MainWindowViewModel(null, _taskFactory.Object, _configuration, _fileWatcher.Object);
+                new MainWindowViewModel(null, _taskFactory.Object, _configuration, _logger.Object);
 
             await model.SyncCommand.Execute();
             Assert.IsTrue(wasRun);

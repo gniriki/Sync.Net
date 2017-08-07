@@ -6,7 +6,6 @@ namespace Sync.Net
 {
     public class SyncNetWatcher
     {
-        public Action<string> Log { get; set; }
         private ISyncNetTask _task;
         private ISyncNetTaskFactory _taskFactory;
         private SyncNetConfiguration _configuration;
@@ -28,29 +27,17 @@ namespace Sync.Net
             _fileWatcher.Created += (sender, args) =>
             {
                 var realivePath = args.FullPath.Substring(_configuration.LocalDirectory.Length);
-                WriteToLog($"File created: {realivePath}, uploading.");
+                StaticLogger.Log($"File created: {realivePath}, uploading.");
                 _task.UpdateFile(realivePath);
-                WriteToLog($"Done uploading {realivePath}");
+                StaticLogger.Log($"Done uploading {realivePath}");
             };
 
             _fileWatcher.WatchForChanges(_configuration.LocalDirectory);
         }
 
-        public async Task Sync()
-        {
-            WriteToLog("Preparing...");
-            await Task.Run(() => _task.Run());
-            WriteToLog("Finished!");
-        }
-
         private void Task_ProgressChanged(SyncNetBackupTask sender, SyncNetProgressChangedEventArgs args)
         {
-            WriteToLog($"Uploaded {args.CurrentFile.Name}. {args.ProcessedFiles}/{args.TotalFiles} processed.\n");
-        }
-
-        private void WriteToLog(string line)
-        {
-            Log?.Invoke(line);
+            StaticLogger.Log($"Uploaded {args.CurrentFile.Name}. {args.ProcessedFiles}/{args.TotalFiles} processed.\n");
         }
     }
 }

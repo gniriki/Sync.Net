@@ -24,6 +24,7 @@ namespace Sync.Net.UI.Utils
             cb.RegisterAssemblyTypes(assembly).AsImplementedInterfaces();
 
             cb.RegisterType<SyncNetTaskFactory>().As<ISyncNetTaskFactory>();
+            cb.RegisterType<SyncNetWatcher>();
 
             using (var stream = new ConfigFile().GetStream())
             {
@@ -31,6 +32,8 @@ namespace Sync.Net.UI.Utils
                 cb.RegisterInstance(configuration).As<SyncNetConfiguration>();
             }
 
+            ILogger logger = new Logger();
+            cb.RegisterInstance(logger).As<ILogger>();
         }
     }
 }

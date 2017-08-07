@@ -92,6 +92,7 @@
     <Compile Include="Utils\FileWatcher.cs" />
     <Compile Include="Utils\IConfigFile.cs" />
     <Compile Include="Utils\IWindowManager.cs" />
+    <Compile Include="Utils\Logger.cs" />
     <Compile Include="Utils\RelayCommand.cs" />
     <Compile Include="Utils\WindowManager.cs" />
     <Compile Include="ViewModels\ConfigurationViewModel.cs" />

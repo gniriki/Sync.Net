@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Autofac;
 using Hardcodet.Wpf.TaskbarNotification;
 using Sync.Net.UI.Utils;
 
@@ -19,13 +20,24 @@ namespace Sync.Net.UI
         protected override void OnStartup(StartupEventArgs e)
         {
             AppContainer.Container = new AppSetup().CreateContainer();
-            base.OnStartup(e);
+
+            StaticLogger.Logger = AppContainer.Container.Resolve<ILogger>();
+
+            StaticLogger.Log("Creating taskbar icon...");
 
             TaskbarIcon tbi = new TaskbarIcon();
             using (Stream iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/TrayIcon.ico")).Stream)
                 tbi.Icon = new System.Drawing.Icon(iconStream);
             tbi.ToolTipText = "Sync.Net";
             tbi.DoubleClickCommand = new RelayCommand(p => true, p=> ShowMainWindow());
+
+            StaticLogger.Log("Starting file watcher...");
+
+            var watcher = AppContainer.Container.Resolve<SyncNetWatcher>();
+            watcher.Watch();
+
+            StaticLogger.Log("Ready.");
+            base.OnStartup(e);
         }
 
         private void ShowMainWindow()

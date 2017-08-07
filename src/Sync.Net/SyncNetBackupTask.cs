@@ -14,14 +14,6 @@ namespace Sync.Net
         public IFileObject CurrentFile { get; set; }
     }
 
-    public delegate void SyncNetProgressChangedDelegate(SyncNetBackupTask sender, SyncNetProgressChangedEventArgs e);
-
-    public interface ISyncNetTask
-    {
-        void Run();
-        event SyncNetProgressChangedDelegate ProgressChanged;
-        void UpdateFile(string fileName);
-    }
 
     public class SyncNetBackupTask : ISyncNetTask
     {
@@ -43,12 +35,16 @@ namespace Sync.Net
         {
             if (_sourceDirectory != null)
             {
+                StaticLogger.Log("Preparing...");
                 var files = GetFilesToUpload(_sourceDirectory, _targetDirectory);
                 _totalFiles = files.Count();
                 foreach (var fileObject in files)
                     _totalBytes += fileObject.Size;
 
+                StaticLogger.Log("Uploading...");
                 Backup(_sourceDirectory, _targetDirectory);
+
+                StaticLogger.Log("Done.");
             }
             else
             {

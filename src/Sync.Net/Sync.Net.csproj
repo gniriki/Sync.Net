@@ -51,13 +51,16 @@
   <ItemGroup>
     <Compile Include="Configuration\SyncNetConfiguration.cs" />
     <Compile Include="IFileWatcher.cs" />
+    <Compile Include="ILogger.cs" />
     <Compile Include="IO\IDirectoryObject.cs" />
     <Compile Include="IO\IFileObject.cs" />
     <Compile Include="IO\LocalDirectoryObject.cs" />
     <Compile Include="IO\LocalFileObject.cs" />
     <Compile Include="IO\S3DirectoryObject.cs" />
     <Compile Include="IO\S3FileObject.cs" />
+    <Compile Include="ISyncNetTask.cs" />
     <Compile Include="ISyncNetTaskFactory.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="SyncNetBackupTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SyncNetTaskFactory.cs" />

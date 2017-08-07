@@ -15,7 +15,8 @@ namespace Sync.Net.UI.ViewModels
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         private string _log;
-        private readonly SyncNetWatcher _syncNetWatcher;
+        private ISyncNetTask _task;
+        private ILogger _logger;
         public ICommand ExitCommand { get; }
         public AsyncCommand SyncCommand { get; }
 
@@ -24,13 +25,12 @@ namespace Sync.Net.UI.ViewModels
         public MainWindowViewModel(IWindowManager windowManager, 
             ISyncNetTaskFactory taskFactory,
             SyncNetConfiguration configuration,
-            IFileWatcher watcher)
+            ILogger logger)
         {
-            _log = string.Empty;
-
-            _syncNetWatcher = new SyncNetWatcher(taskFactory, configuration, watcher);
-            _syncNetWatcher.Log = WriteToLog;
-            _syncNetWatcher.Watch();
+            _logger = logger;
+            _logger.LogUpdated += _logger_LogUpdated;
+            _log = logger.Contents;
+            _task = taskFactory.Create(configuration);
 
             ExitCommand = new RelayCommand(
                 p => true,
@@ -39,14 +39,19 @@ namespace Sync.Net.UI.ViewModels
                     windowManager.ShutdownApplication();
                 });
 
-            SyncCommand = new AsyncCommand(_syncNetWatcher.Sync,
+            SyncCommand = new AsyncCommand(Sync,
                 () => true);
         }
 
-        private void WriteToLog(string line)
+        private void _logger_LogUpdated(string newLine)
         {
-            _log += $"{DateTime.Now}: {line}\n";
+            _log += newLine;
             OnPropertyChanged(nameof(Log));
+        }
+
+        public async Task Sync()
+        {
+            await Task.Run(() => _task.Run());
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
