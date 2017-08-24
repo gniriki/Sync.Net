@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sync.Net", "Sync.Net\Sync.N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sync.Net.UnitTests", "Sync.Net.Tests\Sync.Net.UnitTests.csproj", "{919760CD-D186-42F1-B22D-5EEB7E99D19C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D6031172-31E1-48A7-9A30-F351DA6E38EE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{D6031172-31E1-48A7-9A30-F351DA6E38EE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sync.Net.IntegrationTests", "Sync.Net.IntegrationTests\Sync.Net.IntegrationTests.csproj", "{678CD9B1-E425-403C-BBF4-D06BAF686E20}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sync.Net.UI", "Sync.Net.UI\Sync.Net.UI.csproj", "{DE635EA7-DE60-47C2-A38D-A2570DBA6DA1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sync.Net.UI.UnitTests", "Sync.Net.UI.UnitTests\Sync.Net.UI.UnitTests.csproj", "{8B7986FE-4CC2-4401-8C53-CC3A55231489}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{552D6334-61D7-49D7-AD0B-4D7F18A7ABA5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,7 +55,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{919760CD-D186-42F1-B22D-5EEB7E99D19C} = {D6031172-31E1-48A7-9A30-F351DA6E38EE}
-		{678CD9B1-E425-403C-BBF4-D06BAF686E20} = {D6031172-31E1-48A7-9A30-F351DA6E38EE}
+		{678CD9B1-E425-403C-BBF4-D06BAF686E20} = {552D6334-61D7-49D7-AD0B-4D7F18A7ABA5}
 		{8B7986FE-4CC2-4401-8C53-CC3A55231489} = {D6031172-31E1-48A7-9A30-F351DA6E38EE}
 	EndGlobalSection
 EndGlobal

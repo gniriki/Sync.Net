@@ -14,14 +14,14 @@ namespace Sync.Net.UI.ViewModels
         private readonly ISyncNetTask _task;
 
         public MainWindowViewModel(IWindowManager windowManager,
-            ISyncNetTaskFactory taskFactory,
+            ISyncNetTask task,
             SyncNetConfiguration configuration,
             ILogger logger)
         {
             _logger = logger;
             _logger.LogUpdated += _logger_LogUpdated;
             Log = logger.Contents;
-            _task = taskFactory.Create(configuration);
+            _task = task;
 
             ExitCommand = new RelayCommand(
                 p => true,
@@ -46,7 +46,7 @@ namespace Sync.Net.UI.ViewModels
 
         public async Task Sync()
         {
-            await Task.Run(() => _task.Run());
+            await Task.Run(() => _task.ProcessFiles());
         }
 
         [NotifyPropertyChangedInvocator]

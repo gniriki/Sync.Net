@@ -23,13 +23,17 @@ namespace Sync.Net.UI.Utils
 
             cb.RegisterAssemblyTypes(assembly).AsImplementedInterfaces();
 
-            cb.RegisterType<SyncNetTaskFactory>().As<ISyncNetTaskFactory>();
             cb.RegisterType<SyncNetWatcher>();
 
             using (var stream = new ConfigFile().GetStream())
             {
                 var configuration = SyncNetConfiguration.Load(stream);
                 cb.RegisterInstance(configuration).As<SyncNetConfiguration>();
+
+                var syncNetFactory = new SyncNetTaskFactory();
+                var task = syncNetFactory.Create(configuration);
+
+                cb.RegisterInstance(task).As<ISyncNetTask>();
             }
 
             ILogger logger = new Logger();

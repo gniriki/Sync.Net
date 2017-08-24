@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Amazon.Runtime.Internal;
 using Sync.Net.IO;
+using System.Linq;
 
 namespace Sync.Net
 {
@@ -32,14 +33,14 @@ namespace Sync.Net
             _targetDirectory = targetDirectory;
         }
 
-        public void Run()
+        public void ProcessFiles()
         {
             StaticLogger.Log("Preparing...");
             var files = GetFilesToUpload(_sourceDirectory, _targetDirectory);
 
             foreach (var fileObject in files)
             {
-                UpdateProgressTargets(fileObject);
+                UpdateProgressQueue(fileObject);
             }
 
             StaticLogger.Log("Uploading...");
@@ -51,10 +52,13 @@ namespace Sync.Net
             StaticLogger.Log("Done.");
         }
 
-        private void UpdateProgressTargets(IFileObject fileObject)
+        private void UpdateProgressQueue(IFileObject fileObject)
         {
-            _totalFiles++;
-            _totalBytes += fileObject.Size;
+            if (_filesToBackup.All(x => x.FullName != fileObject.FullName))
+                _filesToBackup.Add(fileObject);
+
+            _totalFiles = _filesToBackup.Count;
+            _totalBytes = _filesToBackup.Sum(file => file.Size);
         }
 
         public event SyncNetProgressChangedDelegate ProgressChanged;
@@ -88,7 +92,7 @@ namespace Sync.Net
 
             var fileObject = sourceDirectory.GetFile(file);
 
-            UpdateProgressTargets(fileObject);
+            UpdateProgressQueue(fileObject);
             Backup(fileObject, targetDirectory);
         }
 
@@ -158,6 +162,8 @@ namespace Sync.Net
                     TotalBytes = _totalBytes,
                     CurrentFile = currentFile
                 });
+
+            StaticLogger.Log($"Processing file {_processedFiles}/{_totalFiles}. Current file: {currentFile.FullName}");
         }
 
         protected virtual void OnProgressChanged(SyncNetProgressChangedEventArgs e)

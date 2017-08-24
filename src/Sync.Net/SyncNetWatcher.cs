@@ -7,17 +7,14 @@ namespace Sync.Net
         private readonly SyncNetConfiguration _configuration;
         private readonly IFileWatcher _fileWatcher;
         private readonly ISyncNetTask _task;
-        private readonly ISyncNetTaskFactory _taskFactory;
 
-        public SyncNetWatcher(ISyncNetTaskFactory taskFactory, SyncNetConfiguration configuration,
+        public SyncNetWatcher(ISyncNetTask task, SyncNetConfiguration configuration,
             IFileWatcher watcher)
         {
             _configuration = configuration;
-            _taskFactory = taskFactory;
             _fileWatcher = watcher;
 
-            _task = _taskFactory.Create(_configuration);
-            _task.ProgressChanged += Task_ProgressChanged;
+            _task = task;
         }
 
         public void Watch()
@@ -25,17 +22,11 @@ namespace Sync.Net
             _fileWatcher.Created += (sender, args) =>
             {
                 var relativePath = args.FullPath.Substring(_configuration.LocalDirectory.Length);
-                StaticLogger.Log($"File created: {relativePath}, uploading.");
+                StaticLogger.Log($"File created: {relativePath}, processing...");
                 _task.ProcessFile(relativePath);
-                StaticLogger.Log($"Done uploading {relativePath}");
             };
 
             _fileWatcher.WatchForChanges(_configuration.LocalDirectory);
-        }
-
-        private void Task_ProgressChanged(SyncNetBackupTask sender, SyncNetProgressChangedEventArgs args)
-        {
-            StaticLogger.Log($"Uploaded {args.CurrentFile.Name}. {args.ProcessedFiles}/{args.TotalFiles} processed.\n");
         }
     }
 }

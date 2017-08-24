@@ -11,7 +11,6 @@ namespace Sync.Net.Tests
         private Mock<ISyncNetTask> _task;
         private SyncNetConfiguration _configuration;
         private Mock<IFileWatcher> _fileWatcher;
-        private Mock<ISyncNetTaskFactory> _taskFactory;
 
         [TestInitialize]
         public void Initialize()
@@ -19,8 +18,6 @@ namespace Sync.Net.Tests
             _task = new Moq.Mock<ISyncNetTask>();
             _configuration = new SyncNetConfiguration();
             _fileWatcher = new Mock<IFileWatcher>();
-            _taskFactory = new Moq.Mock<ISyncNetTaskFactory>();
-            _taskFactory.Setup(x => x.Create(It.IsAny<SyncNetConfiguration>())).Returns(_task.Object);
         }
 
         [TestMethod]
@@ -30,7 +27,7 @@ namespace Sync.Net.Tests
             bool isWatching = false;
             _fileWatcher.Setup(x => x.WatchForChanges(_configuration.LocalDirectory)).Callback(() => isWatching = true);
 
-            var watcher = new SyncNetWatcher(_taskFactory.Object, _configuration, _fileWatcher.Object);
+            var watcher = new SyncNetWatcher(_task.Object, _configuration, _fileWatcher.Object);
             watcher.Watch();
 
             Assert.IsTrue(isWatching);
@@ -45,10 +42,7 @@ namespace Sync.Net.Tests
             bool wasUploaded = false;
             _task.Setup(x => x.ProcessFile(It.IsAny<string>())).Callback(() => wasUploaded = true);
 
-            var taskFactory = new Moq.Mock<ISyncNetTaskFactory>();
-            taskFactory.Setup(x => x.Create(It.IsAny<SyncNetConfiguration>())).Returns(_task.Object);
-
-            var watcher = new SyncNetWatcher(_taskFactory.Object, _configuration, _fileWatcher.Object);
+            var watcher = new SyncNetWatcher(_task.Object, _configuration, _fileWatcher.Object);
             watcher.Watch();
 
             _fileWatcher.Raise(x => x.Created += null, new FileSystemEventArgs(WatcherChangeTypes.Created, _configuration.LocalDirectory, filename));
@@ -66,10 +60,7 @@ namespace Sync.Net.Tests
             var uploadedFilePath = string.Empty;
             _task.Setup(x => x.ProcessFile(It.IsAny<string>())).Callback<string>(path => uploadedFilePath = path);
 
-            var taskFactory = new Moq.Mock<ISyncNetTaskFactory>();
-            taskFactory.Setup(x => x.Create(It.IsAny<SyncNetConfiguration>())).Returns(_task.Object);
-
-            var watcher = new SyncNetWatcher(_taskFactory.Object, _configuration, _fileWatcher.Object);
+            var watcher = new SyncNetWatcher(_task.Object, _configuration, _fileWatcher.Object);
             watcher.Watch();
 
             _fileWatcher.Raise(x => x.Created += null, new FileSystemEventArgs(WatcherChangeTypes.Created, raiseDir, raiseFilename));

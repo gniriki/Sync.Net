@@ -4,7 +4,7 @@ namespace Sync.Net
 
     public interface ISyncNetTask
     {
-        void Run();
+        void ProcessFiles();
         event SyncNetProgressChangedDelegate ProgressChanged;
         void ProcessFile(string fileName);
     }

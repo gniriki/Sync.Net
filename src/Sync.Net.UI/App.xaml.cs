@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows;
 using Autofac;
 using Hardcodet.Wpf.TaskbarNotification;
+using Sync.Net.Configuration;
 using Sync.Net.UI.Utils;
 
 namespace Sync.Net.UI
@@ -28,12 +30,20 @@ namespace Sync.Net.UI
             tbi.ToolTipText = "Sync.Net";
             tbi.DoubleClickCommand = new RelayCommand(p => true, p => ShowMainWindow());
 
-            StaticLogger.Log("Starting file watcher...");
 
-            var watcher = AppContainer.Container.Resolve<SyncNetWatcher>();
-            watcher.Watch();
+            var task = AppContainer.Container.Resolve<ISyncNetTask>();
+            Task.Run(() =>
+            {
+                StaticLogger.Log("Updating files...");
+                task.ProcessFiles();
 
-            StaticLogger.Log("Ready.");
+                StaticLogger.Log("Starting file watcher...");
+                var watcher = AppContainer.Container.Resolve<SyncNetWatcher>();
+                watcher.Watch();
+
+                StaticLogger.Log("Ready.");
+            });
+
             base.OnStartup(e);
         }
 
