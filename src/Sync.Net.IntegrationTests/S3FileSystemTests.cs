@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.IO;
@@ -20,7 +21,7 @@ namespace Sync.Net.IntegrationTests
         private readonly string _subFileName2 = "subFile2.txt";
 
         [TestMethod]
-        public void WritesFileToS3FileSystem()
+        public async Task WritesFileToS3FileSystem()
         {
             var amazonS3Client = new AmazonS3Client(RegionEndpoint.USEast1);
 
@@ -44,7 +45,7 @@ namespace Sync.Net.IntegrationTests
                     .AddFile(_subFileName2, _contents));
 
             var sync = new SyncNetBackupTask(sourceDirectory, targetDirectory);
-            sync.ProcessFiles();
+            await sync.ProcessFilesAsync();
 
             var fileInfos = directoryInfo.GetFiles();
             Assert.AreEqual(2, fileInfos.Length);

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Amazon.Runtime.Internal;
 using Sync.Net.IO;
-using System.Linq;
+using System.Threading.Tasks;
+using Nito.AsyncEx;
 
 namespace Sync.Net
 {
@@ -33,7 +34,7 @@ namespace Sync.Net
             _targetDirectory = targetDirectory;
         }
 
-        public void ProcessFiles()
+        public async Task ProcessFilesAsync()
         {
             StaticLogger.Log("Preparing...");
             var files = GetFilesToUpload(_sourceDirectory, _targetDirectory);
@@ -46,7 +47,7 @@ namespace Sync.Net
             StaticLogger.Log("Uploading...");
             foreach (var fileObject in files)
             {
-                ProcessFile(fileObject.FullName);
+                await ProcessFileAsync(fileObject.FullName);
             }
 
             StaticLogger.Log("Done.");
@@ -63,7 +64,17 @@ namespace Sync.Net
 
         public event SyncNetProgressChangedDelegate ProgressChanged;
 
-        public void ProcessFile(string filePath)
+        private readonly AsyncLock _mutex = new AsyncLock();
+
+        public async Task ProcessFileAsync(string filePath)
+        {
+            using (await _mutex.LockAsync())
+            {
+                await Task.Run(() => ProcessFile(filePath));
+            }
+        }
+
+        private void ProcessFile(string filePath)
         {
             var fileAndTarget = GetFileAndTargetDirectory(filePath);
 

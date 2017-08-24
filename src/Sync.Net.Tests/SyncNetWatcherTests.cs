@@ -40,7 +40,7 @@ namespace Sync.Net.Tests
             var filename = "file";
 
             bool wasUploaded = false;
-            _task.Setup(x => x.ProcessFile(It.IsAny<string>())).Callback(() => wasUploaded = true);
+            _task.Setup(x => x.ProcessFileAsync(It.IsAny<string>())).Callback(() => wasUploaded = true);
 
             var watcher = new SyncNetWatcher(_task.Object, _configuration, _fileWatcher.Object);
             watcher.Watch();
@@ -58,7 +58,7 @@ namespace Sync.Net.Tests
             var raiseFilename = "file";
 
             var uploadedFilePath = string.Empty;
-            _task.Setup(x => x.ProcessFile(It.IsAny<string>())).Callback<string>(path => uploadedFilePath = path);
+            _task.Setup(x => x.ProcessFileAsync(It.IsAny<string>())).Callback<string>(path => uploadedFilePath = path);
 
             var watcher = new SyncNetWatcher(_task.Object, _configuration, _fileWatcher.Object);
             watcher.Watch();

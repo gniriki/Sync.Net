@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Sync.Net.Configuration;
@@ -16,16 +10,16 @@ namespace Sync.Net.UI.UnitTests
     [TestClass]
     public class MainWindowViewModelTests
     {
-        private Mock<IWindowManager> _windowManager;
-        private Mock<ISyncNetTask> _task;
         private SyncNetConfiguration _configuration;
         private Mock<ILogger> _logger;
+        private Mock<ISyncNetTask> _task;
+        private Mock<IWindowManager> _windowManager;
 
         [TestInitialize]
         public void Initialize()
         {
-            _windowManager = new Moq.Mock<IWindowManager>();
-            _task = new Moq.Mock<ISyncNetTask>();
+            _windowManager = new Mock<IWindowManager>();
+            _task = new Mock<ISyncNetTask>();
             _configuration = new SyncNetConfiguration();
             _logger = new Mock<ILogger>();
         }
@@ -33,11 +27,11 @@ namespace Sync.Net.UI.UnitTests
         [TestMethod]
         public void ExitCommandShutDownApplication()
         {
-            bool shutdown = false;
+            var shutdown = false;
 
             _windowManager.Setup(x => x.ShutdownApplication()).Callback(() => shutdown = true);
 
-            MainWindowViewModel model =
+            var model =
                 new MainWindowViewModel(_windowManager.Object, _task.Object, _configuration, _logger.Object);
             model.ExitCommand.Execute(null);
 
@@ -47,10 +41,12 @@ namespace Sync.Net.UI.UnitTests
         [TestMethod]
         public async Task SyncCommandStartsSync()
         {
-            bool wasRun = false;
-            _task.Setup(x => x.ProcessFiles()).Callback(() => wasRun = true);
+            var wasRun = false;
+            _task.Setup(x => x.ProcessFilesAsync())
+                .Callback(() => { wasRun = true; })
+                .Returns(() => Task.CompletedTask);
 
-            MainWindowViewModel model =
+            var model =
                 new MainWindowViewModel(null, _task.Object, _configuration, _logger.Object);
 
             await model.SyncCommand.Execute();

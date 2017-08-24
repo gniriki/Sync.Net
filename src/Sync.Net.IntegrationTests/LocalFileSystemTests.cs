@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sync.Net.IO;
 using Sync.Net.TestHelpers;
@@ -19,7 +20,7 @@ namespace Sync.Net.IntegrationTests
         private readonly string _subFileName2 = "subFile2.txt";
 
         [TestMethod]
-        public void WritesFileToLocalFileSystem()
+        public async Task WritesFileToLocalFileSystem()
         {
             var directoryInfo = new DirectoryInfo(_testDirectory);
             if (!directoryInfo.Exists)
@@ -40,7 +41,7 @@ namespace Sync.Net.IntegrationTests
                     .AddFile(_subFileName2, _contents));
 
             var sync = new SyncNetBackupTask(sourceDirectory, targetDirectory);
-            sync.ProcessFiles();
+            await sync.ProcessFilesAsync();
 
             var fileInfos = directoryInfo.GetFiles();
             Assert.AreEqual(2, fileInfos.Length);
@@ -56,7 +57,7 @@ namespace Sync.Net.IntegrationTests
         }
 
         [TestMethod]
-        public void UploadsFile()
+        public async Task UploadsFile()
         {
             File.WriteAllText(Path.Combine(_testDirectory, _subDirectoryName, _subFileName), 
                 _contents);
@@ -67,7 +68,7 @@ namespace Sync.Net.IntegrationTests
 
             var sync = new SyncNetBackupTask(sourceDirectory, targetDirectory);
 
-            sync.ProcessFile(sourceDirectory.FullName + "\\" + _subDirectoryName + "\\" + _subFileName);
+            await sync.ProcessFileAsync(sourceDirectory.FullName + "\\" + _subDirectoryName + "\\" + _subFileName);
 
             var subDirectory = targetDirectory.GetDirectories().First();
 

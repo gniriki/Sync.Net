@@ -35,7 +35,7 @@ namespace Sync.Net.UI
             Task.Run(() =>
             {
                 StaticLogger.Log("Updating files...");
-                task.ProcessFiles();
+                task.ProcessFilesAsync();
 
                 StaticLogger.Log("Starting file watcher...");
                 var watcher = AppContainer.Container.Resolve<SyncNetWatcher>();

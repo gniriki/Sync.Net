@@ -46,18 +46,18 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
-        public void UploadsFileByName()
+        public async Task UploadsFileByName()
         {
-            _syncNet.ProcessFile(_fileName);
+            await _syncNet.ProcessFileAsync(_fileName);
 
             var files = _targetDirectory.GetFiles();
             Assert.AreEqual(_fileName, files.First().Name);
         }
 
         [TestMethod]
-        public void UploadsFileFromSubfolderDoesntCreateAFileInMainDirectory()
+        public async Task UploadsFileFromSubfolderDoesntCreateAFileInMainDirectory()
         {
-            _syncNet.ProcessFile(".\\" + _subDirectoryName + "\\" + _subFileName);
+            await _syncNet.ProcessFileAsync(".\\" + _subDirectoryName + "\\" + _subFileName);
 
             var files = _targetDirectory.GetFiles();
 
@@ -65,9 +65,9 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
-        public void UploadsFileFromSubfolderCreatesASubDirectory()
+        public async Task UploadsFileFromSubfolderCreatesASubDirectory()
         {
-            _syncNet.ProcessFile(".\\" + _subDirectoryName + "\\" + _subFileName);
+            await _syncNet.ProcessFileAsync(".\\" + _subDirectoryName + "\\" + _subFileName);
 
             var dirs = _targetDirectory.GetDirectories();
 
@@ -76,9 +76,9 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
-            public void UploadsFileByFullPath()
+            public async Task UploadsFileByFullPath()
             {
-                _syncNet.ProcessFile(_sourceDirectory.FullName + "\\" + _subDirectoryName + "\\" + _subFileName);
+                await _syncNet.ProcessFileAsync(_sourceDirectory.FullName + "\\" + _subDirectoryName + "\\" + _subFileName);
 
                 var dirs = _targetDirectory.GetDirectories();
 

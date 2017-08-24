@@ -1,11 +1,13 @@
+using System.Threading.Tasks;
+
 namespace Sync.Net
 {
     public delegate void SyncNetProgressChangedDelegate(SyncNetBackupTask sender, SyncNetProgressChangedEventArgs e);
 
     public interface ISyncNetTask
     {
-        void ProcessFiles();
+        Task ProcessFilesAsync();
         event SyncNetProgressChangedDelegate ProgressChanged;
-        void ProcessFile(string filePath);
+        Task ProcessFileAsync(string filePath);
     }
 }
