@@ -60,7 +60,7 @@ namespace Sync.Net.IntegrationTests
             var targetDirectory = new MemoryDirectoryObject("dir");
             var sync = new SyncNetBackupTask(sourceDirectory, targetDirectory);
 
-            sync.UpdateFile(_subDirectoryName + "\\" + _subFileName);
+            sync.ProcessFile(_subDirectoryName + "\\" + _subFileName);
 
             var subDirectory = targetDirectory.GetDirectories().First();
 

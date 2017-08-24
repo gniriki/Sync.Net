@@ -41,5 +41,7 @@ namespace Sync.Net.IO
                 ;
             }
         }
+
+        public string FullName => _fileInfo.FullName;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Amazon.Runtime.Internal;
 using Sync.Net.IO;
 
 namespace Sync.Net
@@ -20,6 +21,7 @@ namespace Sync.Net
         private readonly IDirectoryObject _sourceDirectory;
         private readonly IFileObject _sourceFile;
         private readonly IDirectoryObject _targetDirectory;
+        private readonly List<IFileObject> _filesToBackup = new List<IFileObject>();
         private long _processedBytes;
         private int _processedFiles;
         private long _totalBytes;
@@ -61,7 +63,7 @@ namespace Sync.Net
 
         public event SyncNetProgressChangedDelegate ProgressChanged;
 
-        public void UpdateFile(string fileName)
+        public void ProcessFile(string fileName)
         {
             var sourceDirectory = _sourceDirectory;
             var targetDirectory = _targetDirectory;

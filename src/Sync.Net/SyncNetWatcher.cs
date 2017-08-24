@@ -24,10 +24,10 @@ namespace Sync.Net
         {
             _fileWatcher.Created += (sender, args) =>
             {
-                var realivePath = args.FullPath.Substring(_configuration.LocalDirectory.Length);
-                StaticLogger.Log($"File created: {realivePath}, uploading.");
-                _task.UpdateFile(realivePath);
-                StaticLogger.Log($"Done uploading {realivePath}");
+                var relativePath = args.FullPath.Substring(_configuration.LocalDirectory.Length);
+                StaticLogger.Log($"File created: {relativePath}, uploading.");
+                _task.ProcessFile(relativePath);
+                StaticLogger.Log($"Done uploading {relativePath}");
             };
 
             _fileWatcher.WatchForChanges(_configuration.LocalDirectory);

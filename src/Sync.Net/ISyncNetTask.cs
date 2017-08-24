@@ -6,6 +6,6 @@ namespace Sync.Net
     {
         void Run();
         event SyncNetProgressChangedDelegate ProgressChanged;
-        void UpdateFile(string fileName);
+        void ProcessFile(string fileName);
     }
 }

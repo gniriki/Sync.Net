@@ -43,7 +43,7 @@ namespace Sync.Net.Tests
             var filename = "file";
 
             bool wasUploaded = false;
-            _task.Setup(x => x.UpdateFile(It.IsAny<string>())).Callback(() => wasUploaded = true);
+            _task.Setup(x => x.ProcessFile(It.IsAny<string>())).Callback(() => wasUploaded = true);
 
             var taskFactory = new Moq.Mock<ISyncNetTaskFactory>();
             taskFactory.Setup(x => x.Create(It.IsAny<SyncNetConfiguration>())).Returns(_task.Object);
@@ -64,7 +64,7 @@ namespace Sync.Net.Tests
             var raiseFilename = "file";
 
             var uploadedFilePath = string.Empty;
-            _task.Setup(x => x.UpdateFile(It.IsAny<string>())).Callback<string>(path => uploadedFilePath = path);
+            _task.Setup(x => x.ProcessFile(It.IsAny<string>())).Callback<string>(path => uploadedFilePath = path);
 
             var taskFactory = new Moq.Mock<ISyncNetTaskFactory>();
             taskFactory.Setup(x => x.Create(It.IsAny<SyncNetConfiguration>())).Returns(_task.Object);

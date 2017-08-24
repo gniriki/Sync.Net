@@ -11,5 +11,6 @@ namespace Sync.Net.IO
         DateTime ModifiedDate { get; set; }
         Stream GetStream();
         void Create();
+        string FullName { get; }
     }
 }
