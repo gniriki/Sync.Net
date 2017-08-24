@@ -74,5 +74,16 @@ namespace Sync.Net.Tests
             Assert.IsTrue(dirs.Count() == 1);
             Assert.AreEqual(_subFileName, dirs.First().GetFiles().First().Name);
         }
+
+        [TestMethod]
+            public void UploadsFileByFullPath()
+            {
+                _syncNet.ProcessFile(_sourceDirectory.FullName + "\\" + _subDirectoryName + "\\" + _subFileName);
+
+                var dirs = _targetDirectory.GetDirectories();
+
+                Assert.IsTrue(dirs.Count() == 1);
+                Assert.AreEqual(_subFileName, dirs.First().GetFiles().First().Name);
+            }
     }
 }
