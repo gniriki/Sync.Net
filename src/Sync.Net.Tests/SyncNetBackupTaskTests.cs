@@ -31,6 +31,36 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
+        public void CreatesTargetFile()
+        {
+            IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
+                .AddFile(_fileName, _contents);
+
+            IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
+            var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
+            syncNet.Run();
+
+            var targetFile = targetDirectory.GetFile(_fileName);
+            
+            Assert.IsTrue(targetFile.Exists);
+        }
+
+        [TestMethod]
+        public void CreatesSubDirectory()
+        {
+            IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
+                .AddDirectory(_subDirectoryName);
+
+            IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
+            var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
+            syncNet.Run();
+
+            var directoryObject = targetDirectory.GetDirectory(_subDirectoryName);
+
+            Assert.IsTrue(directoryObject.Exists);
+        }
+
+        [TestMethod]
         public void WritesFileContentToTargetFile()
         {
             IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")

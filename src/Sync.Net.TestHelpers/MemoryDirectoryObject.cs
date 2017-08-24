@@ -106,6 +106,11 @@ namespace Sync.Net.TestHelpers
             return this;
         }
 
+        public IDirectoryObject AddDirectory(string name)
+        {
+            return AddDirectory(new MemoryDirectoryObject(name));
+        }
+
         public IDirectoryObject AddDirectory(MemoryDirectoryObject subDirectory)
         {
             subDirectory.SetPath(FullName);
