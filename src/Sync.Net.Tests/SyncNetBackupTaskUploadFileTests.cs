@@ -18,7 +18,7 @@ namespace Sync.Net.Tests
         private string _subDirectoryName;
         private string _subFileName;
         private string _subFileName2;
-        private IDirectoryObject _sourceDirectory;
+        private MemoryDirectoryObject _sourceDirectory;
         private MemoryDirectoryObject _targetDirectory;
         private SyncNetBackupTask _syncNet;
 

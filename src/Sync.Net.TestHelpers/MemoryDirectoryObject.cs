@@ -23,7 +23,7 @@ namespace Sync.Net.TestHelpers
         }
 
         public string Name { get; set; }
-        public bool Exists => true;
+        public bool Exists { get; set; }
 
         public IEnumerable<IDirectoryObject> GetDirectories()
         {
@@ -32,6 +32,7 @@ namespace Sync.Net.TestHelpers
 
         public void Create()
         {
+            Exists = true;
         }
 
         public IDirectoryObject GetDirectory(string name)
@@ -80,6 +81,7 @@ namespace Sync.Net.TestHelpers
         private void AddFile(MemoryFileObject memoryFileObject)
         {
             memoryFileObject.SetPath(FullName);
+            memoryFileObject.Exists = true;
             Files.Add(memoryFileObject.Name, memoryFileObject);
         }
 
@@ -107,6 +109,7 @@ namespace Sync.Net.TestHelpers
         public IDirectoryObject AddDirectory(MemoryDirectoryObject subDirectory)
         {
             subDirectory.SetPath(FullName);
+            subDirectory.Exists = true;
             Directories.Add(subDirectory.Name, subDirectory);
             return this;
         }

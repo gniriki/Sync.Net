@@ -34,7 +34,7 @@ namespace Sync.Net.TestHelpers
         }
 
         public string Name { get; set; }
-        public bool Exists => true;
+        public bool Exists { get; set; }
 
         public long Size => _buffer.Length;
         public DateTime ModifiedDate { get; set; }
@@ -46,6 +46,7 @@ namespace Sync.Net.TestHelpers
 
         public void Create()
         {
+            Exists = true;
         }
 
         public string FullName { get; set; }
