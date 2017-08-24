@@ -34,8 +34,9 @@ namespace Sync.Net.Tests
 
             _sourceDirectory = new MemoryDirectoryObject("directory")
                 .AddFile(_fileName, _contents)
-                .AddFile(_fileName2, _contents)
-                .AddDirectory(new MemoryDirectoryObject(_subDirectoryName)
+                .AddFile(_fileName2, _contents);
+
+            _sourceDirectory.AddDirectory(new MemoryDirectoryObject(_subDirectoryName, _sourceDirectory.FullName)
                     .AddFile(_subFileName, _contents)
                     .AddFile(_subFileName2, _contents));
 

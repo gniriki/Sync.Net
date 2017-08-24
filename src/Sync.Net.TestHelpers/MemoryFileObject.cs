@@ -47,5 +47,15 @@ namespace Sync.Net.TestHelpers
         public void Create()
         {
         }
+
+        public string FullName { get; set; }
+
+        public void SetPath(string path)
+        {
+            if (path != null)
+                FullName = path + "\\";
+
+            FullName += Name;
+        }
     }
 }

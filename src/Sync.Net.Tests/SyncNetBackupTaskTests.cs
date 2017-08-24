@@ -31,23 +31,15 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
-        public void CreatesFileInTargetDirectory()
-        {
-            var targetDirectory = new MemoryDirectoryObject("directory");
-
-            var syncNet = new SyncNetBackupTask(new MemoryFileObject("file.txt"), targetDirectory);
-            syncNet.Run();
-            Assert.IsTrue(targetDirectory.ContainsFile("file.txt"));
-        }
-
-        [TestMethod]
         public void WritesFileContentToTargetFile()
         {
-            IDirectoryObject memoryDirectoryObject = new MemoryDirectoryObject("directory");
-            var syncNet = new SyncNetBackupTask(new MemoryFileObject(_fileName, _contents), memoryDirectoryObject);
+            IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
+                .AddFile(_fileName, _contents);
+            IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
+            var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
             syncNet.Run();
 
-            var targetFile = memoryDirectoryObject.GetFile(_fileName);
+            var targetFile = targetDirectory.GetFile(_fileName);
             using (var sr = new StreamReader(targetFile.GetStream()))
             {
                 var targetFileContents = sr.ReadToEnd().Replace("\0", string.Empty);
@@ -58,8 +50,9 @@ namespace Sync.Net.Tests
         [TestMethod]
         public void CreatesDirectoryStructure()
         {
-            var sourceDirectory = new MemoryDirectoryObject("directory")
-                .AddDirectory(new MemoryDirectoryObject(_subDirectoryName)
+            var sourceDirectory = new MemoryDirectoryObject("directory");
+
+            sourceDirectory.AddDirectory(new MemoryDirectoryObject(_subDirectoryName, sourceDirectory.FullName)
                     .AddFile(_subFileName, _contents)
                     .AddFile(_subFileName2, _contents));
 
@@ -123,8 +116,9 @@ namespace Sync.Net.Tests
         {
             var sourceDirectory = new MemoryDirectoryObject("directory")
                 .AddFile(_fileName, _contents)
-                .AddFile(_fileName2, _contents)
-                .AddDirectory(new MemoryDirectoryObject(_subDirectoryName)
+                .AddFile(_fileName2, _contents);
+
+            sourceDirectory.AddDirectory(new MemoryDirectoryObject(_subDirectoryName, sourceDirectory.FullName)
                     .AddFile(_subFileName, _contents)
                     .AddFile(_subFileName2, _contents));
 
@@ -155,8 +149,9 @@ namespace Sync.Net.Tests
             var bytes = Encoding.UTF8.GetBytes(_contents).Length;
             var sourceDirectory = new MemoryDirectoryObject("directory")
                 .AddFile(_fileName, _contents)
-                .AddFile(_fileName2, _contents)
-                .AddDirectory(new MemoryDirectoryObject(_subDirectoryName)
+                .AddFile(_fileName2, _contents);
+
+            sourceDirectory.AddDirectory(new MemoryDirectoryObject(_subDirectoryName, sourceDirectory.FullName)
                     .AddFile(_subFileName, _contents)
                     .AddFile(_subFileName2, _contents));
 
@@ -186,8 +181,9 @@ namespace Sync.Net.Tests
         {
             var sourceDirectory = new MemoryDirectoryObject("directory")
                 .AddFile(_fileName, _contents)
-                .AddFile(_fileName2, _contents)
-                .AddDirectory(new MemoryDirectoryObject(_subDirectoryName)
+                .AddFile(_fileName2, _contents);
+
+            sourceDirectory.AddDirectory(new MemoryDirectoryObject(_subDirectoryName, sourceDirectory.FullName)
                     .AddFile(_subFileName, _contents)
                     .AddFile(_subFileName2, _contents));
 

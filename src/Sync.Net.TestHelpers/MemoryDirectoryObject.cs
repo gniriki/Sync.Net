@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Sync.Net.IO;
 
@@ -13,9 +14,12 @@ namespace Sync.Net.TestHelpers
         public Dictionary<string, MemoryFileObject> Files
             = new Dictionary<string, MemoryFileObject>();
 
-        public MemoryDirectoryObject(string name)
+        public string FullName { get; set; }
+
+        public MemoryDirectoryObject(string name, string path = null)
         {
             Name = name;
+            SetPath(path);
         }
 
         public string Name { get; set; }
@@ -52,6 +56,7 @@ namespace Sync.Net.TestHelpers
             if (!Files.ContainsKey(name))
             {
                 file = new MemoryFileObject(name);
+                file.SetPath(FullName);
                 AddFile(file);
             }
             else
@@ -72,30 +77,46 @@ namespace Sync.Net.TestHelpers
             return list;
         }
 
-        public MemoryDirectoryObject AddFile(MemoryFileObject memoryFileObject)
+        private void AddFile(MemoryFileObject memoryFileObject)
         {
+            memoryFileObject.SetPath(FullName);
             Files.Add(memoryFileObject.Name, memoryFileObject);
+        }
+
+        public MemoryDirectoryObject AddFile(string fileName)
+        {
+            var memoryFileObject = new MemoryFileObject(fileName);
+            AddFile(memoryFileObject);
             return this;
         }
 
         public MemoryDirectoryObject AddFile(string fileName, string contents)
         {
             var memoryFileObject = new MemoryFileObject(fileName, contents);
-            Files.Add(memoryFileObject.Name, memoryFileObject);
+            AddFile(memoryFileObject);
             return this;
         }
 
         public MemoryDirectoryObject AddFile(string fileName, string contents, DateTime modifiedDate)
         {
             var memoryFileObject = new MemoryFileObject(fileName, contents, modifiedDate);
-            Files.Add(memoryFileObject.Name, memoryFileObject);
+            AddFile(memoryFileObject);
             return this;
         }
 
         public IDirectoryObject AddDirectory(MemoryDirectoryObject subDirectory)
         {
+            subDirectory.SetPath(FullName);
             Directories.Add(subDirectory.Name, subDirectory);
             return this;
+        }
+
+        private void SetPath(string path)
+        {
+            if (path != null)
+                FullName = path + "\\";
+
+            FullName += Name;
         }
 
         public bool ContainsFile(string name)

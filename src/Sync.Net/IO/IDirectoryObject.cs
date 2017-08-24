@@ -6,6 +6,7 @@ namespace Sync.Net.IO
     {
         string Name { get; }
         bool Exists { get; }
+        string FullName { get; }
         IFileObject GetFile(string name);
         IEnumerable<IFileObject> GetFiles(bool recursive = false);
         IEnumerable<IDirectoryObject> GetDirectories();

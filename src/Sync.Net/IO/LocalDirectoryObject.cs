@@ -20,6 +20,7 @@ namespace Sync.Net.IO
 
         public string Name => _directoryInfo.Name;
         public bool Exists => _directoryInfo.Exists;
+        public string FullName => _directoryInfo.FullName;
 
         public IFileObject GetFile(string name)
         {

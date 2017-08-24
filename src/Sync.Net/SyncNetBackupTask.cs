@@ -19,7 +19,6 @@ namespace Sync.Net
     public class SyncNetBackupTask : ISyncNetTask
     {
         private readonly IDirectoryObject _sourceDirectory;
-        private readonly IFileObject _sourceFile;
         private readonly IDirectoryObject _targetDirectory;
         private readonly List<IFileObject> _filesToBackup = new List<IFileObject>();
         private long _processedBytes;
@@ -33,38 +32,32 @@ namespace Sync.Net
             _targetDirectory = targetDirectory;
         }
 
-        public SyncNetBackupTask(IFileObject sourceFile, IDirectoryObject targetDirectory)
-        {
-            _sourceFile = sourceFile;
-            _targetDirectory = targetDirectory;
-        }
-
         public void Run()
         {
-            if (_sourceDirectory != null)
-            {
-                StaticLogger.Log("Preparing...");
-                var files = GetFilesToUpload(_sourceDirectory, _targetDirectory);
-                _totalFiles = files.Count();
-                foreach (var fileObject in files)
-                    _totalBytes += fileObject.Size;
+            StaticLogger.Log("Preparing...");
+            var files = GetFilesToUpload(_sourceDirectory, _targetDirectory);
+            _totalFiles = files.Count();
+            foreach (var fileObject in files)
+                _totalBytes += fileObject.Size;
 
-                StaticLogger.Log("Uploading...");
-                Backup(_sourceDirectory, _targetDirectory);
-
-                StaticLogger.Log("Done.");
-            }
-            else
+            StaticLogger.Log("Uploading...");
+            foreach (var fileObject in files)
             {
-                _totalBytes += _sourceFile.Size;
-                Backup(_sourceFile, _targetDirectory);
+                ProcessFile(fileObject.FullName);
             }
+
+            StaticLogger.Log("Done.");
         }
 
         public event SyncNetProgressChangedDelegate ProgressChanged;
 
         public void ProcessFile(string fileName)
         {
+            if (isAbsolute(fileName))
+            {
+                fileName = fileName.Replace(_sourceDirectory.FullName, string.Empty);
+            }
+
             var sourceDirectory = _sourceDirectory;
             var targetDirectory = _targetDirectory;
             var file = fileName;
@@ -74,7 +67,7 @@ namespace Sync.Net
                 if (file.StartsWith(".\\"))
                     file = file.Substring(2);
 
-                var parts = file.Split('\\');
+                var parts = file.Split(new[] {'\\'}, StringSplitOptions.RemoveEmptyEntries);
 
                 for (var i = 0; i < parts.Length - 1; i++)
                 {
@@ -86,6 +79,11 @@ namespace Sync.Net
             }
 
             Backup(sourceDirectory.GetFile(file), targetDirectory);
+        }
+
+        private bool isAbsolute(string fileName)
+        {
+            return !string.IsNullOrEmpty(fileName) && !fileName.StartsWith(".");
         }
 
         private static IEnumerable<IFileObject> GetFilesToUpload(IDirectoryObject source, IDirectoryObject target)
@@ -112,6 +110,9 @@ namespace Sync.Net
 
         private void Backup(IFileObject file, IDirectoryObject targetDirectory)
         {
+            if (!targetDirectory.Exists)
+                targetDirectory.Create();
+
             var targetFile = targetDirectory.GetFile(file.Name);
             if (!targetFile.Exists || file.ModifiedDate >= targetFile.ModifiedDate)
             {
@@ -146,23 +147,6 @@ namespace Sync.Net
                     TotalBytes = _totalBytes,
                     CurrentFile = currentFile
                 });
-        }
-
-        private void Backup(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
-        {
-            var files = sourceDirectory.GetFiles();
-            foreach (var fileObject in files)
-                Backup(fileObject, targetDirectory);
-
-            var subDirectories = sourceDirectory.GetDirectories();
-            foreach (var subDirectory in subDirectories)
-            {
-                var targetSubDirectory = targetDirectory.GetDirectory(subDirectory.Name);
-                if (!targetSubDirectory.Exists)
-                    targetSubDirectory.Create();
-
-                Backup(subDirectory, targetSubDirectory);
-            }
         }
 
         protected virtual void OnProgressChanged(SyncNetProgressChangedEventArgs e)

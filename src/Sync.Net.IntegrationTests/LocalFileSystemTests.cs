@@ -24,13 +24,18 @@ namespace Sync.Net.IntegrationTests
             var directoryInfo = new DirectoryInfo(_testDirectory);
             if (!directoryInfo.Exists)
                 directoryInfo.Create();
+            else
+            {
+                directoryInfo.Delete(true);
+            }
 
             var targetDirectory = new LocalDirectoryObject(directoryInfo);
 
             var sourceDirectory = new MemoryDirectoryObject("integrationTests")
                 .AddFile(_fileName, _contents)
-                .AddFile(_fileName2, _contents)
-                .AddDirectory(new MemoryDirectoryObject(_subDirectoryName)
+                .AddFile(_fileName2, _contents);
+
+            sourceDirectory.AddDirectory(new MemoryDirectoryObject(_subDirectoryName, sourceDirectory.FullName)
                     .AddFile(_subFileName, _contents)
                     .AddFile(_subFileName2, _contents));
 
@@ -53,14 +58,16 @@ namespace Sync.Net.IntegrationTests
         [TestMethod]
         public void UploadsFile()
         {
-            File.WriteAllText(Path.Combine(_testDirectory, _subDirectoryName, _subFileName), _contents);
+            File.WriteAllText(Path.Combine(_testDirectory, _subDirectoryName, _subFileName), 
+                _contents);
 
             var sourceDirectory = new LocalDirectoryObject(_testDirectory);
 
             var targetDirectory = new MemoryDirectoryObject("dir");
+
             var sync = new SyncNetBackupTask(sourceDirectory, targetDirectory);
 
-            sync.ProcessFile(_subDirectoryName + "\\" + _subFileName);
+            sync.ProcessFile(sourceDirectory.FullName + "\\" + _subDirectoryName + "\\" + _subFileName);
 
             var subDirectory = targetDirectory.GetDirectories().First();
 

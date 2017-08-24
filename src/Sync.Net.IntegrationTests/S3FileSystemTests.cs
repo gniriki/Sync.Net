@@ -25,13 +25,21 @@ namespace Sync.Net.IntegrationTests
             var amazonS3Client = new AmazonS3Client(RegionEndpoint.USEast1);
 
             var directoryInfo = new S3DirectoryInfo(amazonS3Client, _testDirectory);
-            
+
+            if (!directoryInfo.Exists)
+                directoryInfo.Create();
+            else
+            {
+                directoryInfo.Delete(true);
+            }
+
             var targetDirectory = new S3DirectoryObject(amazonS3Client, _testDirectory);
 
             var sourceDirectory = new MemoryDirectoryObject("integrationTests")
                 .AddFile(_fileName, _contents)
-                .AddFile(_fileName2, _contents)
-                .AddDirectory(new MemoryDirectoryObject(_subDirectoryName)
+                .AddFile(_fileName2, _contents);
+
+            sourceDirectory.AddDirectory(new MemoryDirectoryObject(_subDirectoryName, sourceDirectory.FullName)
                     .AddFile(_subFileName, _contents)
                     .AddFile(_subFileName2, _contents));
 

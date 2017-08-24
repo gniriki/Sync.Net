@@ -38,6 +38,7 @@ namespace Sync.Net.IO
 
         public string Name => _s3DirectoryInfo.Name;
         public bool Exists => _s3DirectoryInfo.Exists;
+        public string FullName => _s3DirectoryInfo.FullName;
 
         public IFileObject GetFile(string name)
         {
