@@ -63,16 +63,24 @@ namespace Sync.Net
 
         public event SyncNetProgressChangedDelegate ProgressChanged;
 
-        public void ProcessFile(string fileName)
+        public void ProcessFile(string filePath)
         {
-            if (isAbsolute(fileName))
+            var fileAndTarget = GetFileAndTargetDirectory(filePath);
+
+            UpdateProgressQueue(fileAndTarget.Item1);
+            Backup(fileAndTarget.Item1, fileAndTarget.Item2);
+        }
+
+        private Tuple<IFileObject, IDirectoryObject> GetFileAndTargetDirectory(string filePath)
+        {
+            if (isAbsolute(filePath))
             {
-                fileName = fileName.Replace(_sourceDirectory.FullName, string.Empty);
+                filePath = filePath.Replace(_sourceDirectory.FullName, string.Empty);
             }
 
             var sourceDirectory = _sourceDirectory;
             var targetDirectory = _targetDirectory;
-            var file = fileName;
+            var file = filePath;
 
             if (file.Contains('\\'))
             {
@@ -91,9 +99,9 @@ namespace Sync.Net
             }
 
             var fileObject = sourceDirectory.GetFile(file);
-
-            UpdateProgressQueue(fileObject);
-            Backup(fileObject, targetDirectory);
+            Tuple<IFileObject, IDirectoryObject> fileAndTarget
+                = new Tuple<IFileObject, IDirectoryObject>(fileObject, targetDirectory);
+            return fileAndTarget;
         }
 
         private bool isAbsolute(string fileName)

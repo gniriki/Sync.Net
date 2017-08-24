@@ -6,6 +6,6 @@ namespace Sync.Net
     {
         void ProcessFiles();
         event SyncNetProgressChangedDelegate ProgressChanged;
-        void ProcessFile(string fileName);
+        void ProcessFile(string filePath);
     }
 }
