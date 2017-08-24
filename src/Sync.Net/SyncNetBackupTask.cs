@@ -36,9 +36,11 @@ namespace Sync.Net
         {
             StaticLogger.Log("Preparing...");
             var files = GetFilesToUpload(_sourceDirectory, _targetDirectory);
-            _totalFiles = files.Count();
+
             foreach (var fileObject in files)
-                _totalBytes += fileObject.Size;
+            {
+                UpdateProgressTargets(fileObject);
+            }
 
             StaticLogger.Log("Uploading...");
             foreach (var fileObject in files)
@@ -47,6 +49,12 @@ namespace Sync.Net
             }
 
             StaticLogger.Log("Done.");
+        }
+
+        private void UpdateProgressTargets(IFileObject fileObject)
+        {
+            _totalFiles++;
+            _totalBytes += fileObject.Size;
         }
 
         public event SyncNetProgressChangedDelegate ProgressChanged;
@@ -78,7 +86,10 @@ namespace Sync.Net
                 file = parts[parts.Length - 1];
             }
 
-            Backup(sourceDirectory.GetFile(file), targetDirectory);
+            var fileObject = sourceDirectory.GetFile(file);
+
+            UpdateProgressTargets(fileObject);
+            Backup(fileObject, targetDirectory);
         }
 
         private bool isAbsolute(string fileName)
