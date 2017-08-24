@@ -106,12 +106,13 @@ namespace Sync.Net
             var filesToUpload = new List<IFileObject>();
             var sourceFiles = source.GetFiles();
 
-            foreach (var sourceFile in sourceFiles)
-            {
-                var targetFile = target.GetFile(sourceFile.Name);
-                if (!targetFile.Exists || sourceFile.ModifiedDate >= targetFile.ModifiedDate)
-                    filesToUpload.Add(sourceFile);
-            }
+            //filesToUpload.AddRange(sourceFiles);
+                        foreach (var sourceFile in sourceFiles)
+                        {
+                            var targetFile = target.GetFile(sourceFile.Name);
+                            if (!targetFile.Exists || sourceFile.ModifiedDate >= targetFile.ModifiedDate)
+                                filesToUpload.Add(sourceFile);
+                        }
 
             var subDirectories = source.GetDirectories();
             foreach (var sourceSubDirectory in subDirectories)
@@ -134,10 +135,8 @@ namespace Sync.Net
                 if (!targetFile.Exists)
                     targetFile.Create();
 
-                var uploadedBytes = (long) 0;
                 using (var stream = file.GetStream())
                 {
-                    uploadedBytes += stream.Length;
                     using (var destination = targetFile.GetStream())
                     {
                         stream.CopyTo(destination);
@@ -145,14 +144,18 @@ namespace Sync.Net
                 }
 
                 targetFile.ModifiedDate = file.ModifiedDate;
-                UpdateProgess(file, uploadedBytes);
+                UpdateProgess(file);
+            }
+            else
+            {
+                UpdateProgess(file);
             }
         }
 
-        private void UpdateProgess(IFileObject currentFile, long bytesUploaded)
+        private void UpdateProgess(IFileObject currentFile)
         {
             _processedFiles++;
-            _processedBytes += bytesUploaded;
+            _processedBytes += currentFile.Size;
             OnProgressChanged(
                 new SyncNetProgressChangedEventArgs
                 {
