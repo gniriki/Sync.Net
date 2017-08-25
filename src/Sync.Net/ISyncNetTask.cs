@@ -7,7 +7,7 @@ namespace Sync.Net
 
     public interface ISyncNetTask
     {
-        Task ProcessFilesAsync();
+        Task ProcessSourceDirectoryAsync();
         event SyncNetProgressChangedDelegate ProgressChanged;
         Task ProcessFileAsync(IFileObject file);
         Task ProcessDirectoryAsync(IDirectoryObject directory);

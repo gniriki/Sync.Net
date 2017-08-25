@@ -34,23 +34,30 @@ namespace Sync.Net
             _targetDirectory = targetDirectory;
         }
 
-        public async Task ProcessFilesAsync()
+        public async Task ProcessSourceDirectoryAsync()
         {
             StaticLogger.Log("Preparing...");
-            var files = GetFilesToUpload(_sourceDirectory, _targetDirectory);
+
+            await ProcessDirectoryAsync(_sourceDirectory, _targetDirectory);
+
+            StaticLogger.Log("Done.");
+        }
+
+        private async Task ProcessDirectoryAsync(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
+        {
+            StaticLogger.Log($"Processing directory {sourceDirectory.FullName}");
+            var files = GetFilesToUpload(sourceDirectory, targetDirectory);
 
             foreach (var fileObject in files)
             {
                 UpdateProgressQueue(fileObject);
             }
 
-            StaticLogger.Log("Uploading...");
+
             foreach (var fileObject in files)
             {
                 await ProcessFileAsync(fileObject);
             }
-
-            StaticLogger.Log("Done.");
         }
 
         private void UpdateProgressQueue(IFileObject fileObject)
@@ -74,41 +81,38 @@ namespace Sync.Net
             }
         }
 
-        public Task ProcessDirectoryAsync(IDirectoryObject directory)
+        public async Task ProcessDirectoryAsync(IDirectoryObject directory)
         {
-            throw new NotImplementedException();
+            var targetDirectory = GetTargetDirectory(directory.FullName);
+            await ProcessDirectoryAsync(directory, targetDirectory);
         }
 
         private void ProcessFile(IFileObject file)
         {
-            var targetDirectory = GetTargetDirectory(file);
+            var targetDirectory = GetTargetDirectory(file.FullName);
 
             UpdateProgressQueue(file);
             Backup(file, targetDirectory);
         }
 
-        private IDirectoryObject GetTargetDirectory(IFileObject file)
+        private IDirectoryObject GetTargetDirectory(string path)
         {
-            var filePath = file.FullName;
-
-            if (isAbsolute(filePath))
+            if (isAbsolute(path))
             {
-                filePath = filePath.Replace(_sourceDirectory.FullName, string.Empty);
+                path = path.Replace(_sourceDirectory.FullName, string.Empty);
             }
 
-            var sourceDirectory = _sourceDirectory;
             var targetDirectory = _targetDirectory;
 
-            if (filePath.Contains('\\'))
+            if (path.Contains('\\'))
             {
-                if (filePath.StartsWith(".\\"))
-                    filePath = filePath.Substring(2);
+                if (path.StartsWith(".\\"))
+                    path = path.Substring(2);
 
-                var parts = filePath.Split(new[] {'\\'}, StringSplitOptions.RemoveEmptyEntries);
+                var parts = path.Split(new[] {'\\'}, StringSplitOptions.RemoveEmptyEntries);
 
                 for (var i = 0; i < parts.Length - 1; i++)
                 {
-                    sourceDirectory = sourceDirectory.GetDirectory(parts[i]);
                     targetDirectory = targetDirectory.GetDirectory(parts[i]);
                 }
             }
@@ -121,7 +125,7 @@ namespace Sync.Net
             return !string.IsNullOrEmpty(fileName) && !fileName.StartsWith(".");
         }
 
-        private static IEnumerable<IFileObject> GetFilesToUpload(IDirectoryObject source, IDirectoryObject target)
+        private static List<IFileObject> GetFilesToUpload(IDirectoryObject source, IDirectoryObject target)
         {
             var filesToUpload = new List<IFileObject>();
             var sourceFiles = source.GetFiles();

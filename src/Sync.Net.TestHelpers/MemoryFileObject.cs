@@ -58,5 +58,13 @@ namespace Sync.Net.TestHelpers
 
             FullName += Name;
         }
+
+        public override bool Equals(object obj)
+        {
+            var o = obj as IFileObject;
+            if (o != null)
+                return FullName == o.FullName && Name == o.Name;
+            return base.Equals(obj);
+        }
     }
 }

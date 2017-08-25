@@ -45,7 +45,7 @@ namespace Sync.Net.IntegrationTests
                     .AddFile(_subFileName2, _contents));
 
             var sync = new SyncNetBackupTask(sourceDirectory, targetDirectory);
-            await sync.ProcessFilesAsync();
+            await sync.ProcessSourceDirectoryAsync();
 
             var fileInfos = directoryInfo.GetFiles();
             Assert.AreEqual(2, fileInfos.Length);

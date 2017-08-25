@@ -42,7 +42,7 @@ namespace Sync.Net.UI.UnitTests
         public async Task SyncCommandStartsSync()
         {
             var wasRun = false;
-            _task.Setup(x => x.ProcessFilesAsync())
+            _task.Setup(x => x.ProcessSourceDirectoryAsync())
                 .Callback(() => { wasRun = true; })
                 .Returns(() => Task.CompletedTask);
 

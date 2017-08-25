@@ -39,7 +39,7 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
             var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
-            await syncNet.ProcessFilesAsync();
+            await syncNet.ProcessSourceDirectoryAsync();
 
             var targetFile = targetDirectory.GetFile(_fileName);
             
@@ -54,7 +54,7 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
             var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
-            await syncNet.ProcessFilesAsync();
+            await syncNet.ProcessSourceDirectoryAsync();
 
             var directoryObject = targetDirectory.GetDirectory(_subDirectoryName);
 
@@ -68,7 +68,7 @@ namespace Sync.Net.Tests
                 .AddFile(_fileName, _contents);
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
             var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
-            await syncNet.ProcessFilesAsync();
+            await syncNet.ProcessSourceDirectoryAsync();
 
             var targetFile = targetDirectory.GetFile(_fileName);
             using (var sr = new StreamReader(targetFile.GetStream()))
@@ -90,7 +90,7 @@ namespace Sync.Net.Tests
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
             var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
-            await syncNet.ProcessFilesAsync();
+            await syncNet.ProcessSourceDirectoryAsync();
 
             Assert.AreEqual(0, targetDirectory.GetFiles().Count());
 
@@ -115,7 +115,7 @@ namespace Sync.Net.Tests
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
             var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
-            await syncNet.ProcessFilesAsync();
+            await syncNet.ProcessSourceDirectoryAsync();
 
             var files = targetDirectory.GetFiles();
             Assert.AreEqual(2, files.Count());
@@ -137,7 +137,7 @@ namespace Sync.Net.Tests
             var fired = false;
             syncNet.ProgressChanged += delegate { fired = true; };
 
-            await syncNet.ProcessFilesAsync();
+            await syncNet.ProcessSourceDirectoryAsync();
 
             Assert.IsTrue(fired);
         }
@@ -163,7 +163,7 @@ namespace Sync.Net.Tests
                 progressUpdates.Add(e);
             };
 
-            await syncNet.ProcessFilesAsync();
+            await syncNet.ProcessSourceDirectoryAsync();
 
             Assert.AreEqual(4, progressUpdates.Count);
 
@@ -196,7 +196,7 @@ namespace Sync.Net.Tests
                 progressUpdates.Add(e);
             };
 
-            await syncNet.ProcessFilesAsync();
+            await syncNet.ProcessSourceDirectoryAsync();
 
             Assert.AreEqual(4, progressUpdates.Count);
 
@@ -228,7 +228,7 @@ namespace Sync.Net.Tests
                 progressUpdates.Add(e);
             };
 
-            await syncNet.ProcessFilesAsync();
+            await syncNet.ProcessSourceDirectoryAsync();
 
             Assert.AreEqual(_fileName, progressUpdates[0].CurrentFile.Name);
             Assert.AreEqual(_fileName2, progressUpdates[1].CurrentFile.Name);
@@ -253,7 +253,7 @@ namespace Sync.Net.Tests
                 .AddFile(_fileName2, _contents, now);
 
             var syncNet = new SyncNetBackupTask(sourceDirectory, targetDirectory);
-            await syncNet.ProcessFilesAsync();
+            await syncNet.ProcessSourceDirectoryAsync();
 
             var files = targetDirectory.GetFiles();
 

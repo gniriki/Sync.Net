@@ -131,5 +131,13 @@ namespace Sync.Net.TestHelpers
         {
             return Files.ContainsKey(name);
         }
+
+        public override bool Equals(object obj)
+        {
+            var o = obj as IDirectoryObject;
+            if (o != null)
+                return FullName == o.FullName && Name == o.Name;
+            return base.Equals(obj);
+        }
     }
 }

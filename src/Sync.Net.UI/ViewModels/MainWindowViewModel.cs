@@ -46,7 +46,7 @@ namespace Sync.Net.UI.ViewModels
 
         public async Task Sync()
         {
-            await _task.ProcessFilesAsync();
+            await _task.ProcessSourceDirectoryAsync();
         }
 
         [NotifyPropertyChangedInvocator]
