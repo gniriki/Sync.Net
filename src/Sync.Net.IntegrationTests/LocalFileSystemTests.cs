@@ -68,7 +68,7 @@ namespace Sync.Net.IntegrationTests
 
             var sync = new SyncNetBackupTask(sourceDirectory, targetDirectory);
 
-            await sync.ProcessFileAsync(sourceDirectory.FullName + "\\" + _subDirectoryName + "\\" + _subFileName);
+            await sync.ProcessFileAsync(new LocalFileObject(sourceDirectory.FullName + "\\" + _subDirectoryName + "\\" + _subFileName));
 
             var subDirectory = targetDirectory.GetDirectories().First();
 

@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Sync.Net.IO;
 
 namespace Sync.Net
 {
@@ -8,7 +9,7 @@ namespace Sync.Net
     {
         Task ProcessFilesAsync();
         event SyncNetProgressChangedDelegate ProgressChanged;
-        Task ProcessFileAsync(string path);
+        Task ProcessFileAsync(IFileObject file);
         Task ProcessDirectoryAsync(string path);
     }
 }

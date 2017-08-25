@@ -47,7 +47,7 @@ namespace Sync.Net
             StaticLogger.Log("Uploading...");
             foreach (var fileObject in files)
             {
-                await ProcessFileAsync(fileObject.FullName);
+                await ProcessFileAsync(fileObject);
             }
 
             StaticLogger.Log("Done.");
@@ -66,11 +66,11 @@ namespace Sync.Net
 
         private readonly AsyncLock _mutex = new AsyncLock();
 
-        public async Task ProcessFileAsync(string path)
+        public async Task ProcessFileAsync(IFileObject file)
         {
             using (await _mutex.LockAsync())
             {
-                await Task.Run(() => ProcessFile(path));
+                await Task.Run(() => ProcessFile(file));
             }
         }
 
@@ -79,16 +79,18 @@ namespace Sync.Net
             throw new NotImplementedException();
         }
 
-        private void ProcessFile(string filePath)
+        private void ProcessFile(IFileObject file)
         {
-            var fileAndTarget = GetFileAndTargetDirectory(filePath);
+            var targetDirectory = GetTargetDirectory(file);
 
-            UpdateProgressQueue(fileAndTarget.Item1);
-            Backup(fileAndTarget.Item1, fileAndTarget.Item2);
+            UpdateProgressQueue(file);
+            Backup(file, targetDirectory);
         }
 
-        private Tuple<IFileObject, IDirectoryObject> GetFileAndTargetDirectory(string filePath)
+        private IDirectoryObject GetTargetDirectory(IFileObject file)
         {
+            var filePath = file.FullName;
+
             if (isAbsolute(filePath))
             {
                 filePath = filePath.Replace(_sourceDirectory.FullName, string.Empty);
@@ -96,28 +98,22 @@ namespace Sync.Net
 
             var sourceDirectory = _sourceDirectory;
             var targetDirectory = _targetDirectory;
-            var file = filePath;
 
-            if (file.Contains('\\'))
+            if (filePath.Contains('\\'))
             {
-                if (file.StartsWith(".\\"))
-                    file = file.Substring(2);
+                if (filePath.StartsWith(".\\"))
+                    filePath = filePath.Substring(2);
 
-                var parts = file.Split(new[] {'\\'}, StringSplitOptions.RemoveEmptyEntries);
+                var parts = filePath.Split(new[] {'\\'}, StringSplitOptions.RemoveEmptyEntries);
 
                 for (var i = 0; i < parts.Length - 1; i++)
                 {
                     sourceDirectory = sourceDirectory.GetDirectory(parts[i]);
                     targetDirectory = targetDirectory.GetDirectory(parts[i]);
                 }
-
-                file = parts[parts.Length - 1];
             }
 
-            var fileObject = sourceDirectory.GetFile(file);
-            Tuple<IFileObject, IDirectoryObject> fileAndTarget
-                = new Tuple<IFileObject, IDirectoryObject>(fileObject, targetDirectory);
-            return fileAndTarget;
+            return targetDirectory;
         }
 
         private bool isAbsolute(string fileName)

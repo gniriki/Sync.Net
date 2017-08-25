@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Sync.Net.Configuration;
+using Sync.Net.IO;
 
 namespace Sync.Net.Tests
 {
@@ -40,7 +41,7 @@ namespace Sync.Net.Tests
             var filename = "file";
 
             bool wasUploaded = false;
-            _task.Setup(x => x.ProcessFileAsync(It.IsAny<string>())).Callback(() => wasUploaded = true);
+            _task.Setup(x => x.ProcessFileAsync(It.IsAny<IFileObject>())).Callback(() => wasUploaded = true);
 
             var watcher = new SyncNetWatcher(_task.Object, _configuration, _fileWatcher.Object);
             watcher.Watch();

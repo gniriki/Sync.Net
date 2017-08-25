@@ -1,4 +1,5 @@
 using Sync.Net.Configuration;
+using Sync.Net.IO;
 
 namespace Sync.Net
 {
@@ -29,7 +30,8 @@ namespace Sync.Net
                 else
                 {
                     StaticLogger.Log($"File created: {args.FullPath}, processing...");
-                    _task.ProcessFileAsync(args.FullPath);
+                    var file = new LocalFileObject(args.FullPath);
+                    _task.ProcessFileAsync(file);
                 }
             };
 
