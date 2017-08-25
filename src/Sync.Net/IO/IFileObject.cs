@@ -9,8 +9,8 @@ namespace Sync.Net.IO
         bool Exists { get; }
         long Size { get; }
         DateTime ModifiedDate { get; set; }
+        string FullName { get; }
         Stream GetStream();
         void Create();
-        string FullName { get; }
     }
 }

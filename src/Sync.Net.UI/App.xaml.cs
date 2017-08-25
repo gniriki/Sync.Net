@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using Autofac;
 using Hardcodet.Wpf.TaskbarNotification;
-using Sync.Net.Configuration;
 using Sync.Net.UI.Utils;
 
 namespace Sync.Net.UI

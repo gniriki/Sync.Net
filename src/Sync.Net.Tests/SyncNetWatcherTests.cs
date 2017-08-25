@@ -9,14 +9,14 @@ namespace Sync.Net.Tests
     [TestClass]
     public class SyncNetWatcherTests
     {
-        private Mock<ISyncNetTask> _task;
         private SyncNetConfiguration _configuration;
         private Mock<IFileWatcher> _fileWatcher;
+        private Mock<ISyncNetTask> _task;
 
         [TestInitialize]
         public void Initialize()
         {
-            _task = new Moq.Mock<ISyncNetTask>();
+            _task = new Mock<ISyncNetTask>();
             _configuration = new SyncNetConfiguration();
             _fileWatcher = new Mock<IFileWatcher>();
         }
@@ -25,7 +25,7 @@ namespace Sync.Net.Tests
         public void WatchesForFileChanges()
         {
             _configuration.LocalDirectory = "dir";
-            bool isWatching = false;
+            var isWatching = false;
             _fileWatcher.Setup(x => x.WatchForChanges(_configuration.LocalDirectory)).Callback(() => isWatching = true);
 
             var watcher = new SyncNetWatcher(_task.Object, _configuration, _fileWatcher.Object);
@@ -40,13 +40,14 @@ namespace Sync.Net.Tests
             _configuration.LocalDirectory = "dir";
             var filename = "file";
 
-            bool wasUploaded = false;
+            var wasUploaded = false;
             _task.Setup(x => x.ProcessFileAsync(It.IsAny<IFileObject>())).Callback(() => wasUploaded = true);
 
             var watcher = new SyncNetWatcher(_task.Object, _configuration, _fileWatcher.Object);
             watcher.Watch();
 
-            _fileWatcher.Raise(x => x.Created += null, new FileSystemEventArgs(WatcherChangeTypes.Created, _configuration.LocalDirectory, filename));
+            _fileWatcher.Raise(x => x.Created += null,
+                new FileSystemEventArgs(WatcherChangeTypes.Created, _configuration.LocalDirectory, filename));
 
             Assert.IsTrue(wasUploaded);
         }
@@ -57,7 +58,7 @@ namespace Sync.Net.Tests
             _configuration.LocalDirectory = "dir";
             var filename = "file";
 
-            bool wasUploaded = false;
+            var wasUploaded = false;
             _task.Setup(x => x.ProcessDirectoryAsync(It.IsAny<IDirectoryObject>())).Callback(() => wasUploaded = true);
 
             _fileWatcher.Setup(x => x.IsDirectory(It.IsAny<string>())).Returns(true);
@@ -65,7 +66,8 @@ namespace Sync.Net.Tests
             var watcher = new SyncNetWatcher(_task.Object, _configuration, _fileWatcher.Object);
             watcher.Watch();
 
-            _fileWatcher.Raise(x => x.Created += null, new FileSystemEventArgs(WatcherChangeTypes.Created, _configuration.LocalDirectory, filename));
+            _fileWatcher.Raise(x => x.Created += null,
+                new FileSystemEventArgs(WatcherChangeTypes.Created, _configuration.LocalDirectory, filename));
 
             Assert.IsTrue(wasUploaded);
         }

@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Windows;
-using System.Windows.Threading;
 using Sync.Net.UI.ViewModels;
 
 namespace Sync.Net.UI

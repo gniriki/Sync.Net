@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sync.Net.IO;
 
 namespace Sync.Net.Tests
 {
@@ -27,7 +23,7 @@ namespace Sync.Net.Tests
 
             var files = _targetDirectory.GetFiles();
 
-            Assert.IsTrue(!files.Any()); 
+            Assert.IsTrue(!files.Any());
         }
 
         [TestMethod]

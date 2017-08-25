@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Amazon.Runtime.Internal;
-using Sync.Net.IO;
 using System.Threading.Tasks;
 using Nito.AsyncEx;
+using Sync.Net.IO;
 
 namespace Sync.Net
 {
@@ -20,9 +19,11 @@ namespace Sync.Net
 
     public class SyncNetBackupTask : ISyncNetTask
     {
+        private readonly List<IFileObject> _filesToBackup = new List<IFileObject>();
+
+        private readonly AsyncLock _mutex = new AsyncLock();
         private readonly IDirectoryObject _sourceDirectory;
         private readonly IDirectoryObject _targetDirectory;
-        private readonly List<IFileObject> _filesToBackup = new List<IFileObject>();
         private long _processedBytes;
         private int _processedFiles;
         private long _totalBytes;
@@ -43,35 +44,7 @@ namespace Sync.Net
             StaticLogger.Log("Done.");
         }
 
-        private async Task ProcessDirectoryAsync(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
-        {
-            StaticLogger.Log($"Processing directory {sourceDirectory.FullName}");
-            var files = GetFilesToUpload(sourceDirectory, targetDirectory);
-
-            foreach (var fileObject in files)
-            {
-                UpdateProgressQueue(fileObject);
-            }
-
-
-            foreach (var fileObject in files)
-            {
-                await ProcessFileAsync(fileObject);
-            }
-        }
-
-        private void UpdateProgressQueue(IFileObject fileObject)
-        {
-            if (_filesToBackup.All(x => x.FullName != fileObject.FullName))
-                _filesToBackup.Add(fileObject);
-
-            _totalFiles = _filesToBackup.Count;
-            _totalBytes = _filesToBackup.Sum(file => file.Size);
-        }
-
         public event SyncNetProgressChangedDelegate ProgressChanged;
-
-        private readonly AsyncLock _mutex = new AsyncLock();
 
         public async Task ProcessFileAsync(IFileObject file)
         {
@@ -87,6 +60,28 @@ namespace Sync.Net
             await ProcessDirectoryAsync(directory, targetDirectory);
         }
 
+        private async Task ProcessDirectoryAsync(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
+        {
+            StaticLogger.Log($"Processing directory {sourceDirectory.FullName}");
+            var files = GetFilesToUpload(sourceDirectory, targetDirectory);
+
+            foreach (var fileObject in files)
+                UpdateProgressQueue(fileObject);
+
+
+            foreach (var fileObject in files)
+                await ProcessFileAsync(fileObject);
+        }
+
+        private void UpdateProgressQueue(IFileObject fileObject)
+        {
+            if (_filesToBackup.All(x => x.FullName != fileObject.FullName))
+                _filesToBackup.Add(fileObject);
+
+            _totalFiles = _filesToBackup.Count;
+            _totalBytes = _filesToBackup.Sum(file => file.Size);
+        }
+
         private void ProcessFile(IFileObject file)
         {
             var targetDirectory = GetTargetDirectory(file.FullName);
@@ -98,9 +93,7 @@ namespace Sync.Net
         private IDirectoryObject GetTargetDirectory(string path)
         {
             if (isAbsolute(path))
-            {
                 path = path.Replace(_sourceDirectory.FullName, string.Empty);
-            }
 
             var targetDirectory = _targetDirectory;
 
@@ -112,9 +105,7 @@ namespace Sync.Net
                 var parts = path.Split(new[] {'\\'}, StringSplitOptions.RemoveEmptyEntries);
 
                 for (var i = 0; i < parts.Length - 1; i++)
-                {
                     targetDirectory = targetDirectory.GetDirectory(parts[i]);
-                }
             }
 
             return targetDirectory;
@@ -131,12 +122,12 @@ namespace Sync.Net
             var sourceFiles = source.GetFiles();
 
             //filesToUpload.AddRange(sourceFiles);
-                        foreach (var sourceFile in sourceFiles)
-                        {
-                            var targetFile = target.GetFile(sourceFile.Name);
-                            if (!targetFile.Exists || sourceFile.ModifiedDate >= targetFile.ModifiedDate)
-                                filesToUpload.Add(sourceFile);
-                        }
+            foreach (var sourceFile in sourceFiles)
+            {
+                var targetFile = target.GetFile(sourceFile.Name);
+                if (!targetFile.Exists || sourceFile.ModifiedDate >= targetFile.ModifiedDate)
+                    filesToUpload.Add(sourceFile);
+            }
 
             var subDirectories = source.GetDirectories();
             foreach (var sourceSubDirectory in subDirectories)

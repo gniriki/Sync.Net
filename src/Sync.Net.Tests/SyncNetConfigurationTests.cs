@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using Amazon;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sync.Net.Configuration;
-using Sync.Net.TestHelpers;
 
 namespace Sync.Net.Tests
 {
@@ -15,8 +9,8 @@ namespace Sync.Net.Tests
     public class SyncNetConfigurationTests
     {
         private readonly string _configLocalDirectory = "testLocal";
-        private readonly string _configS3Bucket = "testBucket";
         private readonly RegionEndpoint _configRegionEndpoint = RegionEndpoint.APNortheast1;
+        private readonly string _configS3Bucket = "testBucket";
 
         [TestMethod]
         public void SaveLoadTest()

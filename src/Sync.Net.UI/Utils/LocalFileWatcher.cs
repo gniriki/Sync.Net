@@ -49,7 +49,7 @@ namespace Sync.Net.UI.Utils
 
         public bool IsDirectory(string path)
         {
-            FileAttributes attr = File.GetAttributes(path);
+            var attr = File.GetAttributes(path);
 
             //detect whether its a directory or file
             return (attr & FileAttributes.Directory) == FileAttributes.Directory;

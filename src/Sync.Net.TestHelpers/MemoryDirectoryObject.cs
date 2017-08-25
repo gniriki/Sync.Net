@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Sync.Net.IO;
 
@@ -14,13 +13,13 @@ namespace Sync.Net.TestHelpers
         public Dictionary<string, MemoryFileObject> Files
             = new Dictionary<string, MemoryFileObject>();
 
-        public string FullName { get; set; }
-
         public MemoryDirectoryObject(string name, string path = null)
         {
             Name = name;
             SetPath(path);
         }
+
+        public string FullName { get; set; }
 
         public string Name { get; set; }
         public bool Exists { get; set; }

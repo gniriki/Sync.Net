@@ -42,14 +42,14 @@ namespace Sync.Net.Tests
             await syncNet.ProcessSourceDirectoryAsync();
 
             var targetFile = targetDirectory.GetFile(_fileName);
-            
+
             Assert.IsTrue(targetFile.Exists);
         }
 
         [TestMethod]
         public async Task CreatesSubDirectory()
         {
-            IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
+            var sourceDirectory = new MemoryDirectoryObject("directory")
                 .AddDirectory(_subDirectoryName);
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
@@ -84,8 +84,8 @@ namespace Sync.Net.Tests
             var sourceDirectory = new MemoryDirectoryObject("directory");
 
             sourceDirectory.AddDirectory(new MemoryDirectoryObject(_subDirectoryName, sourceDirectory.FullName)
-                    .AddFile(_subFileName, _contents)
-                    .AddFile(_subFileName2, _contents));
+                .AddFile(_subFileName, _contents)
+                .AddFile(_subFileName2, _contents));
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
@@ -150,8 +150,8 @@ namespace Sync.Net.Tests
                 .AddFile(_fileName2, _contents);
 
             sourceDirectory.AddDirectory(new MemoryDirectoryObject(_subDirectoryName, sourceDirectory.FullName)
-                    .AddFile(_subFileName, _contents)
-                    .AddFile(_subFileName2, _contents));
+                .AddFile(_subFileName, _contents)
+                .AddFile(_subFileName2, _contents));
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
@@ -183,8 +183,8 @@ namespace Sync.Net.Tests
                 .AddFile(_fileName2, _contents);
 
             sourceDirectory.AddDirectory(new MemoryDirectoryObject(_subDirectoryName, sourceDirectory.FullName)
-                    .AddFile(_subFileName, _contents)
-                    .AddFile(_subFileName2, _contents));
+                .AddFile(_subFileName, _contents)
+                .AddFile(_subFileName2, _contents));
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
@@ -215,8 +215,8 @@ namespace Sync.Net.Tests
                 .AddFile(_fileName2, _contents);
 
             sourceDirectory.AddDirectory(new MemoryDirectoryObject(_subDirectoryName, sourceDirectory.FullName)
-                    .AddFile(_subFileName, _contents)
-                    .AddFile(_subFileName2, _contents));
+                .AddFile(_subFileName, _contents)
+                .AddFile(_subFileName2, _contents));
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 

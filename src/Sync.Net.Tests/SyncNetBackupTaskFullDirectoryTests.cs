@@ -8,12 +8,12 @@ namespace Sync.Net.Tests
         protected string _contents;
         protected string _fileName;
         protected string _fileName2;
+        protected MemoryDirectoryObject _sourceDirectory;
         protected string _subDirectoryName;
         protected string _subFileName;
         protected string _subFileName2;
-        protected MemoryDirectoryObject _sourceDirectory;
-        protected MemoryDirectoryObject _targetDirectory;
         protected SyncNetBackupTask _syncNet;
+        protected MemoryDirectoryObject _targetDirectory;
 
         [TestInitialize]
         public void Initialize()

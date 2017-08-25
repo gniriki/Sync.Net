@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,10 +13,10 @@ namespace Sync.Net.IntegrationTests
         private readonly string _contents = "contents.";
         private readonly string _fileName = "file.txt";
         private readonly string _fileName2 = "file2.txt";
-        private readonly string _testDirectory = "c:\\temp\\integrationTests";
         private readonly string _subDirectoryName = "subDirectory";
         private readonly string _subFileName = "subFile.txt";
         private readonly string _subFileName2 = "subFile2.txt";
+        private readonly string _testDirectory = "c:\\temp\\integrationTests";
 
         [TestMethod]
         public async Task WritesFileToLocalFileSystem()
@@ -26,9 +25,7 @@ namespace Sync.Net.IntegrationTests
             if (!directoryInfo.Exists)
                 directoryInfo.Create();
             else
-            {
                 directoryInfo.Delete(true);
-            }
 
             var targetDirectory = new LocalDirectoryObject(directoryInfo);
 
@@ -37,8 +34,8 @@ namespace Sync.Net.IntegrationTests
                 .AddFile(_fileName2, _contents);
 
             sourceDirectory.AddDirectory(new MemoryDirectoryObject(_subDirectoryName, sourceDirectory.FullName)
-                    .AddFile(_subFileName, _contents)
-                    .AddFile(_subFileName2, _contents));
+                .AddFile(_subFileName, _contents)
+                .AddFile(_subFileName2, _contents));
 
             var sync = new SyncNetBackupTask(sourceDirectory, targetDirectory);
             await sync.ProcessSourceDirectoryAsync();
@@ -59,7 +56,7 @@ namespace Sync.Net.IntegrationTests
         [TestMethod]
         public async Task UploadsFile()
         {
-            File.WriteAllText(Path.Combine(_testDirectory, _subDirectoryName, _subFileName), 
+            File.WriteAllText(Path.Combine(_testDirectory, _subDirectoryName, _subFileName),
                 _contents);
 
             var sourceDirectory = new LocalDirectoryObject(_testDirectory);
@@ -68,7 +65,8 @@ namespace Sync.Net.IntegrationTests
 
             var sync = new SyncNetBackupTask(sourceDirectory, targetDirectory);
 
-            await sync.ProcessFileAsync(new LocalFileObject(sourceDirectory.FullName + "\\" + _subDirectoryName + "\\" + _subFileName));
+            await sync.ProcessFileAsync(
+                new LocalFileObject(sourceDirectory.FullName + "\\" + _subDirectoryName + "\\" + _subFileName));
 
             var subDirectory = targetDirectory.GetDirectories().First();
 
@@ -77,8 +75,10 @@ namespace Sync.Net.IntegrationTests
             var fileObject = subDirectory.GetFiles().First();
 
             Assert.AreEqual(_subFileName, fileObject.Name);
-            using(var sr = new StreamReader(fileObject.GetStream()))
-                Assert.AreEqual(_contents, sr.ReadToEnd().Replace("\0", String.Empty));
+            using (var sr = new StreamReader(fileObject.GetStream()))
+            {
+                Assert.AreEqual(_contents, sr.ReadToEnd().Replace("\0", string.Empty));
+            }
         }
     }
 }

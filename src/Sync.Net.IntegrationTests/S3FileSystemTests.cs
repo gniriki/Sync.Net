@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.IO;
@@ -15,10 +14,10 @@ namespace Sync.Net.IntegrationTests
         private readonly string _contents = "contents.";
         private readonly string _fileName = "file.txt";
         private readonly string _fileName2 = "file2.txt";
-        private readonly string _testDirectory = "backup-test1236asdsfsd11";
         private readonly string _subDirectoryName = "subDirectory";
         private readonly string _subFileName = "subFile.txt";
         private readonly string _subFileName2 = "subFile2.txt";
+        private readonly string _testDirectory = "backup-test1236asdsfsd11";
 
         [TestMethod]
         public async Task WritesFileToS3FileSystem()
@@ -30,9 +29,7 @@ namespace Sync.Net.IntegrationTests
             if (!directoryInfo.Exists)
                 directoryInfo.Create();
             else
-            {
                 directoryInfo.Delete(true);
-            }
 
             var targetDirectory = new S3DirectoryObject(amazonS3Client, _testDirectory);
 
@@ -41,8 +38,8 @@ namespace Sync.Net.IntegrationTests
                 .AddFile(_fileName2, _contents);
 
             sourceDirectory.AddDirectory(new MemoryDirectoryObject(_subDirectoryName, sourceDirectory.FullName)
-                    .AddFile(_subFileName, _contents)
-                    .AddFile(_subFileName2, _contents));
+                .AddFile(_subFileName, _contents)
+                .AddFile(_subFileName2, _contents));
 
             var sync = new SyncNetBackupTask(sourceDirectory, targetDirectory);
             await sync.ProcessSourceDirectoryAsync();
