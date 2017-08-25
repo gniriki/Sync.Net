@@ -58,7 +58,7 @@ namespace Sync.Net.Tests
             var filename = "file";
 
             bool wasUploaded = false;
-            _task.Setup(x => x.ProcessDirectoryAsync(It.IsAny<string>())).Callback(() => wasUploaded = true);
+            _task.Setup(x => x.ProcessDirectoryAsync(It.IsAny<IDirectoryObject>())).Callback(() => wasUploaded = true);
 
             _fileWatcher.Setup(x => x.IsDirectory(It.IsAny<string>())).Returns(true);
 

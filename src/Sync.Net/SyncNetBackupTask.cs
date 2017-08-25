@@ -74,7 +74,7 @@ namespace Sync.Net
             }
         }
 
-        public Task ProcessDirectoryAsync(string path)
+        public Task ProcessDirectoryAsync(IDirectoryObject directory)
         {
             throw new NotImplementedException();
         }

@@ -25,7 +25,8 @@ namespace Sync.Net
                 if (_fileWatcher.IsDirectory(args.FullPath))
                 {
                     StaticLogger.Log($"Directory created: {args.FullPath}, processing...");
-                    _task.ProcessDirectoryAsync(args.FullPath);
+                    var directory = new LocalDirectoryObject(args.FullPath);
+                    _task.ProcessDirectoryAsync(directory);
                 }
                 else
                 {

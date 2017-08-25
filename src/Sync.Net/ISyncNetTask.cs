@@ -10,6 +10,6 @@ namespace Sync.Net
         Task ProcessFilesAsync();
         event SyncNetProgressChangedDelegate ProgressChanged;
         Task ProcessFileAsync(IFileObject file);
-        Task ProcessDirectoryAsync(string path);
+        Task ProcessDirectoryAsync(IDirectoryObject directory);
     }
 }
