@@ -51,21 +51,22 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
-        public void MakesRelativePathWhenUploadingTheFile()
+        public void UploadsDirectoryWhenCreated()
         {
-            _configuration.LocalDirectory = "c:\\dir";
-            var raiseDir = _configuration.LocalDirectory + "\\sub";
-            var raiseFilename = "file";
+            _configuration.LocalDirectory = "dir";
+            var filename = "file";
 
-            var uploadedFilePath = string.Empty;
-            _task.Setup(x => x.ProcessFileAsync(It.IsAny<string>())).Callback<string>(path => uploadedFilePath = path);
+            bool wasUploaded = false;
+            _task.Setup(x => x.ProcessDirectoryAsync(It.IsAny<string>())).Callback(() => wasUploaded = true);
+
+            _fileWatcher.Setup(x => x.IsDirectory(It.IsAny<string>())).Returns(true);
 
             var watcher = new SyncNetWatcher(_task.Object, _configuration, _fileWatcher.Object);
             watcher.Watch();
 
-            _fileWatcher.Raise(x => x.Created += null, new FileSystemEventArgs(WatcherChangeTypes.Created, raiseDir, raiseFilename));
+            _fileWatcher.Raise(x => x.Created += null, new FileSystemEventArgs(WatcherChangeTypes.Created, _configuration.LocalDirectory, filename));
 
-            Assert.AreEqual("\\sub\\file", uploadedFilePath);
+            Assert.IsTrue(wasUploaded);
         }
     }
 }

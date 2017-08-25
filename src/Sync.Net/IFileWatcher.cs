@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace Sync.Net
@@ -10,5 +11,6 @@ namespace Sync.Net
         event ErrorEventHandler Error;
         event RenamedEventHandler Renamed;
         void WatchForChanges(string path);
+        bool IsDirectory(string path);
     }
 }

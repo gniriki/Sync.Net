@@ -66,12 +66,17 @@ namespace Sync.Net
 
         private readonly AsyncLock _mutex = new AsyncLock();
 
-        public async Task ProcessFileAsync(string filePath)
+        public async Task ProcessFileAsync(string path)
         {
             using (await _mutex.LockAsync())
             {
-                await Task.Run(() => ProcessFile(filePath));
+                await Task.Run(() => ProcessFile(path));
             }
+        }
+
+        public Task ProcessDirectoryAsync(string path)
+        {
+            throw new NotImplementedException();
         }
 
         private void ProcessFile(string filePath)

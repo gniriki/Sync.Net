@@ -21,9 +21,16 @@ namespace Sync.Net
         {
             _fileWatcher.Created += (sender, args) =>
             {
-                var relativePath = args.FullPath.Substring(_configuration.LocalDirectory.Length);
-                StaticLogger.Log($"File created: {relativePath}, processing...");
-                _task.ProcessFileAsync(relativePath);
+                if (_fileWatcher.IsDirectory(args.FullPath))
+                {
+                    StaticLogger.Log($"Directory created: {args.FullPath}, processing...");
+                    _task.ProcessDirectoryAsync(args.FullPath);
+                }
+                else
+                {
+                    StaticLogger.Log($"File created: {args.FullPath}, processing...");
+                    _task.ProcessFileAsync(args.FullPath);
+                }
             };
 
             _fileWatcher.WatchForChanges(_configuration.LocalDirectory);

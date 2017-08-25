@@ -8,6 +8,7 @@ namespace Sync.Net
     {
         Task ProcessFilesAsync();
         event SyncNetProgressChangedDelegate ProgressChanged;
-        Task ProcessFileAsync(string filePath);
+        Task ProcessFileAsync(string path);
+        Task ProcessDirectoryAsync(string path);
     }
 }

@@ -2,11 +2,11 @@
 
 namespace Sync.Net.UI.Utils
 {
-    public class FileWatcher : IFileWatcher
+    public class LocalFileWatcher : IFileWatcher
     {
         private readonly FileSystemWatcher _watcher;
 
-        public FileWatcher()
+        public LocalFileWatcher()
         {
             _watcher = new FileSystemWatcher();
         }
@@ -45,6 +45,14 @@ namespace Sync.Net.UI.Utils
         {
             _watcher.Path = path;
             _watcher.EnableRaisingEvents = true;
+        }
+
+        public bool IsDirectory(string path)
+        {
+            FileAttributes attr = File.GetAttributes(path);
+
+            //detect whether its a directory or file
+            return (attr & FileAttributes.Directory) == FileAttributes.Directory;
         }
     }
 }
