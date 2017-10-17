@@ -3,11 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Sync.Net.UI"
              xmlns:viewModels="clr-namespace:Sync.Net.UI.ViewModels"
+             xmlns:utils="clr-namespace:Sync.Net.UI.Utils"
              ShutdownMode="OnExplicitShutdown"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <viewModels:ViewModelLocator x:Key="Locator" />
+            <utils:EnumBooleanConverter x:Key="EnumBooleanConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

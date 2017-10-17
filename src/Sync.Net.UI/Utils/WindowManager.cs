@@ -18,5 +18,10 @@ namespace Sync.Net.UI.Utils
         {
             Application.Current.Shutdown();
         }
+
+        public void ShowMessage(string message)
+        {
+            MessageBox.Show(message);
+        }
     }
 }

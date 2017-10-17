@@ -121,7 +121,6 @@ namespace Sync.Net
             var filesToUpload = new List<IFileObject>();
             var sourceFiles = source.GetFiles();
 
-            //filesToUpload.AddRange(sourceFiles);
             foreach (var sourceFile in sourceFiles)
             {
                 var targetFile = target.GetFile(sourceFile.Name);

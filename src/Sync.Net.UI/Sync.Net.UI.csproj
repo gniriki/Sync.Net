@@ -91,6 +91,7 @@
     <Compile Include="Utils\AppSetup.cs" />
     <Compile Include="Utils\AsyncCommand.cs" />
     <Compile Include="Utils\ConfigFile.cs" />
+    <Compile Include="Utils\EnumBooleanConverter.cs" />
     <Compile Include="Utils\LocalFileWatcher.cs" />
     <Compile Include="Utils\IConfigFile.cs" />
     <Compile Include="Utils\IWindowManager.cs" />

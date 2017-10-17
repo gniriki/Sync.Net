@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Amazon;
@@ -22,6 +23,55 @@ namespace Sync.Net.UI.ViewModels
             SelectFile = new RelayCommand(
                 p => true,
                 p => { LocalDirectory = _windowManager.ShowDirectoryDialog(); });
+
+            Save = new RelayCommand(
+                p => true,
+                p =>
+                {
+                    using (var stream = _configFile.GetStream())
+                    {
+                        try
+                        {
+                            _configuration.Save(stream);
+                        }
+                        catch (Exception e)
+                        {
+                            _windowManager.ShowMessage(e.Message);
+                        }
+                    }
+                });
+        }
+
+        public string ProfileName
+        {
+            get { return _configuration.ProfileName; }
+            set { _configuration.ProfileName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string KeySecret
+        {
+            get { return _configuration.KeySecret; }
+            set { _configuration.KeySecret = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string KeyId
+        {
+            get { return _configuration.KeyId; }
+            set { _configuration.KeyId = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public CredentialsType CredentialsType
+        {
+            get { return _configuration.CredentialsType; }
+            set { _configuration.CredentialsType = value;
+                OnPropertyChanged();
+            }
         }
 
         public string LocalDirectory
@@ -56,14 +106,12 @@ namespace Sync.Net.UI.ViewModels
 
         public ICommand SelectFile { get; }
 
+        public ICommand Save { get; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            using (var stream = _configFile.GetStream())
-            {
-                _configuration.Save(stream);
-            }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
