@@ -33,5 +33,46 @@ namespace Sync.Net.Tests
             Assert.AreEqual(_configS3Bucket, loadedConfiguration.S3Bucket);
             Assert.AreEqual(_configRegionEndpoint, loadedConfiguration.RegionEndpoint);
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(ConfigurationException))]
+        public void ThrowErrorWhenKeyIdIsEmpty()
+        {
+            var config = new SyncNetConfiguration
+            {
+                CredentialsType = CredentialsType.Basic,
+                KeySecret = "secret"
+            };
+
+            var memoryStream = new MemoryStream();
+            config.Save(memoryStream);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ConfigurationException))]
+        public void ThrowErrorWhenKeySecretIsEmpty()
+        {
+            var config = new SyncNetConfiguration
+            {
+                CredentialsType = CredentialsType.Basic,
+                KeyId = "id"
+            };
+
+            var memoryStream = new MemoryStream();
+            config.Save(memoryStream);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ConfigurationException))]
+        public void ThrowErrorWhenProfileNameIsEmpty()
+        {
+            var config = new SyncNetConfiguration
+            {
+                CredentialsType = CredentialsType.NamedProfile
+            };
+
+            var memoryStream = new MemoryStream();
+            config.Save(memoryStream);
+        }
     }
 }
