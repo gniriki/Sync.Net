@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 using Amazon;
 using Sync.Net.Configuration;
@@ -33,6 +34,8 @@ namespace Sync.Net.UI.ViewModels
                         try
                         {
                             _configuration.Save(stream);
+                            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+                            Application.Current.Shutdown();
                         }
                         catch (Exception e)
                         {

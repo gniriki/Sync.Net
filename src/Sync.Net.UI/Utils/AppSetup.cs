@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Windows;
 using Autofac;
 using Sync.Net.Configuration;
 
@@ -32,7 +33,6 @@ namespace Sync.Net.UI.Utils
 
                 var syncNetFactory = new SyncNetTaskFactory();
                 var task = syncNetFactory.Create(configuration);
-
                 cb.RegisterInstance(task).As<ISyncNetTask>();
             }
 
