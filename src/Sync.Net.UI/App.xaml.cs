@@ -16,19 +16,9 @@ namespace Sync.Net.UI
         protected override void OnStartup(StartupEventArgs e)
         {
             AppContainer.Container = new AppSetup().CreateContainer();
-
             StaticLogger.Logger = AppContainer.Container.Resolve<ILogger>();
 
-            StaticLogger.Log("Creating taskbar icon...");
-
-            var tbi = new TaskbarIcon();
-            using (var iconStream = GetResourceStream(new Uri("pack://application:,,,/TrayIcon.ico")).Stream)
-            {
-                tbi.Icon = new Icon(iconStream);
-            }
-            tbi.ToolTipText = "Sync.Net";
-            tbi.DoubleClickCommand = new RelayCommand(p => true, p => ShowMainWindow());
-
+            CreateTaskbarIcon();
 
             var task = AppContainer.Container.Resolve<ISyncNetTask>();
             Task.Run(() =>
@@ -44,6 +34,20 @@ namespace Sync.Net.UI
             });
 
             base.OnStartup(e);
+        }
+
+        private void CreateTaskbarIcon()
+        {
+            StaticLogger.Log("Creating taskbar icon...");
+
+            var tbi = new TaskbarIcon();
+            using (var iconStream = GetResourceStream(new Uri("pack://application:,,,/TrayIcon.ico")).Stream)
+            {
+                tbi.Icon = new Icon(iconStream);
+            }
+            tbi.ToolTipText = "Sync.Net";
+
+            tbi.DoubleClickCommand = new RelayCommand(p => true, p => ShowMainWindow());
         }
 
         private void ShowMainWindow()
