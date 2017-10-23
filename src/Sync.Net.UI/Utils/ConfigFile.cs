@@ -15,5 +15,10 @@ namespace Sync.Net.UI.Utils
                 fi.Directory.Create();
             return fi.Open(FileMode.OpenOrCreate);
         }
+
+        public void Clear()
+        {
+            File.WriteAllText(_path, String.Empty);
+        }
     }
 }

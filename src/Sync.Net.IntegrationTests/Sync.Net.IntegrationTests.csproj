@@ -58,6 +58,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ConfigurationTesterTests.cs" />
     <Compile Include="LocalFileSystemTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="S3FileSystemTests.cs" />

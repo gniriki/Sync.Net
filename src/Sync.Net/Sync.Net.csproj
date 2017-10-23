@@ -76,9 +76,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AmazonS3ClientFactory.cs" />
     <Compile Include="Configuration\ConfigurationException.cs" />
     <Compile Include="Configuration\ConfigurationLoadException.cs" />
+    <Compile Include="Configuration\ConfigurationTester.cs" />
     <Compile Include="Configuration\CredentialsType.cs" />
+    <Compile Include="Configuration\IConfigurationTester.cs" />
     <Compile Include="Configuration\SyncNetConfiguration.cs" />
     <Compile Include="IFileWatcher.cs" />
     <Compile Include="ILogger.cs" />

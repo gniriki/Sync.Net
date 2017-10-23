@@ -14,41 +14,67 @@ namespace Sync.Net.UI.ViewModels
         private readonly IConfigFile _configFile;
         private readonly SyncNetConfiguration _configuration;
         private readonly IWindowManager _windowManager;
+        private readonly IConfigurationTester _configurationTester;
 
-        public ConfigurationViewModel(SyncNetConfiguration configuration, IWindowManager windowManager,
-            IConfigFile configFile)
+        public ConfigurationViewModel(SyncNetConfiguration configuration, IWindowManager windowManager, IConfigFile configFile, IConfigurationTester configurationTester)
         {
             _configuration = configuration;
             _windowManager = windowManager;
             _configFile = configFile;
+            _configurationTester = configurationTester;
             SelectFile = new RelayCommand(
                 p => true,
                 p => { LocalDirectory = _windowManager.ShowDirectoryDialog(); });
 
             Save = new RelayCommand(
                 p => true,
-                p =>
+                p => { SaveConfiguration(); });
+
+            Test = new RelayCommand(
+                p => true,
+                p => { CheckIfConfigurationIsValid(true); });
+        }
+
+        private void SaveConfiguration()
+        {
+            bool canSave = CheckIfConfigurationIsValid(false);
+
+            if (canSave)
+            {
+                _configFile.Clear();
+                using (var stream = _configFile.GetStream())
                 {
-                    using (var stream = _configFile.GetStream())
+                    try
                     {
-                        try
-                        {
-                            _configuration.Save(stream);
-                            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
-                            Application.Current.Shutdown();
-                        }
-                        catch (Exception e)
-                        {
-                            _windowManager.ShowMessage(e.Message);
-                        }
+                        _configuration.Save(stream);
+                        _windowManager.RestartApplication();
                     }
-                });
+                    catch (Exception e)
+                    {
+                        _windowManager.ShowMessage(e.Message);
+                    }
+                }
+            }
+        }
+
+        private bool CheckIfConfigurationIsValid(bool showConfirmationMessage)
+        {
+            var testResults = _configurationTester.Test(_configuration);
+
+            if (!testResults.IsValid)
+            {
+                _windowManager.ShowMessage(testResults.Message);
+            }else if(showConfirmationMessage)
+                _windowManager.ShowMessage("Ok");
+            return testResults.IsValid;
         }
 
         public string ProfileName
         {
             get { return _configuration.ProfileName; }
-            set { _configuration.ProfileName = value;
+            set
+            {
+                _configuration.ProfileName = value;
                 OnPropertyChanged();
             }
         }
@@ -56,7 +82,9 @@ namespace Sync.Net.UI.ViewModels
         public string KeySecret
         {
             get { return _configuration.KeySecret; }
-            set { _configuration.KeySecret = value;
+            set
+            {
+                _configuration.KeySecret = value;
                 OnPropertyChanged();
             }
         }
@@ -64,7 +92,9 @@ namespace Sync.Net.UI.ViewModels
         public string KeyId
         {
             get { return _configuration.KeyId; }
-            set { _configuration.KeyId = value;
+            set
+            {
+                _configuration.KeyId = value;
                 OnPropertyChanged();
             }
         }
@@ -72,7 +102,9 @@ namespace Sync.Net.UI.ViewModels
         public CredentialsType CredentialsType
         {
             get { return _configuration.CredentialsType; }
-            set { _configuration.CredentialsType = value;
+            set
+            {
+                _configuration.CredentialsType = value;
                 OnPropertyChanged();
             }
         }
@@ -110,6 +142,8 @@ namespace Sync.Net.UI.ViewModels
         public ICommand SelectFile { get; }
 
         public ICommand Save { get; }
+
+        public ICommand Test { get; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

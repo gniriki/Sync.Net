@@ -27,29 +27,21 @@ namespace Sync.Net.UI.UnitTests
         [TestMethod]
         public void ExitCommandShutDownApplication()
         {
-            var shutdown = false;
-
-            _windowManager.Setup(x => x.ShutdownApplication()).Callback(() => shutdown = true);
-
             var model =
                 new MainWindowViewModel(_windowManager.Object, _task.Object, _logger.Object);
             model.ExitCommand.Execute(null);
 
-            Assert.IsTrue(shutdown);
+            _windowManager.Verify(x => x.ShutdownApplication());
         }
 
         [TestMethod]
         public void ConfigureCommandOpensConfigurationWindow()
         {
-            var wasOpened = false;
-            _windowManager.Setup(x => x.ShowConfiguration())
-                .Callback(() => { wasOpened = true; });
-
             var model =
                 new MainWindowViewModel(_windowManager.Object, _task.Object, _logger.Object);
 
             model.ConfigureCommand.Execute(null);
-            Assert.IsTrue(wasOpened);
+            _windowManager.Verify(x => x.ShowConfiguration());
         }
     }
 }

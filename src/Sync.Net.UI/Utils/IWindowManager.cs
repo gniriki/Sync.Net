@@ -6,5 +6,6 @@
         void ShutdownApplication();
         void ShowMessage(string message);
         void ShowConfiguration();
+        void RestartApplication();
     }
 }

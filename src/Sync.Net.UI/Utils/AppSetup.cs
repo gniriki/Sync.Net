@@ -26,6 +26,8 @@ namespace Sync.Net.UI.Utils
 
             cb.RegisterType<SyncNetWatcher>();
 
+            cb.RegisterType<ConfigurationTester>().As<IConfigurationTester>();
+
             cb.RegisterInstance(configuration).As<SyncNetConfiguration>();
 
             var syncNetFactory = new SyncNetTaskFactory();

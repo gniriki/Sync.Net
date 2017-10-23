@@ -10,35 +10,16 @@ namespace Sync.Net
 {
     public class SyncNetTaskFactory : ISyncNetTaskFactory
     {
+        private readonly AmazonS3ClientFactory _amazonS3ClientFactory = new AmazonS3ClientFactory();
+
         public ISyncNetTask Create(SyncNetConfiguration configuration)
         {
             var localDirectoryObject = new LocalDirectoryObject(configuration.LocalDirectory);
 
-            var amazonS3Client = GetS3Client(configuration);
+            var amazonS3Client = _amazonS3ClientFactory.GetS3Client(configuration);
             var s3DirectoryObject = new S3DirectoryObject(amazonS3Client, configuration.S3Bucket);
 
             return new SyncNetBackupTask(localDirectoryObject, s3DirectoryObject);
-        }
-
-        private AmazonS3Client GetS3Client(SyncNetConfiguration configuration)
-        {
-            switch (configuration.CredentialsType)
-            {
-                case CredentialsType.NamedProfile:
-                    var file = new SharedCredentialsFile();
-                    CredentialProfile profile;
-                    if (file.TryGetProfile(configuration.ProfileName, out profile))
-                    {
-                        return new AmazonS3Client(AWSCredentialsFactory.GetAWSCredentials(profile, null), configuration.RegionEndpoint);
-                    }
-                    else
-                        goto default;
-                case CredentialsType.Basic:
-                    var basicCredentials = new BasicAWSCredentials(configuration.KeyId, configuration.KeySecret);
-                    return new AmazonS3Client(basicCredentials, configuration.RegionEndpoint);
-                default:
-                    return new AmazonS3Client(configuration.RegionEndpoint);
-            }
         }
     }
 }

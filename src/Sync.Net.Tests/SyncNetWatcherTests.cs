@@ -25,13 +25,11 @@ namespace Sync.Net.Tests
         public void WatchesForFileChanges()
         {
             _configuration.LocalDirectory = "dir";
-            var isWatching = false;
-            _fileWatcher.Setup(x => x.WatchForChanges(_configuration.LocalDirectory)).Callback(() => isWatching = true);
 
             var watcher = new SyncNetWatcher(_task.Object, _configuration, _fileWatcher.Object);
             watcher.Watch();
 
-            Assert.IsTrue(isWatching);
+            _fileWatcher.Verify(x => x.WatchForChanges(_configuration.LocalDirectory));
         }
 
         [TestMethod]

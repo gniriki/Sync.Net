@@ -19,6 +19,12 @@ namespace Sync.Net.UI.Utils
             Application.Current.Shutdown();
         }
 
+        public void RestartApplication()
+        {
+            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+            Application.Current.Shutdown();
+        }
+
         public void ShowMessage(string message)
         {
             MessageBox.Show(message);

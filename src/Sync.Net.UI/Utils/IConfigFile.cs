@@ -5,5 +5,6 @@ namespace Sync.Net.UI.Utils
     public interface IConfigFile
     {
         Stream GetStream();
+        void Clear();
     }
 }

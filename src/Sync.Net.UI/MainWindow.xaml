@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Sync.Net.UI"
         mc:Ignorable="d"
         ShowInTaskbar="True"
-        Title="MainWindow" Height="Auto" Width="525"
+        Title="MainWindow" Height="400" Width="525"
         DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}" d:DesignHeight="322.8">
     <Grid>
         <Button Content="Configure" Margin="0,0,10.4,9.8" VerticalAlignment="Bottom"
