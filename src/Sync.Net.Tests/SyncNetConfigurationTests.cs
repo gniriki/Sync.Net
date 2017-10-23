@@ -36,7 +36,7 @@ namespace Sync.Net.Tests
 
         [TestMethod]
         [ExpectedException(typeof(ConfigurationException))]
-        public void ThrowErrorWhenKeyIdIsEmpty()
+        public void SaveThrowsErrorWhenKeyIdIsEmpty()
         {
             var config = new SyncNetConfiguration
             {
@@ -50,7 +50,7 @@ namespace Sync.Net.Tests
 
         [TestMethod]
         [ExpectedException(typeof(ConfigurationException))]
-        public void ThrowErrorWhenKeySecretIsEmpty()
+        public void SaveThrowsErrorWhenKeySecretIsEmpty()
         {
             var config = new SyncNetConfiguration
             {
@@ -64,7 +64,7 @@ namespace Sync.Net.Tests
 
         [TestMethod]
         [ExpectedException(typeof(ConfigurationException))]
-        public void ThrowErrorWhenProfileNameIsEmpty()
+        public void SaveThrowsErrorWhenProfileNameIsEmpty()
         {
             var config = new SyncNetConfiguration
             {
@@ -73,6 +73,14 @@ namespace Sync.Net.Tests
 
             var memoryStream = new MemoryStream();
             config.Save(memoryStream);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ConfigurationLoadException))]
+        public void LoadThrowsErrorWhenStreamIsEmpty()
+        {
+            var memoryStream = new MemoryStream();
+            SyncNetConfiguration.Load(memoryStream);
         }
     }
 }
