@@ -32,25 +32,24 @@ namespace Sync.Net.UI.UnitTests
             _windowManager.Setup(x => x.ShutdownApplication()).Callback(() => shutdown = true);
 
             var model =
-                new MainWindowViewModel(_windowManager.Object, _task.Object, _configuration, _logger.Object);
+                new MainWindowViewModel(_windowManager.Object, _task.Object, _logger.Object);
             model.ExitCommand.Execute(null);
 
             Assert.IsTrue(shutdown);
         }
 
         [TestMethod]
-        public async Task SyncCommandStartsSync()
+        public void ConfigureCommandOpensConfigurationWindow()
         {
-            var wasRun = false;
-            _task.Setup(x => x.ProcessSourceDirectoryAsync())
-                .Callback(() => { wasRun = true; })
-                .Returns(() => Task.CompletedTask);
+            var wasOpened = false;
+            _windowManager.Setup(x => x.ShowConfiguration())
+                .Callback(() => { wasOpened = true; });
 
             var model =
-                new MainWindowViewModel(null, _task.Object, _configuration, _logger.Object);
+                new MainWindowViewModel(_windowManager.Object, _task.Object, _logger.Object);
 
-            await model.SyncCommand.Execute();
-            Assert.IsTrue(wasRun);
+            model.ConfigureCommand.Execute(null);
+            Assert.IsTrue(wasOpened);
         }
     }
 }

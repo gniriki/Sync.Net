@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
-using Sync.Net.Configuration;
 using Sync.Net.UI.Annotations;
 using Sync.Net.UI.Utils;
 
@@ -15,7 +15,6 @@ namespace Sync.Net.UI.ViewModels
 
         public MainWindowViewModel(IWindowManager windowManager,
             ISyncNetTask task,
-            SyncNetConfiguration configuration,
             ILogger logger)
         {
             _logger = logger;
@@ -27,12 +26,16 @@ namespace Sync.Net.UI.ViewModels
                 p => true,
                 p => { windowManager.ShutdownApplication(); });
 
-            SyncCommand = new AsyncCommand(Sync,
-                () => true);
+            ConfigureCommand = new RelayCommand(
+                p => true,
+                p =>
+                {
+                    windowManager.ShowConfiguration();
+                });
         }
 
         public ICommand ExitCommand { get; }
-        public AsyncCommand SyncCommand { get; }
+        public ICommand ConfigureCommand { get; }
 
         public string Log { get; private set; }
 

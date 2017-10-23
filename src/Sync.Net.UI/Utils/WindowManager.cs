@@ -23,5 +23,11 @@ namespace Sync.Net.UI.Utils
         {
             MessageBox.Show(message);
         }
+
+        public void ShowConfiguration()
+        {
+            var window = new Window {Content = new Configuration()};
+            window.Show();
+        }
     }
 }

@@ -5,5 +5,6 @@
         string ShowDirectoryDialog();
         void ShutdownApplication();
         void ShowMessage(string message);
+        void ShowConfiguration();
     }
 }
