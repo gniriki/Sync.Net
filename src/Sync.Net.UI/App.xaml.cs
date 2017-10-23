@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Autofac;
 using Hardcodet.Wpf.TaskbarNotification;
+using Sync.Net.Configuration;
 using Sync.Net.UI.Utils;
 
 namespace Sync.Net.UI
@@ -15,7 +16,8 @@ namespace Sync.Net.UI
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            AppContainer.Container = new AppSetup().CreateContainer();
+            SyncNetConfiguration configuration = LoadConfiguration();
+            AppContainer.Container = new AppSetup().CreateContainer(configuration);
             StaticLogger.Logger = AppContainer.Container.Resolve<ILogger>();
 
             CreateTaskbarIcon();
@@ -34,6 +36,16 @@ namespace Sync.Net.UI
             });
 
             base.OnStartup(e);
+        }
+
+        private static SyncNetConfiguration LoadConfiguration()
+        {
+            SyncNetConfiguration configuration;
+            using (var stream = new ConfigFile().GetStream())
+            {
+                configuration = SyncNetConfiguration.Load(stream);
+            }
+            return configuration;
         }
 
         private void CreateTaskbarIcon()
