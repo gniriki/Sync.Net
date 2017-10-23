@@ -1,4 +1,5 @@
-﻿using Amazon;
+﻿using System;
+using Amazon;
 using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
 using Amazon.S3;
@@ -11,18 +12,33 @@ namespace Sync.Net
     {
         public ISyncNetTask Create(SyncNetConfiguration configuration)
         {
-            return Create(configuration.LocalDirectory, configuration.S3Bucket, configuration.RegionEndpoint);
-        }
+            var localDirectoryObject = new LocalDirectoryObject(configuration.LocalDirectory);
 
-        public ISyncNetTask Create(string localDirectory, string s3BucketName, RegionEndpoint regionEndpoint)
-        {
-            var localDirectoryObject = new LocalDirectoryObject(localDirectory);
-
-
-            var amazonS3Client = new AmazonS3Client(regionEndpoint);
-            var s3DirectoryObject = new S3DirectoryObject(amazonS3Client, s3BucketName);
+            var amazonS3Client = GetS3Client(configuration);
+            var s3DirectoryObject = new S3DirectoryObject(amazonS3Client, configuration.S3Bucket);
 
             return new SyncNetBackupTask(localDirectoryObject, s3DirectoryObject);
+        }
+
+        private AmazonS3Client GetS3Client(SyncNetConfiguration configuration)
+        {
+            switch (configuration.CredentialsType)
+            {
+                case CredentialsType.NamedProfile:
+                    var file = new SharedCredentialsFile();
+                    CredentialProfile profile;
+                    if (file.TryGetProfile(configuration.ProfileName, out profile))
+                    {
+                        return new AmazonS3Client(AWSCredentialsFactory.GetAWSCredentials(profile, null), configuration.RegionEndpoint);
+                    }
+                    else
+                        goto default;
+                case CredentialsType.Basic:
+                    var basicCredentials = new BasicAWSCredentials(configuration.KeyId, configuration.KeySecret);
+                    return new AmazonS3Client(basicCredentials, configuration.RegionEndpoint);
+                default:
+                    return new AmazonS3Client(configuration.RegionEndpoint);
+            }
         }
     }
 }

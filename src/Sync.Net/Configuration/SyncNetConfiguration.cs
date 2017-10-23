@@ -79,11 +79,16 @@ namespace Sync.Net.Configuration
         {
             try
             {
+                using (var stream2 = File.Open("c:\\temp\\conf.conf", FileMode.OpenOrCreate))
+                {
+                    Serializer.WriteObject(stream2, new SyncNetConfiguration());
+                }
                 return Serializer.ReadObject(stream) as SyncNetConfiguration;
+                
             }
-            catch (Exception e)
+            catch (SerializationException e)
             {
-                throw new ConfigurationLoadException("Error while loading the configuration", e);
+                throw new ConfigurationLoadException("Error while loading the configuration from file", e);
             }
         }
     }

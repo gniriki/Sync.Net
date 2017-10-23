@@ -17,6 +17,7 @@ namespace Sync.Net.UI
         protected override void OnStartup(StartupEventArgs e)
         {
             SyncNetConfiguration configuration = LoadConfiguration();
+
             AppContainer.Container = new AppSetup().CreateContainer(configuration);
             StaticLogger.Logger = AppContainer.Container.Resolve<ILogger>();
 
@@ -36,16 +37,17 @@ namespace Sync.Net.UI
             });
 
             base.OnStartup(e);
+
+            var window = new MainWindow();
+            window.Show();
         }
 
-        private static SyncNetConfiguration LoadConfiguration()
+        private SyncNetConfiguration LoadConfiguration()
         {
-            SyncNetConfiguration configuration;
             using (var stream = new ConfigFile().GetStream())
             {
-                configuration = SyncNetConfiguration.Load(stream);
+                return SyncNetConfiguration.Load(stream);
             }
-            return configuration;
         }
 
         private void CreateTaskbarIcon()
