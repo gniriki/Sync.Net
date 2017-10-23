@@ -77,12 +77,14 @@ namespace Sync.Net.Configuration
 
         public static SyncNetConfiguration Load(Stream stream)
         {
+            if (stream.Length == 0)
+                throw new ConfigurationLoadException("The configuration file is empty");
+
             try
             {
                 return Serializer.ReadObject(stream) as SyncNetConfiguration;
-                
             }
-            catch (SerializationException e)
+            catch (Exception e)
             {
                 throw new ConfigurationLoadException("Error while loading the configuration from file", e);
             }
