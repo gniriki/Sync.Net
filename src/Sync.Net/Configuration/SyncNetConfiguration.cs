@@ -77,7 +77,14 @@ namespace Sync.Net.Configuration
 
         public static SyncNetConfiguration Load(Stream stream)
         {
-            return Serializer.ReadObject(stream) as SyncNetConfiguration;
+            try
+            {
+                return Serializer.ReadObject(stream) as SyncNetConfiguration;
+            }
+            catch (Exception e)
+            {
+                throw new ConfigurationLoadException("Error while loading the configuration", e);
+            }
         }
     }
 }
