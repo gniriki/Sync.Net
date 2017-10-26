@@ -12,11 +12,12 @@ namespace Sync.Net.Configuration
     {
         SyncNetConfiguration Current { get; }
         void Save();
+        void Create();
     }
 
     public class ConfigurationProvider : IConfigurationProvider
     {
-        private SyncNetConfiguration _configuration;
+        private static SyncNetConfiguration _configuration;
         private IConfigFile _configFile;
         private static readonly DataContractSerializer Serializer;
 

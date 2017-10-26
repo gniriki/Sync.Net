@@ -19,18 +19,22 @@ namespace Sync.Net.UI
         protected override void OnStartup(StartupEventArgs e)
         {
             AppContainer.Container = new AppSetup().CreateContainer();
+            StaticLogger.Logger = AppContainer.Container.Resolve<ILogger>();
+
+            var configurationProvider = AppContainer.Container.Resolve<IConfigurationProvider>();
+            var windowManager = AppContainer.Container.Resolve<IWindowManager>();
 
             if (_configFile.Exists())
             {
-                var configurationProvider = AppContainer.Container.Resolve<IConfigurationProvider>();
-
-                StaticLogger.Logger = AppContainer.Container.Resolve<ILogger>();
-
-                CreateTaskbarIcon();
                 StartProcessor(configurationProvider.Current);
-
-                var window = new MainWindow();
-                window.Show();
+                ShowMainWindow();
+                CreateTaskbarIcon();
+            }
+            else
+            {
+                App.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
+                configurationProvider.Create();
+                windowManager.ShowConfiguration();
             }
 
             base.OnStartup(e);
