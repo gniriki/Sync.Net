@@ -3,7 +3,7 @@ using Sync.Net.TestHelpers;
 
 namespace Sync.Net.Tests
 {
-    public class SyncNetBackupTaskFullDirectoryTests
+    public class SyncNetProcessorFullDirectoryTests
     {
         protected string _contents;
         protected string _fileName;
@@ -12,7 +12,7 @@ namespace Sync.Net.Tests
         protected string _subDirectoryName;
         protected string _subFileName;
         protected string _subFileName2;
-        protected SyncNetBackupTask _syncNet;
+        protected SyncNetProcessor _syncNet;
         protected MemoryDirectoryObject _targetDirectory;
 
         [TestInitialize]
@@ -35,7 +35,7 @@ namespace Sync.Net.Tests
 
             _targetDirectory = new MemoryDirectoryObject("targetDirectory");
 
-            _syncNet = new SyncNetBackupTask(_sourceDirectory, _targetDirectory);
+            _syncNet = new SyncNetProcessor(_sourceDirectory, _targetDirectory);
         }
     }
 }

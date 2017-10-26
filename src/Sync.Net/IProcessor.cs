@@ -3,9 +3,9 @@ using Sync.Net.IO;
 
 namespace Sync.Net
 {
-    public delegate void SyncNetProgressChangedDelegate(SyncNetBackupTask sender, SyncNetProgressChangedEventArgs e);
+    public delegate void SyncNetProgressChangedDelegate(SyncNetProcessor sender, SyncNetProgressChangedEventArgs e);
 
-    public interface ISyncNetTask
+    public interface IProcessor
     {
         Task ProcessSourceDirectoryAsync();
         event SyncNetProgressChangedDelegate ProgressChanged;

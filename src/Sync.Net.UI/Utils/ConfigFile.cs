@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Sync.Net.Configuration;
 
 namespace Sync.Net.UI.Utils
 {
@@ -19,6 +20,11 @@ namespace Sync.Net.UI.Utils
         public void Clear()
         {
             File.WriteAllText(_path, String.Empty);
+        }
+
+        public bool Exists()
+        {
+            return File.Exists(_path);
         }
     }
 }

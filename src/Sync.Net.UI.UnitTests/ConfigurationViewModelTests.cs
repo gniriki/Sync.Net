@@ -11,21 +11,23 @@ namespace Sync.Net.UI.UnitTests
     public class ConfigurationViewModelTests
     {
         private Mock<IConfigFile> _configFile;
-        private Mock<SyncNetConfiguration> _configuration;
         private Mock<IConfigurationTester> _configurationTester;
         private ConfigurationViewModel _configurationViewModel;
         private readonly string _testDirectory = "C:\\Test\\Dir";
 
         private Mock<IWindowManager> _windowManager;
+        private Mock<IConfigurationProvider> _configurationProvider;
 
         [TestInitialize]
         public void Initialize()
         {
-            _configuration = new Mock<SyncNetConfiguration>();
             _configurationTester = new Mock<IConfigurationTester>();
             _windowManager = new Mock<IWindowManager>();
             _configFile = new Mock<IConfigFile>();
+            _configurationProvider = new Mock<IConfigurationProvider>();
+
             _windowManager.Setup(x => x.ShowDirectoryDialog()).Returns(_testDirectory);
+            _configurationProvider.Setup(x => x.Current).Returns(new SyncNetConfiguration());
 
             _configurationTester.Setup(x => x.Test(It.IsAny<SyncNetConfiguration>())).Returns(
                 new ConfigurationTestResult
@@ -34,7 +36,7 @@ namespace Sync.Net.UI.UnitTests
                 });
 
             _configurationViewModel =
-                new ConfigurationViewModel(_configuration.Object,
+                new ConfigurationViewModel(_configurationProvider.Object,
                 _windowManager.Object,
                 _configFile.Object,
                 _configurationTester.Object);
@@ -51,7 +53,7 @@ namespace Sync.Net.UI.UnitTests
         public void SaveSavesConfiguration()
         {
             _configurationViewModel.Save.Execute(null);
-            _configuration.Verify(x => x.Save(It.IsAny<Stream>()));
+            _configurationProvider.Verify(x => x.Save());
         }
 
         [TestMethod]
@@ -81,7 +83,7 @@ namespace Sync.Net.UI.UnitTests
                 });
 
             _configurationViewModel.Save.Execute(null);
-            _configuration.Verify(x => x.Save(It.IsAny<Stream>()), Times.Never);
+            _configurationProvider.Verify(x => x.Save(), Times.Never);
             _windowManager.Verify(x => x.RestartApplication(), Times.Never);
         }
 

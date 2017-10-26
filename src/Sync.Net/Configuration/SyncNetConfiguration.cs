@@ -9,13 +9,6 @@ namespace Sync.Net.Configuration
     [DataContract]
     public class SyncNetConfiguration
     {
-        private static readonly DataContractSerializer Serializer;
-
-        static SyncNetConfiguration()
-        {
-            Serializer = new DataContractSerializer(typeof(SyncNetConfiguration));
-        }
-
         public SyncNetConfiguration()
         {
             RegionEndpoint = RegionEndpoint.USEast1;
@@ -48,13 +41,7 @@ namespace Sync.Net.Configuration
         [DataMember]
         public string ProfileName { get; set; }
 
-        public virtual void Save(Stream stream)
-        {
-            Validate();
-            Serializer.WriteObject(stream, this);
-        }
-
-        private void Validate()
+        public void Validate()
         {
             switch (CredentialsType)
             {
@@ -72,21 +59,6 @@ namespace Sync.Net.Configuration
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        public static SyncNetConfiguration Load(Stream stream)
-        {
-            if (stream.Length == 0)
-                throw new ConfigurationLoadException("The configuration file is empty");
-
-            try
-            {
-                return Serializer.ReadObject(stream) as SyncNetConfiguration;
-            }
-            catch (Exception e)
-            {
-                throw new ConfigurationLoadException("Error while loading the configuration from file", e);
             }
         }
     }

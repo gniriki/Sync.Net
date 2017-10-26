@@ -7,15 +7,15 @@ namespace Sync.Net
     {
         private readonly SyncNetConfiguration _configuration;
         private readonly IFileWatcher _fileWatcher;
-        private readonly ISyncNetTask _task;
+        private readonly IProcessor _processor;
 
-        public SyncNetWatcher(ISyncNetTask task, SyncNetConfiguration configuration,
+        public SyncNetWatcher(IProcessor processor, IConfigurationProvider configurationProvider,
             IFileWatcher watcher)
         {
-            _configuration = configuration;
+            _configuration = configurationProvider.Current;
             _fileWatcher = watcher;
 
-            _task = task;
+            _processor = processor;
         }
 
         public void Watch()
@@ -26,13 +26,13 @@ namespace Sync.Net
                 {
                     StaticLogger.Log($"Directory created: {args.FullPath}, processing...");
                     var directory = new LocalDirectoryObject(args.FullPath);
-                    _task.ProcessDirectoryAsync(directory);
+                    _processor.ProcessDirectoryAsync(directory);
                 }
                 else
                 {
                     StaticLogger.Log($"File created: {args.FullPath}, processing...");
                     var file = new LocalFileObject(args.FullPath);
-                    _task.ProcessFileAsync(file);
+                    _processor.ProcessFileAsync(file);
                 }
             };
 

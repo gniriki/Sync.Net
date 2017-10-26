@@ -8,18 +8,18 @@ using Sync.Net.IO;
 
 namespace Sync.Net
 {
-    public class SyncNetTaskFactory : ISyncNetTaskFactory
+    public class SyncNetProcessorFactory : ISyncNetProcessorFactory
     {
         private readonly AmazonS3ClientFactory _amazonS3ClientFactory = new AmazonS3ClientFactory();
 
-        public ISyncNetTask Create(SyncNetConfiguration configuration)
+        public IProcessor Create(SyncNetConfiguration configuration)
         {
             var localDirectoryObject = new LocalDirectoryObject(configuration.LocalDirectory);
 
             var amazonS3Client = _amazonS3ClientFactory.GetS3Client(configuration);
             var s3DirectoryObject = new S3DirectoryObject(amazonS3Client, configuration.S3Bucket);
 
-            return new SyncNetBackupTask(localDirectoryObject, s3DirectoryObject);
+            return new SyncNetProcessor(localDirectoryObject, s3DirectoryObject);
         }
     }
 }

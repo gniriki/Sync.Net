@@ -93,7 +93,6 @@
     <Compile Include="Utils\ConfigFile.cs" />
     <Compile Include="Utils\EnumBooleanConverter.cs" />
     <Compile Include="Utils\LocalFileWatcher.cs" />
-    <Compile Include="Utils\IConfigFile.cs" />
     <Compile Include="Utils\IWindowManager.cs" />
     <Compile Include="Utils\Logger.cs" />
     <Compile Include="Utils\RelayCommand.cs" />

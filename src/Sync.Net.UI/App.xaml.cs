@@ -14,40 +14,46 @@ namespace Sync.Net.UI
     /// </summary>
     public partial class App : Application
     {
+        private ConfigFile _configFile = new ConfigFile();
+
         protected override void OnStartup(StartupEventArgs e)
         {
-            SyncNetConfiguration configuration = LoadConfiguration();
+            AppContainer.Container = new AppSetup().CreateContainer();
 
-            AppContainer.Container = new AppSetup().CreateContainer(configuration);
-            StaticLogger.Logger = AppContainer.Container.Resolve<ILogger>();
+            if (_configFile.Exists())
+            {
+                var configurationProvider = AppContainer.Container.Resolve<IConfigurationProvider>();
 
-            CreateTaskbarIcon();
+                StaticLogger.Logger = AppContainer.Container.Resolve<ILogger>();
 
-            var task = AppContainer.Container.Resolve<ISyncNetTask>();
+                CreateTaskbarIcon();
+                StartProcessor(configurationProvider.Current);
+
+                var window = new MainWindow();
+                window.Show();
+            }
+
+            base.OnStartup(e);
+        }
+
+        private static void StartProcessor(SyncNetConfiguration configuration)
+        {
             Task.Run(() =>
             {
+                var syncNetFactory = new SyncNetProcessorFactory();
+                var processor = syncNetFactory.Create(configuration);
+
                 StaticLogger.Log("Updating files...");
-                task.ProcessSourceDirectoryAsync();
+                processor.ProcessSourceDirectoryAsync();
 
                 StaticLogger.Log("Starting file watcher...");
-                var watcher = AppContainer.Container.Resolve<SyncNetWatcher>();
+                var watcher = new SyncNetWatcher(processor,
+                    AppContainer.Container.Resolve<IConfigurationProvider>(),
+                    AppContainer.Container.Resolve<IFileWatcher>());
                 watcher.Watch();
 
                 StaticLogger.Log("Ready.");
             });
-
-            base.OnStartup(e);
-
-            var window = new MainWindow();
-            window.Show();
-        }
-
-        private SyncNetConfiguration LoadConfiguration()
-        {
-            using (var stream = new ConfigFile().GetStream())
-            {
-                return SyncNetConfiguration.Load(stream);
-            }
         }
 
         private void CreateTaskbarIcon()

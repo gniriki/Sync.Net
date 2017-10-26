@@ -11,16 +11,13 @@ namespace Sync.Net.UI.ViewModels
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         private readonly ILogger _logger;
-        private readonly ISyncNetTask _task;
 
         public MainWindowViewModel(IWindowManager windowManager,
-            ISyncNetTask task,
             ILogger logger)
         {
             _logger = logger;
             _logger.LogUpdated += _logger_LogUpdated;
             Log = logger.Contents;
-            _task = task;
 
             ExitCommand = new RelayCommand(
                 p => true,
@@ -45,11 +42,6 @@ namespace Sync.Net.UI.ViewModels
         {
             Log += newLine;
             OnPropertyChanged(nameof(Log));
-        }
-
-        public async Task Sync()
-        {
-            await _task.ProcessSourceDirectoryAsync();
         }
 
         [NotifyPropertyChangedInvocator]

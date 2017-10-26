@@ -7,14 +7,14 @@ namespace Sync.Net.UI.Utils
 {
     internal class AppSetup
     {
-        public IContainer CreateContainer(SyncNetConfiguration configuration)
+        public IContainer CreateContainer()
         {
             var containerBuilder = new ContainerBuilder();
-            RegisterDependencies(containerBuilder, configuration);
+            RegisterDependencies(containerBuilder);
             return containerBuilder.Build();
         }
 
-        protected virtual void RegisterDependencies(ContainerBuilder cb, SyncNetConfiguration configuration)
+        protected virtual void RegisterDependencies(ContainerBuilder cb)
         {
             var assembly = Assembly.GetExecutingAssembly();
 
@@ -28,11 +28,7 @@ namespace Sync.Net.UI.Utils
 
             cb.RegisterType<ConfigurationTester>().As<IConfigurationTester>();
 
-            cb.RegisterInstance(configuration).As<SyncNetConfiguration>();
-
-            var syncNetFactory = new SyncNetTaskFactory();
-            var task = syncNetFactory.Create(configuration);
-            cb.RegisterInstance(task).As<ISyncNetTask>();
+            cb.RegisterType<ConfigurationProvider>().As<IConfigurationProvider>();
 
             ILogger logger = new Logger();
             cb.RegisterInstance(logger).As<ILogger>();

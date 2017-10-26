@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Sync.Net.Tests
 {
     [TestClass]
-    public class SyncNetBackupTaskProcessDirectoryAsyncTests : SyncNetBackupTaskFullDirectoryTests
+    public class SyncNetProcessorDirectoryAsyncTests : SyncNetProcessorFullDirectoryTests
     {
         [TestMethod]
         public async Task UploadsDirectory()

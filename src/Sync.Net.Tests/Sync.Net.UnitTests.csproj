@@ -61,12 +61,12 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AssertEx.cs" />
-    <Compile Include="SyncNetBackupTaskFullDirectoryTests.cs" />
-    <Compile Include="SyncNetBackupTaskProcessDirectoryAsyncTests.cs" />
-    <Compile Include="SyncNetBackupTaskTests.cs" />
+    <Compile Include="SyncNetProcessorFullDirectoryTests.cs" />
+    <Compile Include="SyncNetProcessorDirectoryAsyncTests.cs" />
+    <Compile Include="SyncNetProcessorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SyncNetBackupTaskProcessFileAsyncTests.cs" />
-    <Compile Include="SyncNetConfigurationTests.cs" />
+    <Compile Include="SyncNetProcessorFileAsyncTests.cs" />
+    <Compile Include="ConfigurationProviderTests.cs" />
     <Compile Include="SyncNetWatcherTests.cs" />
   </ItemGroup>
   <ItemGroup>

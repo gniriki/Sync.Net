@@ -12,14 +12,13 @@ namespace Sync.Net.UI.UnitTests
     {
         private SyncNetConfiguration _configuration;
         private Mock<ILogger> _logger;
-        private Mock<ISyncNetTask> _task;
+        private Mock<IProcessor> _processor;
         private Mock<IWindowManager> _windowManager;
 
         [TestInitialize]
         public void Initialize()
         {
             _windowManager = new Mock<IWindowManager>();
-            _task = new Mock<ISyncNetTask>();
             _configuration = new SyncNetConfiguration();
             _logger = new Mock<ILogger>();
         }
@@ -28,7 +27,7 @@ namespace Sync.Net.UI.UnitTests
         public void ExitCommandShutDownApplication()
         {
             var model =
-                new MainWindowViewModel(_windowManager.Object, _task.Object, _logger.Object);
+                new MainWindowViewModel(_windowManager.Object, _logger.Object);
             model.ExitCommand.Execute(null);
 
             _windowManager.Verify(x => x.ShutdownApplication());
@@ -38,7 +37,7 @@ namespace Sync.Net.UI.UnitTests
         public void ConfigureCommandOpensConfigurationWindow()
         {
             var model =
-                new MainWindowViewModel(_windowManager.Object, _task.Object, _logger.Object);
+                new MainWindowViewModel(_windowManager.Object, _logger.Object);
 
             model.ConfigureCommand.Execute(null);
             _windowManager.Verify(x => x.ShowConfiguration());

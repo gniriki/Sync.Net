@@ -12,13 +12,13 @@ namespace Sync.Net.UI.ViewModels
     public class ConfigurationViewModel : INotifyPropertyChanged
     {
         private readonly IConfigFile _configFile;
-        private readonly SyncNetConfiguration _configuration;
         private readonly IWindowManager _windowManager;
         private readonly IConfigurationTester _configurationTester;
+        private readonly IConfigurationProvider _configurationProvider;
 
-        public ConfigurationViewModel(SyncNetConfiguration configuration, IWindowManager windowManager, IConfigFile configFile, IConfigurationTester configurationTester)
+        public ConfigurationViewModel(IConfigurationProvider configurationProvider, IWindowManager windowManager, IConfigFile configFile, IConfigurationTester configurationTester)
         {
-            _configuration = configuration;
+            _configurationProvider = configurationProvider;
             _windowManager = windowManager;
             _configFile = configFile;
             _configurationTester = configurationTester;
@@ -42,99 +42,97 @@ namespace Sync.Net.UI.ViewModels
             if (canSave)
             {
                 _configFile.Clear();
-                using (var stream = _configFile.GetStream())
+                try
                 {
-                    try
-                    {
-                        _configuration.Save(stream);
-                        _windowManager.RestartApplication();
-                    }
-                    catch (Exception e)
-                    {
-                        _windowManager.ShowMessage(e.Message);
-                    }
+                    _configurationProvider.Save();
+                    _windowManager.RestartApplication();
+                }
+                catch (Exception e)
+                {
+                    _windowManager.ShowMessage(e.Message);
                 }
             }
         }
 
         private bool CheckIfConfigurationIsValid(bool showConfirmationMessage)
         {
-            var testResults = _configurationTester.Test(_configuration);
+            var testResults = _configurationTester.Test(_configurationProvider.Current);
 
             if (!testResults.IsValid)
             {
                 _windowManager.ShowMessage(testResults.Message);
-            }else if(showConfirmationMessage)
+            }
+            else if (showConfirmationMessage)
                 _windowManager.ShowMessage("Ok");
             return testResults.IsValid;
         }
 
         public string ProfileName
         {
-            get { return _configuration.ProfileName; }
+            get { return _configurationProvider.Current.ProfileName; }
             set
             {
-                _configuration.ProfileName = value;
+                _configurationProvider.Current.ProfileName = value;
                 OnPropertyChanged();
             }
         }
 
         public string KeySecret
         {
-            get { return _configuration.KeySecret; }
+            get { return _configurationProvider.Current.KeySecret; }
             set
             {
-                _configuration.KeySecret = value;
+                _configurationProvider.Current.KeySecret = value;
                 OnPropertyChanged();
             }
         }
 
         public string KeyId
         {
-            get { return _configuration.KeyId; }
+            get { return _configurationProvider.Current.KeyId; }
             set
             {
-                _configuration.KeyId = value;
+                _configurationProvider.Current.KeyId = value;
                 OnPropertyChanged();
             }
         }
 
         public CredentialsType CredentialsType
         {
-            get { return _configuration.CredentialsType; }
+            get { return _configurationProvider.Current.CredentialsType; }
             set
             {
-                _configuration.CredentialsType = value;
+                _configurationProvider.Current.CredentialsType = value;
                 OnPropertyChanged();
             }
         }
 
         public string LocalDirectory
         {
-            get { return _configuration.LocalDirectory; }
+            get { return _configurationProvider.Current.LocalDirectory; }
             set
             {
-                _configuration.LocalDirectory = value;
+                _configurationProvider.Current.LocalDirectory = value;
                 OnPropertyChanged();
             }
         }
 
         public string S3Bucket
         {
-            get { return _configuration.S3Bucket; }
+            get { return _configurationProvider.Current.S3Bucket; }
             set
             {
-                _configuration.S3Bucket = value;
+                _configurationProvider.Current.S3Bucket = value;
                 OnPropertyChanged();
             }
         }
 
         public RegionEndpoint RegionEndpoint
         {
-            get { return _configuration.RegionEndpoint; }
+            get { return _configurationProvider.Current.RegionEndpoint; }
             set
             {
-                _configuration.RegionEndpoint = value;
+                _configurationProvider.Current.RegionEndpoint = value;
                 OnPropertyChanged();
             }
         }

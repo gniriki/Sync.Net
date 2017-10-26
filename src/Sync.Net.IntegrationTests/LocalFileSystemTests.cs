@@ -37,7 +37,7 @@ namespace Sync.Net.IntegrationTests
                 .AddFile(_subFileName, _contents)
                 .AddFile(_subFileName2, _contents));
 
-            var sync = new SyncNetBackupTask(sourceDirectory, targetDirectory);
+            var sync = new SyncNetProcessor(sourceDirectory, targetDirectory);
             await sync.ProcessSourceDirectoryAsync();
 
             var fileInfos = directoryInfo.GetFiles();
@@ -63,7 +63,7 @@ namespace Sync.Net.IntegrationTests
 
             var targetDirectory = new MemoryDirectoryObject("dir");
 
-            var sync = new SyncNetBackupTask(sourceDirectory, targetDirectory);
+            var sync = new SyncNetProcessor(sourceDirectory, targetDirectory);
 
             await sync.ProcessFileAsync(
                 new LocalFileObject(sourceDirectory.FullName + "\\" + _subDirectoryName + "\\" + _subFileName));
