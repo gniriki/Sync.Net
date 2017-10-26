@@ -41,7 +41,7 @@ namespace Sync.Net.IntegrationTests
                 .AddFile(_subFileName, _contents)
                 .AddFile(_subFileName2, _contents));
 
-            var sync = new SyncNetProcessor(sourceDirectory, targetDirectory);
+            var sync = new Processor(sourceDirectory, targetDirectory);
             await sync.ProcessSourceDirectoryAsync();
 
             var fileInfos = directoryInfo.GetFiles();

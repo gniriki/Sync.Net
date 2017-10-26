@@ -3,13 +3,13 @@ using Sync.Net.IO;
 
 namespace Sync.Net
 {
-    public class SyncNetWatcher
+    public class EventWatcher
     {
-        private readonly SyncNetConfiguration _configuration;
+        private readonly ProcessorConfiguration _configuration;
         private readonly IFileWatcher _fileWatcher;
         private readonly IProcessor _processor;
 
-        public SyncNetWatcher(IProcessor processor, IConfigurationProvider configurationProvider,
+        public EventWatcher(IProcessor processor, IConfigurationProvider configurationProvider,
             IFileWatcher watcher)
         {
             _configuration = configurationProvider.Current;

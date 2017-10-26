@@ -27,9 +27,9 @@ namespace Sync.Net.UI.UnitTests
             _configurationProvider = new Mock<IConfigurationProvider>();
 
             _windowManager.Setup(x => x.ShowDirectoryDialog()).Returns(_testDirectory);
-            _configurationProvider.Setup(x => x.Current).Returns(new SyncNetConfiguration());
+            _configurationProvider.Setup(x => x.Current).Returns(new ProcessorConfiguration());
 
-            _configurationTester.Setup(x => x.Test(It.IsAny<SyncNetConfiguration>())).Returns(
+            _configurationTester.Setup(x => x.Test(It.IsAny<ProcessorConfiguration>())).Returns(
                 new ConfigurationTestResult
                 {
                     IsValid = true
@@ -67,7 +67,7 @@ namespace Sync.Net.UI.UnitTests
         public void SaveTestsConfiguration()
         {
             _configurationViewModel.Save.Execute(null);
-            _configurationTester.Verify(x => x.Test(It.IsAny<SyncNetConfiguration>()));
+            _configurationTester.Verify(x => x.Test(It.IsAny<ProcessorConfiguration>()));
         }
 
         [TestMethod]
@@ -75,7 +75,7 @@ namespace Sync.Net.UI.UnitTests
         {
             string invalidConfigurationMessage = "invalid";
 
-            _configurationTester.Setup(x => x.Test(It.IsAny<SyncNetConfiguration>())).Returns(
+            _configurationTester.Setup(x => x.Test(It.IsAny<ProcessorConfiguration>())).Returns(
                 new ConfigurationTestResult
                 {
                     IsValid = false,
@@ -92,7 +92,7 @@ namespace Sync.Net.UI.UnitTests
         {
             string invalidConfigurationMessage = "invalid";
 
-            _configurationTester.Setup(x => x.Test(It.IsAny<SyncNetConfiguration>())).Returns(
+            _configurationTester.Setup(x => x.Test(It.IsAny<ProcessorConfiguration>())).Returns(
                 new ConfigurationTestResult
                 {
                     IsValid = false,

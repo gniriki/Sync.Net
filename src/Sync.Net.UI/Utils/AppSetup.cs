@@ -24,7 +24,7 @@ namespace Sync.Net.UI.Utils
 
             cb.RegisterAssemblyTypes(assembly).AsImplementedInterfaces();
 
-            cb.RegisterType<SyncNetWatcher>();
+            cb.RegisterType<EventWatcher>();
 
             cb.RegisterType<ConfigurationTester>().As<IConfigurationTester>();
 

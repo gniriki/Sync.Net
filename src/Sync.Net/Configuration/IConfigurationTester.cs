@@ -2,6 +2,6 @@
 {
     public interface IConfigurationTester
     {
-        ConfigurationTestResult Test(SyncNetConfiguration configuration);
+        ConfigurationTestResult Test(ProcessorConfiguration configuration);
     }
 }

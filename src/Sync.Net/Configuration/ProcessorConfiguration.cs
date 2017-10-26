@@ -7,9 +7,9 @@ using Amazon;
 namespace Sync.Net.Configuration
 {
     [DataContract]
-    public class SyncNetConfiguration
+    public class ProcessorConfiguration
     {
-        public SyncNetConfiguration()
+        public ProcessorConfiguration()
         {
             RegionEndpoint = RegionEndpoint.USEast1;
         }

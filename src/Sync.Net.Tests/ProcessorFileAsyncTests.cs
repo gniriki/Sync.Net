@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Sync.Net.Tests
 {
     [TestClass]
-    public class SyncNetProcessorFileAsyncTests : SyncNetProcessorFullDirectoryTests
+    public class ProcessorFileAsyncTests : ProcessorFullDirectoryTests
     {
         [TestMethod]
         public async Task UploadsFile()

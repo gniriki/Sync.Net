@@ -17,7 +17,7 @@ namespace Sync.Net
     }
 
 
-    public class SyncNetProcessor : IProcessor
+    public class Processor : IProcessor
     {
         private readonly List<IFileObject> _filesToBackup = new List<IFileObject>();
 
@@ -29,7 +29,7 @@ namespace Sync.Net
         private long _totalBytes;
         private int _totalFiles;
 
-        public SyncNetProcessor(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
+        public Processor(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
         {
             _sourceDirectory = sourceDirectory;
             _targetDirectory = targetDirectory;

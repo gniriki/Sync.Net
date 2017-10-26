@@ -10,7 +10,6 @@ namespace Sync.Net.Tests
     public class ConfigurationProviderTests
     {
         private readonly string _configLocalDirectory = "testLocal";
-        private readonly RegionEndpoint _configRegionEndpoint = RegionEndpoint.APNortheast1;
         private readonly string _configS3Bucket = "testBucket";
         private Mock<IConfigFile>_configFile;
         private ConfigurationProvider _configurationProvider;

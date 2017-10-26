@@ -11,7 +11,7 @@ namespace Sync.Net.IntegrationTests
         public void ReturnInvalidResultIfCredentialsAreInvalid()
         {
             ConfigurationTester tester = new ConfigurationTester();
-            var result = tester.Test(new SyncNetConfiguration
+            var result = tester.Test(new ProcessorConfiguration
             {
                 CredentialsType = CredentialsType.Basic,
                 KeySecret = "xyz",

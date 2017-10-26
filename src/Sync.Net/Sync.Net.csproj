@@ -84,7 +84,7 @@
     <Compile Include="Configuration\CredentialsType.cs" />
     <Compile Include="Configuration\IConfigFile.cs" />
     <Compile Include="Configuration\IConfigurationTester.cs" />
-    <Compile Include="Configuration\SyncNetConfiguration.cs" />
+    <Compile Include="Configuration\ProcessorConfiguration.cs" />
     <Compile Include="IFileWatcher.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="IO\IDirectoryObject.cs" />
@@ -94,12 +94,12 @@
     <Compile Include="IO\S3DirectoryObject.cs" />
     <Compile Include="IO\S3FileObject.cs" />
     <Compile Include="IProcessor.cs" />
-    <Compile Include="ISyncNetProcessorFactory.cs" />
+    <Compile Include="IProcessorFactory.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="SyncNetProcessor.cs" />
+    <Compile Include="Processor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SyncNetProcessorFactory.cs" />
-    <Compile Include="SyncNetWatcher.cs" />
+    <Compile Include="ProcessorFactory.cs" />
+    <Compile Include="EventWatcher.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

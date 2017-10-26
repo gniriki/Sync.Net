@@ -10,20 +10,20 @@ namespace Sync.Net.Configuration
 {
     public interface IConfigurationProvider
     {
-        SyncNetConfiguration Current { get; }
+        ProcessorConfiguration Current { get; }
         void Save();
         void Create();
     }
 
     public class ConfigurationProvider : IConfigurationProvider
     {
-        private static SyncNetConfiguration _configuration;
+        private static ProcessorConfiguration _configuration;
         private IConfigFile _configFile;
         private static readonly DataContractSerializer Serializer;
 
         static ConfigurationProvider()
         {
-            Serializer = new DataContractSerializer(typeof(SyncNetConfiguration));
+            Serializer = new DataContractSerializer(typeof(ProcessorConfiguration));
         }
 
         public ConfigurationProvider(IConfigFile configFile)
@@ -31,7 +31,7 @@ namespace Sync.Net.Configuration
             _configFile = configFile;
         }
 
-        public SyncNetConfiguration Current
+        public ProcessorConfiguration Current
         {
             get
             {
@@ -51,7 +51,7 @@ namespace Sync.Net.Configuration
             }
         }
 
-        private SyncNetConfiguration Load()
+        private ProcessorConfiguration Load()
         {
             if (!_configFile.Exists())
                 throw new ConfigurationLoadException("No configuration file found!");
@@ -62,13 +62,13 @@ namespace Sync.Net.Configuration
                 if (stream.Length == 0)
                     throw new ConfigurationLoadException("The configuration file is empty");
 
-                return Serializer.ReadObject(stream) as SyncNetConfiguration;
+                return Serializer.ReadObject(stream) as ProcessorConfiguration;
             }
         }
 
         public void Create()
         {
-            _configuration = new SyncNetConfiguration();
+            _configuration = new ProcessorConfiguration();
         }
     }
 }

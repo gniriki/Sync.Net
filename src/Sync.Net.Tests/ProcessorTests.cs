@@ -11,7 +11,7 @@ using Sync.Net.TestHelpers;
 namespace Sync.Net.Tests
 {
     [TestClass]
-    public class SyncNetProcessorTests
+    public class ProcessorTests
     {
         private string _contents;
         private string _fileName;
@@ -38,7 +38,7 @@ namespace Sync.Net.Tests
                 .AddFile(_fileName, _contents);
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
-            var syncNet = new SyncNetProcessor(sourceDirectory, targetDirectory);
+            var syncNet = new Processor(sourceDirectory, targetDirectory);
             await syncNet.ProcessSourceDirectoryAsync();
 
             var targetFile = targetDirectory.GetFile(_fileName);
@@ -53,7 +53,7 @@ namespace Sync.Net.Tests
                 .AddDirectory(_subDirectoryName);
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
-            var syncNet = new SyncNetProcessor(sourceDirectory, targetDirectory);
+            var syncNet = new Processor(sourceDirectory, targetDirectory);
             await syncNet.ProcessSourceDirectoryAsync();
 
             var directoryObject = targetDirectory.GetDirectory(_subDirectoryName);
@@ -67,7 +67,7 @@ namespace Sync.Net.Tests
             IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
                 .AddFile(_fileName, _contents);
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
-            var syncNet = new SyncNetProcessor(sourceDirectory, targetDirectory);
+            var syncNet = new Processor(sourceDirectory, targetDirectory);
             await syncNet.ProcessSourceDirectoryAsync();
 
             var targetFile = targetDirectory.GetFile(_fileName);
@@ -89,7 +89,7 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new SyncNetProcessor(sourceDirectory, targetDirectory);
+            var syncNet = new Processor(sourceDirectory, targetDirectory);
             await syncNet.ProcessSourceDirectoryAsync();
 
             Assert.AreEqual(0, targetDirectory.GetFiles().Count());
@@ -114,7 +114,7 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new SyncNetProcessor(sourceDirectory, targetDirectory);
+            var syncNet = new Processor(sourceDirectory, targetDirectory);
             await syncNet.ProcessSourceDirectoryAsync();
 
             var files = targetDirectory.GetFiles();
@@ -132,7 +132,7 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new SyncNetProcessor(sourceDirectory, targetDirectory);
+            var syncNet = new Processor(sourceDirectory, targetDirectory);
 
             var fired = false;
             syncNet.ProgressChanged += delegate { fired = true; };
@@ -155,10 +155,10 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new SyncNetProcessor(sourceDirectory, targetDirectory);
+            var syncNet = new Processor(sourceDirectory, targetDirectory);
 
             var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
-            syncNet.ProgressChanged += delegate(SyncNetProcessor sender, SyncNetProgressChangedEventArgs e)
+            syncNet.ProgressChanged += delegate(Processor sender, SyncNetProgressChangedEventArgs e)
             {
                 progressUpdates.Add(e);
             };
@@ -188,10 +188,10 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new SyncNetProcessor(sourceDirectory, targetDirectory);
+            var syncNet = new Processor(sourceDirectory, targetDirectory);
 
             var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
-            syncNet.ProgressChanged += delegate(SyncNetProcessor sender, SyncNetProgressChangedEventArgs e)
+            syncNet.ProgressChanged += delegate(Processor sender, SyncNetProgressChangedEventArgs e)
             {
                 progressUpdates.Add(e);
             };
@@ -220,10 +220,10 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new SyncNetProcessor(sourceDirectory, targetDirectory);
+            var syncNet = new Processor(sourceDirectory, targetDirectory);
 
             var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
-            syncNet.ProgressChanged += delegate(SyncNetProcessor sender, SyncNetProgressChangedEventArgs e)
+            syncNet.ProgressChanged += delegate(Processor sender, SyncNetProgressChangedEventArgs e)
             {
                 progressUpdates.Add(e);
             };
@@ -252,7 +252,7 @@ namespace Sync.Net.Tests
                 .AddFile(_fileName, _contents, now)
                 .AddFile(_fileName2, _contents, now);
 
-            var syncNet = new SyncNetProcessor(sourceDirectory, targetDirectory);
+            var syncNet = new Processor(sourceDirectory, targetDirectory);
             await syncNet.ProcessSourceDirectoryAsync();
 
             var files = targetDirectory.GetFiles();

@@ -7,9 +7,9 @@ using Sync.Net.IO;
 namespace Sync.Net.Tests
 {
     [TestClass]
-    public class SyncNetWatcherTests
+    public class EventWatcherTests
     {
-        private SyncNetConfiguration _configuration;
+        private ProcessorConfiguration _configuration;
         private Mock<IFileWatcher> _fileWatcher;
         private Mock<IProcessor> _processor;
         private Mock<IConfigurationProvider> _configurationProvider;
@@ -18,7 +18,7 @@ namespace Sync.Net.Tests
         public void Initialize()
         {
             _processor = new Mock<IProcessor>();
-            _configuration = new SyncNetConfiguration();
+            _configuration = new ProcessorConfiguration();
             _fileWatcher = new Mock<IFileWatcher>();
             _configurationProvider = new Mock<IConfigurationProvider>();
 
@@ -30,7 +30,7 @@ namespace Sync.Net.Tests
         {
             _configuration.LocalDirectory = "dir";
 
-            var watcher = new SyncNetWatcher(_processor.Object, _configurationProvider.Object, _fileWatcher.Object);
+            var watcher = new EventWatcher(_processor.Object, _configurationProvider.Object, _fileWatcher.Object);
             watcher.Watch();
 
             _fileWatcher.Verify(x => x.WatchForChanges(_configuration.LocalDirectory));
@@ -45,7 +45,7 @@ namespace Sync.Net.Tests
             var wasUploaded = false;
             _processor.Setup(x => x.ProcessFileAsync(It.IsAny<IFileObject>())).Callback(() => wasUploaded = true);
 
-            var watcher = new SyncNetWatcher(_processor.Object, _configurationProvider.Object, _fileWatcher.Object);
+            var watcher = new EventWatcher(_processor.Object, _configurationProvider.Object, _fileWatcher.Object);
             watcher.Watch();
 
             _fileWatcher.Raise(x => x.Created += null,
@@ -65,7 +65,7 @@ namespace Sync.Net.Tests
 
             _fileWatcher.Setup(x => x.IsDirectory(It.IsAny<string>())).Returns(true);
 
-            var watcher = new SyncNetWatcher(_processor.Object, _configurationProvider.Object, _fileWatcher.Object);
+            var watcher = new EventWatcher(_processor.Object, _configurationProvider.Object, _fileWatcher.Object);
             watcher.Watch();
 
             _fileWatcher.Raise(x => x.Created += null,

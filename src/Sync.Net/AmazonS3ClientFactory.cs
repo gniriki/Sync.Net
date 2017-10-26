@@ -7,7 +7,7 @@ namespace Sync.Net
 {
     public class AmazonS3ClientFactory
     {
-        public AmazonS3Client GetS3Client(SyncNetConfiguration configuration)
+        public AmazonS3Client GetS3Client(ProcessorConfiguration configuration)
         {
             switch (configuration.CredentialsType)
             {

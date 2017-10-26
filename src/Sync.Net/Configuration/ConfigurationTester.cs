@@ -19,7 +19,7 @@ namespace Sync.Net.Configuration
         private string _key = "key";
         private string _contentBody = "content";
 
-        public ConfigurationTestResult Test(SyncNetConfiguration configuration)
+        public ConfigurationTestResult Test(ProcessorConfiguration configuration)
         {
             AmazonS3ClientFactory factory = new AmazonS3ClientFactory();
             var client = factory.GetS3Client(configuration);

@@ -40,18 +40,18 @@ namespace Sync.Net.UI
             base.OnStartup(e);
         }
 
-        private static void StartProcessor(SyncNetConfiguration configuration)
+        private static void StartProcessor(ProcessorConfiguration configuration)
         {
             Task.Run(() =>
             {
-                var syncNetFactory = new SyncNetProcessorFactory();
+                var syncNetFactory = new ProcessorFactory();
                 var processor = syncNetFactory.Create(configuration);
 
                 StaticLogger.Log("Updating files...");
                 processor.ProcessSourceDirectoryAsync();
 
                 StaticLogger.Log("Starting file watcher...");
-                var watcher = new SyncNetWatcher(processor,
+                var watcher = new EventWatcher(processor,
                     AppContainer.Container.Resolve<IConfigurationProvider>(),
                     AppContainer.Container.Resolve<IFileWatcher>());
                 watcher.Watch();

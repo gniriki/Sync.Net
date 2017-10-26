@@ -3,7 +3,7 @@ using Sync.Net.IO;
 
 namespace Sync.Net
 {
-    public delegate void SyncNetProgressChangedDelegate(SyncNetProcessor sender, SyncNetProgressChangedEventArgs e);
+    public delegate void SyncNetProgressChangedDelegate(Processor sender, SyncNetProgressChangedEventArgs e);
 
     public interface IProcessor
     {

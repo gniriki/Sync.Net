@@ -10,7 +10,7 @@ namespace Sync.Net.UI.UnitTests
     [TestClass]
     public class MainWindowViewModelTests
     {
-        private SyncNetConfiguration _configuration;
+        private ProcessorConfiguration _configuration;
         private Mock<ILogger> _logger;
         private Mock<IProcessor> _processor;
         private Mock<IWindowManager> _windowManager;
@@ -19,7 +19,7 @@ namespace Sync.Net.UI.UnitTests
         public void Initialize()
         {
             _windowManager = new Mock<IWindowManager>();
-            _configuration = new SyncNetConfiguration();
+            _configuration = new ProcessorConfiguration();
             _logger = new Mock<ILogger>();
         }
 
