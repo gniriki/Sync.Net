@@ -6,42 +6,44 @@
              xmlns:local="clr-namespace:Sync.Net.UI"
              xmlns:viewModels="clr-namespace:Sync.Net.UI.ViewModels"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="328.8"
+             d:DesignHeight="301.6" d:DesignWidth="328.8"
              DataContext="{Binding Source={StaticResource Locator}, Path=Configuration}">
     <Grid>
-        <Label x:Name="label" Content="Local directory" HorizontalAlignment="Left" Margin="10,10,0,0"
-               VerticalAlignment="Top" />
-        <TextBox x:Name="textBox" Height="23" Margin="10,36,90,0" TextWrapping="Wrap" Text="{Binding LocalDirectory}"
-                 VerticalAlignment="Top" />
-        <Button x:Name="button" Command="{Binding SelectFile}" Content="Select" Margin="0,35,10,0"
-                VerticalAlignment="Top" Height="24" HorizontalAlignment="Right" Width="75" />
-        <Label x:Name="label1" Content="S3 Bucket" HorizontalAlignment="Left" Margin="10,64,0,0"
-               VerticalAlignment="Top" />
-        <TextBox x:Name="textBox1" Text="{Binding S3Bucket}" Height="23" Margin="10,90,10,0" TextWrapping="Wrap"
-                 VerticalAlignment="Top" />
-        <Label Content="Credentials" HorizontalAlignment="Left" Margin="10,118,0,0"
+        <Label Content="Credentials" HorizontalAlignment="Left" Margin="10,10,0,0"
                VerticalAlignment="Top" />
         <RadioButton Content="Default profile" GroupName="credentials" 
-                     HorizontalAlignment="Left" Margin="13,144,0,0" VerticalAlignment="Top"
+                     HorizontalAlignment="Left" Margin="13,37,0,0" VerticalAlignment="Top"
                      IsChecked="{Binding Path=CredentialsType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=DefaultProfile}"/>
-        <RadioButton Content="Profile" GroupName="credentials" HorizontalAlignment="Left" Margin="13,164,0,0" VerticalAlignment="Top"
+        <RadioButton Content="Profile" GroupName="credentials" HorizontalAlignment="Left" Margin="13,57,0,0" VerticalAlignment="Top"
                      IsChecked="{Binding Path=CredentialsType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=NamedProfile}"/>
-        <TextBox Height="23" Margin="119,162,10,0" TextWrapping="Wrap" 
+        <TextBox Height="23" Margin="119,54,9.8,0" TextWrapping="Wrap" 
                  Text="{Binding ProfileName}" 
                  IsEnabled="{Binding Path=CredentialsType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=NamedProfile}"
                  VerticalAlignment="Top"/>
-        <RadioButton Content="Key" GroupName="credentials" HorizontalAlignment="Left" Margin="13,184,0,0" VerticalAlignment="Top"
+        <RadioButton Content="Key" GroupName="credentials" HorizontalAlignment="Left" Margin="13,77,0,0" VerticalAlignment="Top"
                      IsChecked="{Binding Path=CredentialsType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Basic}"/>
-        <Label Content="Key ID" HorizontalAlignment="Left" Margin="27,204,0,0" VerticalAlignment="Top"/>
-        <TextBox Height="23" Margin="119,207,10,0" TextWrapping="Wrap" 
+        <Label Content="Key ID" HorizontalAlignment="Left" Margin="27,97,0,0" VerticalAlignment="Top"/>
+        <TextBox Height="23" Margin="119,100,9.8,0" TextWrapping="Wrap" 
                  Text="{Binding KeyId}" 
                  IsEnabled="{Binding Path=CredentialsType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Basic}"
                  VerticalAlignment="Top"/>
-        <Label Content="Key Secret" HorizontalAlignment="Left" Margin="27,235,0,0" VerticalAlignment="Top"/>
-        <TextBox Height="23" Margin="119,239,10,0" TextWrapping="Wrap" 
+        <Label Content="Key Secret" HorizontalAlignment="Left" Margin="27,128,0,0" VerticalAlignment="Top"/>
+        <TextBox Height="23" Margin="119,132,9.8,0" TextWrapping="Wrap" 
                  Text="{Binding KeySecret}" 
                  IsEnabled="{Binding Path=CredentialsType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter=Basic}"
                  VerticalAlignment="Top"/>
+        <Grid IsEnabled="{Binding CredentialsTypeSet}">
+            <Label x:Name="label" Content="Local directory" HorizontalAlignment="Left" Margin="11,163,0,0"
+                   VerticalAlignment="Top" />
+            <TextBox x:Name="textBox" Height="23" Margin="10,189,89.8,0" TextWrapping="Wrap" Text="{Binding LocalDirectory}"
+                     VerticalAlignment="Top" />
+            <Button x:Name="button" Command="{Binding SelectFile}" Content="Select" Margin="0,188,8.8,0"
+                    VerticalAlignment="Top" Height="24" HorizontalAlignment="Right" Width="75" />
+            <Label x:Name="label1" Content="S3 Bucket" HorizontalAlignment="Left" Margin="11,217,0,0"
+                   VerticalAlignment="Top" />
+            <TextBox x:Name="textBox1" Text="{Binding S3Bucket}" Height="23" Margin="10,243,9.8,0" TextWrapping="Wrap"
+                     VerticalAlignment="Top" />
+        </Grid>
         <Button Content="Save and Restart" HorizontalAlignment="Right" 
                 Margin="0,0,10,8" VerticalAlignment="Bottom" Width="95"
                 Command="{Binding Save}"/>

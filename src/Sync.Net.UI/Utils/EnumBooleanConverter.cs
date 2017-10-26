@@ -17,6 +17,9 @@ namespace Sync.Net.UI.Utils
             if (parameterString == null)
                 return DependencyProperty.UnsetValue;
 
+            if(value == null)
+                return DependencyProperty.UnsetValue;
+
             if (Enum.IsDefined(value.GetType(), value) == false)
                 return DependencyProperty.UnsetValue;
 
@@ -30,6 +33,11 @@ namespace Sync.Net.UI.Utils
             string parameterString = parameter as string;
             if (parameterString == null)
                 return DependencyProperty.UnsetValue;
+
+            if (targetType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                targetType = targetType.GetGenericArguments().First();
+            }
 
             return Enum.Parse(targetType, parameterString);
         }

@@ -6,6 +6,12 @@ using Amazon;
 
 namespace Sync.Net.Configuration
 {
+    public class ProcessorConfigurationValidationResult
+    {
+        public bool IsValid { get; set; }
+        public string Message { get; set; }
+    }
+
     [DataContract]
     public class ProcessorConfiguration
     {
@@ -30,7 +36,7 @@ namespace Sync.Net.Configuration
         }
 
         [DataMember]
-        public CredentialsType CredentialsType { get; set; }
+        public CredentialsType? CredentialsType { get; set; }
 
         [DataMember]
         public string KeyId { get; set; }
@@ -41,25 +47,39 @@ namespace Sync.Net.Configuration
         [DataMember]
         public string ProfileName { get; set; }
 
-        public void Validate()
+        public ProcessorConfigurationValidationResult Validate()
         {
-            switch (CredentialsType)
+            if (!CredentialsType.HasValue)
+                return Invalid("Choose credentials");
+            switch (CredentialsType.Value)
             {
-                case CredentialsType.DefaultProfile:
+                case Configuration.CredentialsType.DefaultProfile:
                     break;
-                case CredentialsType.NamedProfile:
-                    if(string.IsNullOrEmpty(ProfileName))
-                        throw new ConfigurationException("Profile name cannot be empty");
+                case Configuration.CredentialsType.NamedProfile:
+                    if (string.IsNullOrEmpty(ProfileName))
+                        return Invalid("Profile name cannot be empty");
                     break;
-                case CredentialsType.Basic:
+                case Configuration.CredentialsType.Basic:
                     if (string.IsNullOrEmpty(KeyId))
-                        throw new ConfigurationException("KeyId cannot be empty");
+                        return Invalid("KeyId cannot be empty");
                     if (string.IsNullOrEmpty(KeySecret))
-                        throw new ConfigurationException("KeySecret cannot be empty");
+                        return Invalid("KeySecret cannot be empty");
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            return Valid();
+        }
+
+        private ProcessorConfigurationValidationResult Valid()
+        {
+            return new ProcessorConfigurationValidationResult { IsValid = true };
+        }
+
+        private ProcessorConfigurationValidationResult Invalid(string message)
+        {
+            return new ProcessorConfigurationValidationResult { IsValid = false, Message = message};
         }
     }
 }

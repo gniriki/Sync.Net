@@ -46,7 +46,9 @@ namespace Sync.Net.Configuration
             var stream = _configFile.GetStream();
             using (stream)
             {
-                _configuration.Validate();
+                var result = _configuration.Validate();
+                if(!result.IsValid)
+                    throw new ConfigurationException(result.Message);
                 Serializer.WriteObject(stream, _configuration);
             }
         }

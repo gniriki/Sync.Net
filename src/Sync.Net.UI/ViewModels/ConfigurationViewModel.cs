@@ -56,6 +56,13 @@ namespace Sync.Net.UI.ViewModels
 
         private bool CheckIfConfigurationIsValid(bool showConfirmationMessage)
         {
+            var validationResults = _configurationProvider.Current.Validate();
+            if (!validationResults.IsValid)
+            {
+                _windowManager.ShowMessage(validationResults.Message);
+                return false;
+            }
+
             var testResults = _configurationTester.Test(_configurationProvider.Current);
 
             if (!testResults.IsValid)
@@ -97,15 +104,18 @@ namespace Sync.Net.UI.ViewModels
             }
         }
 
-        public CredentialsType CredentialsType
+        public CredentialsType? CredentialsType
         {
             get { return _configurationProvider.Current.CredentialsType; }
             set
             {
                 _configurationProvider.Current.CredentialsType = value;
                 OnPropertyChanged();
+                OnPropertyChanged($"CredentialsTypeSet");
             }
         }
+
+        public bool CredentialsTypeSet => CredentialsType.HasValue;
 
         public string LocalDirectory
         {
