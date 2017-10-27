@@ -69,7 +69,7 @@ namespace Sync.Net
         private async Task ProcessDirectoryAsync(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
         {
             StaticLogger.Log($"Processing directory {sourceDirectory.FullName}");
-            var files = GetFilesToUpload(sourceDirectory, targetDirectory);
+            var files = new DirectoryScanner(sourceDirectory, targetDirectory).GetFilesToCopy();
             var tasks = new List<ITask>();
 
             foreach (var fileObject in files)
@@ -118,28 +118,6 @@ namespace Sync.Net
         private bool isAbsolute(string fileName)
         {
             return !string.IsNullOrEmpty(fileName) && !fileName.StartsWith(".");
-        }
-
-        private static List<IFileObject> GetFilesToUpload(IDirectoryObject source, IDirectoryObject target)
-        {
-            var filesToUpload = new List<IFileObject>();
-            var sourceFiles = source.GetFiles();
-
-            foreach (var sourceFile in sourceFiles)
-            {
-                var targetFile = target.GetFile(sourceFile.Name);
-                if (!targetFile.Exists || sourceFile.ModifiedDate >= targetFile.ModifiedDate)
-                    filesToUpload.Add(sourceFile);
-            }
-
-            var subDirectories = source.GetDirectories();
-            foreach (var sourceSubDirectory in subDirectories)
-            {
-                var targetSubDirectory = target.GetDirectory(sourceSubDirectory.Name);
-                filesToUpload.AddRange(GetFilesToUpload(sourceSubDirectory, targetSubDirectory));
-            }
-
-            return filesToUpload;
         }
 
         private void UpdateProgess(IFileObject currentFile)

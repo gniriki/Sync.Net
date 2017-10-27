@@ -235,30 +235,5 @@ namespace Sync.Net.Tests
             Assert.AreEqual(_subFileName, progressUpdates[2].CurrentFile.Name);
             Assert.AreEqual(_subFileName2, progressUpdates[3].CurrentFile.Name);
         }
-
-        [TestMethod]
-        public async Task UploadsOnlyNewerFile()
-        {
-            var now = DateTime.Now;
-
-            var lastUpdated = now.AddDays(-1);
-            var lastUpdated2 = now.AddDays(1);
-
-            IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
-                .AddFile(_fileName, _contents, lastUpdated)
-                .AddFile(_fileName2, _contents, lastUpdated2);
-
-            IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory")
-                .AddFile(_fileName, _contents, now)
-                .AddFile(_fileName2, _contents, now);
-
-            var syncNet = new Processor(sourceDirectory, targetDirectory);
-            await syncNet.ProcessSourceDirectoryAsync();
-
-            var files = targetDirectory.GetFiles();
-
-            Assert.AreEqual(now, files.First().ModifiedDate);
-            Assert.AreEqual(lastUpdated2, files.Last().ModifiedDate);
-        }
     }
 }

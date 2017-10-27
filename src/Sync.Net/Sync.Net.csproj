@@ -97,6 +97,7 @@
     <Compile Include="IProcessorFactory.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Processing\CopyFileTask.cs" />
+    <Compile Include="Processing\DirectoryScanner.cs" />
     <Compile Include="Processing\ITask.cs" />
     <Compile Include="Processor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
