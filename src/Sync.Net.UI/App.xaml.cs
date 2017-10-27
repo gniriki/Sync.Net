@@ -18,6 +18,7 @@ namespace Sync.Net.UI
         private ConfigFile _configFile = new ConfigFile();
         private IProcessor _processor;
         private EventWatcher _watcher;
+        private AsyncTaskQueue _asyncTaskQueue = new AsyncTaskQueue();
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -45,8 +46,10 @@ namespace Sync.Net.UI
 
         private void StartProcessing(ProcessorConfiguration configuration)
         {
+            _asyncTaskQueue.StartProcessing();
+
             var processorFactory = new ProcessorFactory();
-            _processor = processorFactory.Create(configuration);
+            _processor = processorFactory.Create(configuration, _asyncTaskQueue);
 
             _processor.ProcessSourceDirectory();
 
@@ -84,7 +87,7 @@ namespace Sync.Net.UI
 
         private void App_OnExit(object sender, ExitEventArgs e)
         {
-           // _processor.Stop();
+          _asyncTaskQueue.StopProcessing();
         }
     }
 }
