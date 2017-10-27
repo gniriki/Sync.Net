@@ -4,7 +4,8 @@
              xmlns:local="clr-namespace:Sync.Net.UI"
              xmlns:viewModels="clr-namespace:Sync.Net.UI.ViewModels"
              xmlns:utils="clr-namespace:Sync.Net.UI.Utils"
-             ShutdownMode="OnExplicitShutdown">
+             ShutdownMode="OnExplicitShutdown"
+             Exit="App_OnExit">
     <Application.Resources>
         <ResourceDictionary>
             <viewModels:ViewModelLocator x:Key="Locator" />

@@ -5,6 +5,7 @@ using System.Windows;
 using Autofac;
 using Hardcodet.Wpf.TaskbarNotification;
 using Sync.Net.Configuration;
+using Sync.Net.Processing;
 using Sync.Net.UI.Utils;
 
 namespace Sync.Net.UI
@@ -15,6 +16,8 @@ namespace Sync.Net.UI
     public partial class App : Application
     {
         private ConfigFile _configFile = new ConfigFile();
+        private IProcessor _processor;
+        private EventWatcher _watcher;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -26,7 +29,7 @@ namespace Sync.Net.UI
 
             if (_configFile.Exists())
             {
-                StartProcessor(configurationProvider.Current);
+                StartProcessing(configurationProvider.Current);
                 ShowMainWindow();
                 CreateTaskbarIcon();
             }
@@ -40,24 +43,20 @@ namespace Sync.Net.UI
             base.OnStartup(e);
         }
 
-        private static void StartProcessor(ProcessorConfiguration configuration)
+        private void StartProcessing(ProcessorConfiguration configuration)
         {
-            Task.Run(() =>
-            {
-                var syncNetFactory = new ProcessorFactory();
-                var processor = syncNetFactory.Create(configuration);
+            var processorFactory = new ProcessorFactory();
+            _processor = processorFactory.Create(configuration);
 
-                StaticLogger.Log("Updating files...");
-                processor.ProcessSourceDirectoryAsync();
+            _processor.ProcessSourceDirectory();
 
-                StaticLogger.Log("Starting file watcher...");
-                var watcher = new EventWatcher(processor,
-                    AppContainer.Container.Resolve<IConfigurationProvider>(),
-                    AppContainer.Container.Resolve<IFileWatcher>());
-                watcher.Watch();
+            _watcher = new EventWatcher(_processor,
+                AppContainer.Container.Resolve<IConfigurationProvider>(),
+                AppContainer.Container.Resolve<IFileWatcher>());
+            StaticLogger.Log("Starting file watcher...");
+            _watcher.Start();
 
-                StaticLogger.Log("Ready.");
-            });
+            StaticLogger.Log("Ready.");
         }
 
         private void CreateTaskbarIcon()
@@ -81,6 +80,11 @@ namespace Sync.Net.UI
 
             MainWindow.Visibility = Visibility.Visible;
             MainWindow.Activate();
+        }
+
+        private void App_OnExit(object sender, ExitEventArgs e)
+        {
+           // _processor.Stop();
         }
     }
 }

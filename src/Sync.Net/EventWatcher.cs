@@ -18,7 +18,7 @@ namespace Sync.Net
             _processor = processor;
         }
 
-        public void Watch()
+        public void Start()
         {
             _fileWatcher.Created += (sender, args) =>
             {
@@ -26,13 +26,13 @@ namespace Sync.Net
                 {
                     StaticLogger.Log($"Directory created: {args.FullPath}, processing...");
                     var directory = new LocalDirectoryObject(args.FullPath);
-                    _processor.ProcessDirectoryAsync(directory);
+                   _processor.ProcessDirectory(directory);
                 }
                 else
                 {
                     StaticLogger.Log($"File created: {args.FullPath}, processing...");
                     var file = new LocalFileObject(args.FullPath);
-                    _processor.CopyFileAsync(file);
+                    _processor.CopyFile(file);
                 }
             };
 

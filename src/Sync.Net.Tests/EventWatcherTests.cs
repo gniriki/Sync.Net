@@ -31,7 +31,7 @@ namespace Sync.Net.Tests
             _configuration.LocalDirectory = "dir";
 
             var watcher = new EventWatcher(_processor.Object, _configurationProvider.Object, _fileWatcher.Object);
-            watcher.Watch();
+            watcher.Start();
 
             _fileWatcher.Verify(x => x.WatchForChanges(_configuration.LocalDirectory));
         }
@@ -43,10 +43,10 @@ namespace Sync.Net.Tests
             var filename = "file";
 
             var wasUploaded = false;
-            _processor.Setup(x => x.CopyFileAsync(It.IsAny<IFileObject>())).Callback(() => wasUploaded = true);
+            _processor.Setup(x => x.CopyFile(It.IsAny<IFileObject>())).Callback(() => wasUploaded = true);
 
             var watcher = new EventWatcher(_processor.Object, _configurationProvider.Object, _fileWatcher.Object);
-            watcher.Watch();
+            watcher.Start();
 
             _fileWatcher.Raise(x => x.Created += null,
                 new FileSystemEventArgs(WatcherChangeTypes.Created, _configuration.LocalDirectory, filename));
@@ -60,18 +60,15 @@ namespace Sync.Net.Tests
             _configuration.LocalDirectory = "dir";
             var filename = "file";
 
-            var wasUploaded = false;
-            _processor.Setup(x => x.ProcessDirectoryAsync(It.IsAny<IDirectoryObject>())).Callback(() => wasUploaded = true);
-
             _fileWatcher.Setup(x => x.IsDirectory(It.IsAny<string>())).Returns(true);
 
             var watcher = new EventWatcher(_processor.Object, _configurationProvider.Object, _fileWatcher.Object);
-            watcher.Watch();
+            watcher.Start();
 
             _fileWatcher.Raise(x => x.Created += null,
                 new FileSystemEventArgs(WatcherChangeTypes.Created, _configuration.LocalDirectory, filename));
 
-            Assert.IsTrue(wasUploaded);
+            _processor.Verify(x => x.ProcessDirectory(It.IsAny<IDirectoryObject>()));
         }
     }
 }

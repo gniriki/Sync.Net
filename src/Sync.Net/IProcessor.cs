@@ -7,9 +7,9 @@ namespace Sync.Net
 
     public interface IProcessor
     {
-        Task ProcessSourceDirectoryAsync();
         event SyncNetProgressChangedDelegate ProgressChanged;
-        Task CopyFileAsync(IFileObject file);
-        Task ProcessDirectoryAsync(IDirectoryObject directory);
+        void ProcessSourceDirectory();
+        void CopyFile(IFileObject file);
+        void ProcessDirectory(IDirectoryObject directory);
     }
 }

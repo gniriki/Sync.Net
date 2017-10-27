@@ -7,9 +7,9 @@ namespace Sync.Net.Tests
     public class ProcessorDirectoryAsyncTests : ProcessorFullDirectoryTests
     {
         [TestMethod]
-        public async Task UploadsDirectory()
+        public void UploadsDirectory()
         {
-            await _syncNet.ProcessDirectoryAsync(_sourceDirectory);
+            _syncNet.ProcessDirectory(_sourceDirectory);
             AssertEx.EqualStructure(_sourceDirectory, _targetDirectory);
         }
     }

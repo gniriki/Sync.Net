@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sync.Net.IO;
+using Sync.Net.Processing;
 using Sync.Net.TestHelpers;
 
 namespace Sync.Net.IntegrationTests
@@ -19,7 +20,7 @@ namespace Sync.Net.IntegrationTests
         private readonly string _testDirectory = "c:\\temp\\integrationTests";
 
         [TestMethod]
-        public async Task WritesFileToLocalFileSystem()
+        public void WritesFileToLocalFileSystem()
         {
             var directoryInfo = new DirectoryInfo(_testDirectory);
             if (!directoryInfo.Exists)
@@ -37,8 +38,8 @@ namespace Sync.Net.IntegrationTests
                 .AddFile(_subFileName, _contents)
                 .AddFile(_subFileName2, _contents));
 
-            var processor = new Processor(sourceDirectory, targetDirectory);
-            await processor.ProcessSourceDirectoryAsync();
+            var syncNet = new Processor(sourceDirectory, targetDirectory, new SyncTaskQueue());
+            syncNet.ProcessSourceDirectory();
 
             var fileInfos = directoryInfo.GetFiles();
             Assert.AreEqual(2, fileInfos.Length);
@@ -54,11 +55,11 @@ namespace Sync.Net.IntegrationTests
         }
 
         [TestMethod]
-        public async Task UploadsFile()
+        public void UploadsFile()
         {
             var subDirectorPath = Path.Combine(_testDirectory, _subDirectoryName);
 
-            if(!Directory.Exists(subDirectorPath))
+            if (!Directory.Exists(subDirectorPath))
                 Directory.CreateDirectory(subDirectorPath);
             File.WriteAllText(Path.Combine(_testDirectory, _subDirectoryName, _subFileName),
                 _contents);
@@ -67,22 +68,21 @@ namespace Sync.Net.IntegrationTests
 
             var targetDirectory = new MemoryDirectoryObject("dir");
 
-            var processor = new Processor(sourceDirectory, targetDirectory);
-
-            await processor.CopyFileAsync(
-                new LocalFileObject(sourceDirectory.FullName + "\\" + _subDirectoryName + "\\" + _subFileName));
-
-            var subDirectory = targetDirectory.GetDirectories().First();
-
-            Assert.AreEqual(_subDirectoryName, subDirectory.Name);
-
-            var fileObject = subDirectory.GetFiles().First();
-
-            Assert.AreEqual(_subFileName, fileObject.Name);
-            using (var sr = new StreamReader(fileObject.GetStream()))
-            {
-                Assert.AreEqual(_contents, sr.ReadToEnd().Replace("\0", string.Empty));
-            }
+            var syncNet = new Processor(sourceDirectory, targetDirectory, new SyncTaskQueue());
+                        syncNet.CopyFile(
+                            new LocalFileObject(sourceDirectory.FullName + "\\" + _subDirectoryName + "\\" + _subFileName));
+            
+                        var subDirectory = targetDirectory.GetDirectories().First();
+            
+                        Assert.AreEqual(_subDirectoryName, subDirectory.Name);
+            
+                        var fileObject = subDirectory.GetFiles().First();
+            
+                        Assert.AreEqual(_subFileName, fileObject.Name);
+                        using (var sr = new StreamReader(fileObject.GetStream()))
+                        {
+                            Assert.AreEqual(_contents, sr.ReadToEnd().Replace("\0", string.Empty));
+                        }
         }
     }
 }

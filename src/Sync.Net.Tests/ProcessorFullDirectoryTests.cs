@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sync.Net.Processing;
 using Sync.Net.TestHelpers;
 
 namespace Sync.Net.Tests
@@ -35,7 +36,7 @@ namespace Sync.Net.Tests
 
             _targetDirectory = new MemoryDirectoryObject("targetDirectory");
 
-            _syncNet = new Processor(_sourceDirectory, _targetDirectory);
+            _syncNet = new Processor(_sourceDirectory, _targetDirectory, new SyncTaskQueue());
         }
     }
 }

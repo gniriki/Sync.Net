@@ -85,6 +85,7 @@
     <Compile Include="Configuration\IConfigFile.cs" />
     <Compile Include="Configuration\IConfigurationTester.cs" />
     <Compile Include="Configuration\ProcessorConfiguration.cs" />
+    <Compile Include="DirectoryScannerFactory.cs" />
     <Compile Include="IFileWatcher.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="IO\IDirectoryObject.cs" />
@@ -98,7 +99,10 @@
     <Compile Include="Logger.cs" />
     <Compile Include="Processing\CopyFileTask.cs" />
     <Compile Include="Processing\DirectoryScanner.cs" />
+    <Compile Include="Processing\IDirectoryScanner.cs" />
     <Compile Include="Processing\ITask.cs" />
+    <Compile Include="Processing\AsyncTaskQueue.cs" />
+    <Compile Include="Processing\SyncTaskQueue.cs" />
     <Compile Include="Processor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProcessorFactory.cs" />

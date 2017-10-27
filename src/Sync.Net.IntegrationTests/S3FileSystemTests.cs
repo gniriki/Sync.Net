@@ -4,6 +4,7 @@ using Amazon.S3;
 using Amazon.S3.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sync.Net.IO;
+using Sync.Net.Processing;
 using Sync.Net.TestHelpers;
 
 namespace Sync.Net.IntegrationTests
@@ -20,7 +21,7 @@ namespace Sync.Net.IntegrationTests
         private readonly string _testDirectory = "backup-test1236asdsfsd11";
 
         [TestMethod]
-        public async Task WritesFileToS3FileSystem()
+        public void WritesFileToS3FileSystem()
         {
             var amazonS3Client = new AmazonS3Client(RegionEndpoint.USEast1);
 
@@ -41,21 +42,21 @@ namespace Sync.Net.IntegrationTests
                 .AddFile(_subFileName, _contents)
                 .AddFile(_subFileName2, _contents));
 
-            var sync = new Processor(sourceDirectory, targetDirectory);
-            await sync.ProcessSourceDirectoryAsync();
-
-            var fileInfos = directoryInfo.GetFiles();
-            Assert.AreEqual(2, fileInfos.Length);
-
-            var directoryInfos = directoryInfo.GetDirectories();
-            Assert.AreEqual(1, directoryInfos.Length);
-            Assert.AreEqual(_subDirectoryName, directoryInfos[0].Name);
-
-            var file = fileInfos[0];
-            using (var sr = file.OpenText())
-            {
-                Assert.AreEqual(_contents, sr.ReadToEnd());
-            }
+            var syncNet = new Processor(sourceDirectory, targetDirectory, new SyncTaskQueue());
+            syncNet.ProcessSourceDirectory();
+            
+                        var fileInfos = directoryInfo.GetFiles();
+                        Assert.AreEqual(2, fileInfos.Length);
+            
+                        var directoryInfos = directoryInfo.GetDirectories();
+                        Assert.AreEqual(1, directoryInfos.Length);
+                        Assert.AreEqual(_subDirectoryName, directoryInfos[0].Name);
+            
+                        var file = fileInfos[0];
+                        using (var sr = file.OpenText())
+                        {
+                            Assert.AreEqual(_contents, sr.ReadToEnd());
+                        }
         }
     }
 }

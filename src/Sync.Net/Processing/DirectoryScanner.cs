@@ -7,7 +7,7 @@ using Sync.Net.IO;
 
 namespace Sync.Net.Processing
 {
-    public class DirectoryScanner
+    public class DirectoryScanner : IDirectoryScanner
     {
         private IDirectoryObject _source;
         private IDirectoryObject _target;

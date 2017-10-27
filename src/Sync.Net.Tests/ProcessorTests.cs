@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sync.Net.IO;
+using Sync.Net.Processing;
 using Sync.Net.TestHelpers;
 
 namespace Sync.Net.Tests
@@ -32,14 +33,14 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
-        public async Task CreatesTargetFile()
+        public void CreatesTargetFile()
         {
             IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
                 .AddFile(_fileName, _contents);
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
-            var syncNet = new Processor(sourceDirectory, targetDirectory);
-            await syncNet.ProcessSourceDirectoryAsync();
+            var syncNet = new Processor(sourceDirectory, targetDirectory, new SyncTaskQueue());
+            syncNet.ProcessSourceDirectory();
 
             var targetFile = targetDirectory.GetFile(_fileName);
 
@@ -47,14 +48,14 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
-        public async Task CreatesSubDirectory()
+        public void CreatesSubDirectory()
         {
             var sourceDirectory = new MemoryDirectoryObject("directory")
                 .AddDirectory(_subDirectoryName);
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
-            var syncNet = new Processor(sourceDirectory, targetDirectory);
-            await syncNet.ProcessSourceDirectoryAsync();
+            var syncNet = new Processor(sourceDirectory, targetDirectory, new SyncTaskQueue());
+            syncNet.ProcessSourceDirectory();
 
             var directoryObject = targetDirectory.GetDirectory(_subDirectoryName);
 
@@ -62,13 +63,13 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
-        public async Task WritesFileContentToTargetFile()
+        public void WritesFileContentToTargetFile()
         {
             IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
                 .AddFile(_fileName, _contents);
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
-            var syncNet = new Processor(sourceDirectory, targetDirectory);
-            await syncNet.ProcessSourceDirectoryAsync();
+            var syncNet = new Processor(sourceDirectory, targetDirectory, new SyncTaskQueue());
+            syncNet.ProcessSourceDirectory();
 
             var targetFile = targetDirectory.GetFile(_fileName);
             using (var sr = new StreamReader(targetFile.GetStream()))
@@ -79,7 +80,7 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
-        public async Task CreatesDirectoryStructure()
+        public void CreatesDirectoryStructure()
         {
             var sourceDirectory = new MemoryDirectoryObject("directory");
 
@@ -89,8 +90,8 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new Processor(sourceDirectory, targetDirectory);
-            await syncNet.ProcessSourceDirectoryAsync();
+            var syncNet = new Processor(sourceDirectory, targetDirectory, new SyncTaskQueue());
+            syncNet.ProcessSourceDirectory();
 
             Assert.AreEqual(0, targetDirectory.GetFiles().Count());
 
@@ -106,7 +107,7 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
-        public async Task UploadsFilesToDirectory()
+        public void UploadsFilesToDirectory()
         {
             IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
                 .AddFile(_fileName, _contents)
@@ -114,8 +115,8 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new Processor(sourceDirectory, targetDirectory);
-            await syncNet.ProcessSourceDirectoryAsync();
+            var syncNet = new Processor(sourceDirectory, targetDirectory, new SyncTaskQueue());
+            syncNet.ProcessSourceDirectory();
 
             var files = targetDirectory.GetFiles();
             Assert.AreEqual(2, files.Count());
@@ -125,25 +126,25 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
-        public async Task FiresProgressEvent()
+        public void FiresProgressEvent()
         {
             IDirectoryObject sourceDirectory = new MemoryDirectoryObject("directory")
                 .AddFile(_fileName, _contents);
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new Processor(sourceDirectory, targetDirectory);
+            var syncNet = new Processor(sourceDirectory, targetDirectory, new SyncTaskQueue());
+
 
             var fired = false;
             syncNet.ProgressChanged += delegate { fired = true; };
-
-            await syncNet.ProcessSourceDirectoryAsync();
+            syncNet.ProcessSourceDirectory();
 
             Assert.IsTrue(fired);
         }
 
         [TestMethod]
-        public async Task CountsUploadedFiles()
+        public void CountsUploadedFiles()
         {
             var sourceDirectory = new MemoryDirectoryObject("directory")
                 .AddFile(_fileName, _contents)
@@ -155,15 +156,16 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new Processor(sourceDirectory, targetDirectory);
+            var syncNet = new Processor(sourceDirectory, targetDirectory, new SyncTaskQueue());
+
 
             var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
-            syncNet.ProgressChanged += delegate(Processor sender, SyncNetProgressChangedEventArgs e)
+            syncNet.ProgressChanged += delegate (Processor sender, SyncNetProgressChangedEventArgs e)
             {
                 progressUpdates.Add(e);
             };
 
-            await syncNet.ProcessSourceDirectoryAsync();
+            syncNet.ProcessSourceDirectory();
 
             Assert.AreEqual(4, progressUpdates.Count);
 
@@ -175,7 +177,7 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
-        public async Task CountsUploadedData()
+        public void CountsUploadedData()
         {
             var bytes = Encoding.UTF8.GetBytes(_contents).Length;
             var sourceDirectory = new MemoryDirectoryObject("directory")
@@ -188,15 +190,16 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new Processor(sourceDirectory, targetDirectory);
+            var syncNet = new Processor(sourceDirectory, targetDirectory, new SyncTaskQueue());
+
 
             var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
-            syncNet.ProgressChanged += delegate(Processor sender, SyncNetProgressChangedEventArgs e)
+            syncNet.ProgressChanged += delegate (Processor sender, SyncNetProgressChangedEventArgs e)
             {
                 progressUpdates.Add(e);
             };
 
-            await syncNet.ProcessSourceDirectoryAsync();
+            syncNet.ProcessSourceDirectory();
 
             Assert.AreEqual(4, progressUpdates.Count);
 
@@ -208,7 +211,7 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
-        public async Task ReportsCurrentlyUploadedFileName()
+        public void ReportsCurrentlyUploadedFileName()
         {
             var sourceDirectory = new MemoryDirectoryObject("directory")
                 .AddFile(_fileName, _contents)
@@ -220,15 +223,14 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new Processor(sourceDirectory, targetDirectory);
+            var syncNet = new Processor(sourceDirectory, targetDirectory, new SyncTaskQueue());
 
             var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
-            syncNet.ProgressChanged += delegate(Processor sender, SyncNetProgressChangedEventArgs e)
+            syncNet.ProgressChanged += delegate (Processor sender, SyncNetProgressChangedEventArgs e)
             {
                 progressUpdates.Add(e);
             };
-
-            await syncNet.ProcessSourceDirectoryAsync();
+            syncNet.ProcessSourceDirectory();
 
             Assert.AreEqual(_fileName, progressUpdates[0].CurrentFile.Name);
             Assert.AreEqual(_fileName2, progressUpdates[1].CurrentFile.Name);

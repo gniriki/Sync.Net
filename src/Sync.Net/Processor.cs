@@ -22,7 +22,6 @@ namespace Sync.Net
     {
         private readonly List<IFileObject> _filesToBackup = new List<IFileObject>();
 
-        private readonly AsyncLock _mutex = new AsyncLock();
         private readonly IDirectoryObject _sourceDirectory;
         private readonly IDirectoryObject _targetDirectory;
         private long _processedBytes;
@@ -30,59 +29,46 @@ namespace Sync.Net
         private long _totalBytes;
         private int _totalFiles;
 
-        public Processor(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
+        private ITaskQueue _queue;
+
+        public Processor(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory, ITaskQueue queue)
         {
             _sourceDirectory = sourceDirectory;
             _targetDirectory = targetDirectory;
-        }
-
-        public async Task ProcessSourceDirectoryAsync()
-        {
-            StaticLogger.Log("Preparing...");
-
-            await ProcessDirectoryAsync(_sourceDirectory, _targetDirectory);
-
-            StaticLogger.Log("Done.");
+            _queue = queue;
         }
 
         public event SyncNetProgressChangedDelegate ProgressChanged;
 
-        public async Task CopyFileAsync(IFileObject file)
+        public void ProcessSourceDirectory()
         {
-            using (await _mutex.LockAsync())
+            StaticLogger.Log("Scaning directory for changes.");
+            var scanner = new DirectoryScanner(_sourceDirectory, _targetDirectory);
+            var files = scanner.GetFilesToCopy();
+            StaticLogger.Log($"Found {files.Count} new files.");
+            foreach (var file in files)
             {
-                var targetDirectory = GetTargetDirectory(file.FullName);
-
-                var copyFileTask = new CopyFileTask(file, targetDirectory);
-                UpdateProgressQueue(file);
-                await copyFileTask.ExecuteAsync();
-                UpdateProgess(file);
+                CopyFile(file);
             }
         }
 
-        public async Task ProcessDirectoryAsync(IDirectoryObject directory)
+        public void ProcessDirectory(IDirectoryObject directory)
         {
             var targetDirectory = GetTargetDirectory(directory.FullName);
-            await ProcessDirectoryAsync(directory, targetDirectory);
+
+            var scanner = new DirectoryScanner(directory, targetDirectory);
+            var files = scanner.GetFilesToCopy();
+            foreach (var file in files)
+            {
+                CopyFile(file);
+            }
         }
 
-        private async Task ProcessDirectoryAsync(IDirectoryObject sourceDirectory, IDirectoryObject targetDirectory)
+        public void CopyFile(IFileObject file)
         {
-            StaticLogger.Log($"Processing directory {sourceDirectory.FullName}");
-            var files = new DirectoryScanner(sourceDirectory, targetDirectory).GetFilesToCopy();
-            var tasks = new List<ITask>();
-
-            foreach (var fileObject in files)
-            {
-                UpdateProgressQueue(fileObject);
-
-//                var targetDir = GetTargetDirectory(fileObject.FullName);
-//                var copyFileTask = new CopyFileTask(fileObject, targetDir);
-//                tasks.Add(copyFileTask);
-            }
-
-            foreach (var fileObject in files)
-                await CopyFileAsync(fileObject);
+            var targetDirectory = GetTargetDirectory(file.FullName);
+            var copyFileTask = new CopyFileTask(file, targetDirectory);
+            _queue.Queue(copyFileTask);
         }
 
         private void UpdateProgressQueue(IFileObject fileObject)
@@ -120,7 +106,7 @@ namespace Sync.Net
             return !string.IsNullOrEmpty(fileName) && !fileName.StartsWith(".");
         }
 
-        private void UpdateProgess(IFileObject currentFile)
+        private void FileProcessingCompleted(IFileObject currentFile)
         {
             _processedFiles++;
             _processedBytes += currentFile.Size;

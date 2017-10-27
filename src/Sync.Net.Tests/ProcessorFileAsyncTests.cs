@@ -8,18 +8,18 @@ namespace Sync.Net.Tests
     public class ProcessorFileAsyncTests : ProcessorFullDirectoryTests
     {
         [TestMethod]
-        public async Task UploadsFile()
+        public void UploadsFile()
         {
-            await _syncNet.CopyFileAsync(_sourceDirectory.GetFile(_fileName));
+            _syncNet.CopyFile(_sourceDirectory.GetFile(_fileName));
 
             var files = _targetDirectory.GetFiles();
             Assert.AreEqual(_fileName, files.First().Name);
         }
 
         [TestMethod]
-        public async Task UploadFromSubfolderDoesntCreateAFileInMainDirectory()
+        public void UploadFromSubfolderDoesntCreateAFileInMainDirectory()
         {
-            await _syncNet.CopyFileAsync(_sourceDirectory.GetDirectory(_subDirectoryName).GetFile(_subFileName));
+            _syncNet.CopyFile(_sourceDirectory.GetDirectory(_subDirectoryName).GetFile(_subFileName));
 
             var files = _targetDirectory.GetFiles();
 
@@ -27,9 +27,9 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
-        public async Task UploadFromSubfolderCreatesASubDirectory()
+        public void UploadFromSubfolderCreatesASubDirectory()
         {
-            await _syncNet.CopyFileAsync(_sourceDirectory.GetDirectory(_subDirectoryName).GetFile(_subFileName));
+            _syncNet.CopyFile(_sourceDirectory.GetDirectory(_subDirectoryName).GetFile(_subFileName));
 
             var dirs = _targetDirectory.GetDirectories();
 
