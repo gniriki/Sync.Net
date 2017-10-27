@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace Sync.Net.Processing
 {
-    public class SyncTaskQueue : ITaskQueue
+    public class SyncTaskQueue : TaskQueue
     {
-        public void Queue(ITask task)
+        public override void Queue(ITask task)
         {
+            OnTaskStarting(task);
             task.Execute();
+            OnTaskCompleted(task);
         }
     }
 }

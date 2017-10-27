@@ -8,20 +8,55 @@ using System.Threading.Tasks;
 
 namespace Sync.Net.Processing
 {
+    public class TaskQueueEventArgs : EventArgs
+    {
+        public TaskQueueEventArgs(ITask task)
+        {
+            Task = task;
+        }
+
+        public ITask Task { get; set; }
+    }
+
+    public delegate void TaskQueueDelegate(TaskQueueEventArgs eventArgs);
+
     public interface ITaskQueue
     {
         void Queue(ITask task);
+        event TaskQueueDelegate TaskStarting;
+        event TaskQueueDelegate TaskCompleted;
     }
 
-    public class AsyncTaskQueue : ITaskQueue
+    public abstract class TaskQueue : ITaskQueue
+    {
+        public abstract void Queue(ITask task);
+
+        public event TaskQueueDelegate TaskStarting;
+        public event TaskQueueDelegate TaskCompleted;
+
+
+        protected virtual void OnTaskCompleted(ITask task)
+        {
+            TaskCompleted?.Invoke(new TaskQueueEventArgs(task));
+        }
+
+        protected virtual void OnTaskStarting(ITask task)
+        {
+            TaskStarting?.Invoke(new TaskQueueEventArgs(task));
+        }
+    }
+
+    public class AsyncTaskQueue : TaskQueue
     {
         private BlockingCollection<ITask> _tasks = new BlockingCollection<ITask>();
         private bool _cancelled;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-        public void Queue(ITask task)
+        public override void Queue(ITask task)
         {
+            OnTaskStarting(task);
             _tasks.Add(task);
+            OnTaskCompleted(task);
         }
 
         public void StartProcessing()

@@ -36,6 +36,12 @@ namespace Sync.Net
             _sourceDirectory = sourceDirectory;
             _targetDirectory = targetDirectory;
             _queue = queue;
+            _queue.TaskCompleted += _queue_TaskCompleted;
+        }
+
+        private void _queue_TaskCompleted(TaskQueueEventArgs eventArgs)
+        {
+            FileProcessingCompleted(eventArgs.Task.File);
         }
 
         public event SyncNetProgressChangedDelegate ProgressChanged;
@@ -66,6 +72,7 @@ namespace Sync.Net
 
         public void CopyFile(IFileObject file)
         {
+            UpdateProgressQueue(file);
             var targetDirectory = GetTargetDirectory(file.FullName);
             var copyFileTask = new CopyFileTask(file, targetDirectory);
             _queue.Queue(copyFileTask);
