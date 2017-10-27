@@ -37,8 +37,8 @@ namespace Sync.Net.IntegrationTests
                 .AddFile(_subFileName, _contents)
                 .AddFile(_subFileName2, _contents));
 
-            var sync = new Processor(sourceDirectory, targetDirectory);
-            await sync.ProcessSourceDirectoryAsync();
+            var processor = new Processor(sourceDirectory, targetDirectory);
+            await processor.ProcessSourceDirectoryAsync();
 
             var fileInfos = directoryInfo.GetFiles();
             Assert.AreEqual(2, fileInfos.Length);
@@ -56,6 +56,10 @@ namespace Sync.Net.IntegrationTests
         [TestMethod]
         public async Task UploadsFile()
         {
+            var subDirectorPath = Path.Combine(_testDirectory, _subDirectoryName);
+
+            if(!Directory.Exists(subDirectorPath))
+                Directory.CreateDirectory(subDirectorPath);
             File.WriteAllText(Path.Combine(_testDirectory, _subDirectoryName, _subFileName),
                 _contents);
 
@@ -63,9 +67,9 @@ namespace Sync.Net.IntegrationTests
 
             var targetDirectory = new MemoryDirectoryObject("dir");
 
-            var sync = new Processor(sourceDirectory, targetDirectory);
+            var processor = new Processor(sourceDirectory, targetDirectory);
 
-            await sync.ProcessFileAsync(
+            await processor.CopyFileAsync(
                 new LocalFileObject(sourceDirectory.FullName + "\\" + _subDirectoryName + "\\" + _subFileName));
 
             var subDirectory = targetDirectory.GetDirectories().First();

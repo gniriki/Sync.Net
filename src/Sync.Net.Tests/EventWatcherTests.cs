@@ -43,7 +43,7 @@ namespace Sync.Net.Tests
             var filename = "file";
 
             var wasUploaded = false;
-            _processor.Setup(x => x.ProcessFileAsync(It.IsAny<IFileObject>())).Callback(() => wasUploaded = true);
+            _processor.Setup(x => x.CopyFileAsync(It.IsAny<IFileObject>())).Callback(() => wasUploaded = true);
 
             var watcher = new EventWatcher(_processor.Object, _configurationProvider.Object, _fileWatcher.Object);
             watcher.Watch();

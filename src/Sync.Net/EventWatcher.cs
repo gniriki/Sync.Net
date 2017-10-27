@@ -32,7 +32,7 @@ namespace Sync.Net
                 {
                     StaticLogger.Log($"File created: {args.FullPath}, processing...");
                     var file = new LocalFileObject(args.FullPath);
-                    _processor.ProcessFileAsync(file);
+                    _processor.CopyFileAsync(file);
                 }
             };
 

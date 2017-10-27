@@ -10,7 +10,7 @@ namespace Sync.Net.Tests
         [TestMethod]
         public async Task UploadsFile()
         {
-            await _syncNet.ProcessFileAsync(_sourceDirectory.GetFile(_fileName));
+            await _syncNet.CopyFileAsync(_sourceDirectory.GetFile(_fileName));
 
             var files = _targetDirectory.GetFiles();
             Assert.AreEqual(_fileName, files.First().Name);
@@ -19,7 +19,7 @@ namespace Sync.Net.Tests
         [TestMethod]
         public async Task UploadFromSubfolderDoesntCreateAFileInMainDirectory()
         {
-            await _syncNet.ProcessFileAsync(_sourceDirectory.GetDirectory(_subDirectoryName).GetFile(_subFileName));
+            await _syncNet.CopyFileAsync(_sourceDirectory.GetDirectory(_subDirectoryName).GetFile(_subFileName));
 
             var files = _targetDirectory.GetFiles();
 
@@ -29,7 +29,7 @@ namespace Sync.Net.Tests
         [TestMethod]
         public async Task UploadFromSubfolderCreatesASubDirectory()
         {
-            await _syncNet.ProcessFileAsync(_sourceDirectory.GetDirectory(_subDirectoryName).GetFile(_subFileName));
+            await _syncNet.CopyFileAsync(_sourceDirectory.GetDirectory(_subDirectoryName).GetFile(_subFileName));
 
             var dirs = _targetDirectory.GetDirectories();
 

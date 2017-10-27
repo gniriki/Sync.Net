@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Nito.AsyncEx;
 using Sync.Net.IO;
+using Sync.Net.Processing;
 
 namespace Sync.Net
 {
@@ -46,11 +47,16 @@ namespace Sync.Net
 
         public event SyncNetProgressChangedDelegate ProgressChanged;
 
-        public async Task ProcessFileAsync(IFileObject file)
+        public async Task CopyFileAsync(IFileObject file)
         {
             using (await _mutex.LockAsync())
             {
-                await Task.Run(() => ProcessFile(file));
+                var targetDirectory = GetTargetDirectory(file.FullName);
+
+                var copyFileTask = new CopyFileTask(file, targetDirectory);
+                UpdateProgressQueue(file);
+                await copyFileTask.ExecuteAsync();
+                UpdateProgess(file);
             }
         }
 
@@ -64,13 +70,19 @@ namespace Sync.Net
         {
             StaticLogger.Log($"Processing directory {sourceDirectory.FullName}");
             var files = GetFilesToUpload(sourceDirectory, targetDirectory);
+            var tasks = new List<ITask>();
 
             foreach (var fileObject in files)
+            {
                 UpdateProgressQueue(fileObject);
 
+//                var targetDir = GetTargetDirectory(fileObject.FullName);
+//                var copyFileTask = new CopyFileTask(fileObject, targetDir);
+//                tasks.Add(copyFileTask);
+            }
 
             foreach (var fileObject in files)
-                await ProcessFileAsync(fileObject);
+                await CopyFileAsync(fileObject);
         }
 
         private void UpdateProgressQueue(IFileObject fileObject)
@@ -80,14 +92,6 @@ namespace Sync.Net
 
             _totalFiles = _filesToBackup.Count;
             _totalBytes = _filesToBackup.Sum(file => file.Size);
-        }
-
-        private void ProcessFile(IFileObject file)
-        {
-            var targetDirectory = GetTargetDirectory(file.FullName);
-
-            UpdateProgressQueue(file);
-            Backup(file, targetDirectory);
         }
 
         private IDirectoryObject GetTargetDirectory(string path)
@@ -136,34 +140,6 @@ namespace Sync.Net
             }
 
             return filesToUpload;
-        }
-
-        private void Backup(IFileObject file, IDirectoryObject targetDirectory)
-        {
-            if (!targetDirectory.Exists)
-                targetDirectory.Create();
-
-            var targetFile = targetDirectory.GetFile(file.Name);
-            if (!targetFile.Exists || file.ModifiedDate >= targetFile.ModifiedDate)
-            {
-                if (!targetFile.Exists)
-                    targetFile.Create();
-
-                using (var stream = file.GetStream())
-                {
-                    using (var destination = targetFile.GetStream())
-                    {
-                        stream.CopyTo(destination);
-                    }
-                }
-
-                targetFile.ModifiedDate = file.ModifiedDate;
-                UpdateProgess(file);
-            }
-            else
-            {
-                UpdateProgess(file);
-            }
         }
 
         private void UpdateProgess(IFileObject currentFile)
