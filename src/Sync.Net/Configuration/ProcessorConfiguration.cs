@@ -46,40 +46,5 @@ namespace Sync.Net.Configuration
 
         [DataMember]
         public string ProfileName { get; set; }
-
-        public ProcessorConfigurationValidationResult Validate()
-        {
-            if (!CredentialsType.HasValue)
-                return Invalid("Choose credentials");
-            switch (CredentialsType.Value)
-            {
-                case Configuration.CredentialsType.DefaultProfile:
-                    break;
-                case Configuration.CredentialsType.NamedProfile:
-                    if (string.IsNullOrEmpty(ProfileName))
-                        return Invalid("Profile name cannot be empty");
-                    break;
-                case Configuration.CredentialsType.Basic:
-                    if (string.IsNullOrEmpty(KeyId))
-                        return Invalid("KeyId cannot be empty");
-                    if (string.IsNullOrEmpty(KeySecret))
-                        return Invalid("KeySecret cannot be empty");
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            return Valid();
-        }
-
-        private ProcessorConfigurationValidationResult Valid()
-        {
-            return new ProcessorConfigurationValidationResult { IsValid = true };
-        }
-
-        private ProcessorConfigurationValidationResult Invalid(string message)
-        {
-            return new ProcessorConfigurationValidationResult { IsValid = false, Message = message};
-        }
     }
 }

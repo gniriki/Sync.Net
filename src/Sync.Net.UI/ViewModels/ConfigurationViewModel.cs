@@ -15,8 +15,9 @@ namespace Sync.Net.UI.ViewModels
         private readonly IWindowManager _windowManager;
         private readonly IConfigurationTester _configurationTester;
         private readonly IConfigurationProvider _configurationProvider;
+        private readonly IProcessorConfigurationValidator _validator;
 
-        public ConfigurationViewModel(IConfigurationProvider configurationProvider, IWindowManager windowManager, IConfigFile configFile, IConfigurationTester configurationTester)
+        public ConfigurationViewModel(IConfigurationProvider configurationProvider, IWindowManager windowManager, IConfigFile configFile, IConfigurationTester configurationTester, IProcessorConfigurationValidator validator)
         {
             _configurationProvider = configurationProvider;
             _windowManager = windowManager;
@@ -33,6 +34,7 @@ namespace Sync.Net.UI.ViewModels
             Test = new RelayCommand(
                 p => true,
                 p => { CheckIfConfigurationIsValid(true); });
+            _validator = validator;
         }
 
         private void SaveConfiguration()
@@ -56,7 +58,7 @@ namespace Sync.Net.UI.ViewModels
 
         private bool CheckIfConfigurationIsValid(bool showConfirmationMessage)
         {
-            var validationResults = _configurationProvider.Current.Validate();
+            var validationResults = _validator.Validate(_configurationProvider.Current);
             if (!validationResults.IsValid)
             {
                 _windowManager.ShowMessage(validationResults.Message);
@@ -65,13 +67,13 @@ namespace Sync.Net.UI.ViewModels
 
             var testResults = _configurationTester.Test(_configurationProvider.Current);
 
-            if (!testResults.IsValid)
+            if (!testResults.TestPassed)
             {
                 _windowManager.ShowMessage(testResults.Message);
             }
             else if (showConfirmationMessage)
                 _windowManager.ShowMessage("Ok");
-            return testResults.IsValid;
+            return testResults.TestPassed;
         }
 
         public string ProfileName

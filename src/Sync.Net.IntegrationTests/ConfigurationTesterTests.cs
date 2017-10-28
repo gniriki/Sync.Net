@@ -18,7 +18,7 @@ namespace Sync.Net.IntegrationTests
                 KeyId = "abc"
             });
             
-            Assert.IsFalse(result.IsValid);
+            Assert.IsFalse(result.TestPassed);
             Assert.IsFalse(string.IsNullOrEmpty(result.Message));
         }
     }

@@ -10,7 +10,7 @@ namespace Sync.Net.Configuration
 {
     public class ConfigurationTestResult
     {
-        public bool IsValid { get; set; }
+        public bool TestPassed { get; set; }
         public string Message { get; set; }
     }
 
@@ -39,10 +39,10 @@ namespace Sync.Net.Configuration
             }
             catch (Exception e)
             {
-                return new ConfigurationTestResult {IsValid = false, Message = e.Message};
+                return new ConfigurationTestResult {TestPassed = false, Message = e.Message};
             }
 
-            return new ConfigurationTestResult { IsValid = true };
+            return new ConfigurationTestResult { TestPassed = true };
         }
     }
 }

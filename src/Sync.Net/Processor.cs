@@ -54,6 +54,10 @@ namespace Sync.Net
             StaticLogger.Log($"Found {files.Count} new files.");
             foreach (var file in files)
             {
+                UpdateProgressQueue(file);
+            }
+            foreach (var file in files)
+            {
                 CopyFile(file);
             }
         }
@@ -66,13 +70,16 @@ namespace Sync.Net
             var files = scanner.GetFilesToCopy();
             foreach (var file in files)
             {
+                UpdateProgressQueue(file);
+            }
+            foreach (var file in files)
+            {
                 CopyFile(file);
             }
         }
 
         public void CopyFile(IFileObject file)
         {
-            UpdateProgressQueue(file);
             var targetDirectory = GetTargetDirectory(file.FullName);
             var copyFileTask = new CopyFileTask(file, targetDirectory);
             _queue.Queue(copyFileTask);

@@ -20,15 +20,17 @@ namespace Sync.Net.Configuration
         private static ProcessorConfiguration _configuration;
         private IConfigFile _configFile;
         private static readonly DataContractSerializer Serializer;
+        private IProcessorConfigurationValidator _validator;
 
         static ConfigurationProvider()
         {
             Serializer = new DataContractSerializer(typeof(ProcessorConfiguration));
         }
 
-        public ConfigurationProvider(IConfigFile configFile)
+        public ConfigurationProvider(IConfigFile configFile, IProcessorConfigurationValidator validator)
         {
             _configFile = configFile;
+            _validator = validator;
         }
 
         public ProcessorConfiguration Current
@@ -46,7 +48,7 @@ namespace Sync.Net.Configuration
             var stream = _configFile.GetStream();
             using (stream)
             {
-                var result = _configuration.Validate();
+                var result = _validator.Validate(_configuration);
                 if(!result.IsValid)
                     throw new ConfigurationException(result.Message);
                 Serializer.WriteObject(stream, _configuration);

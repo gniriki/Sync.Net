@@ -84,7 +84,9 @@
     <Compile Include="Configuration\CredentialsType.cs" />
     <Compile Include="Configuration\IConfigFile.cs" />
     <Compile Include="Configuration\IConfigurationTester.cs" />
+    <Compile Include="Configuration\IProcessorConfigurationValidator.cs" />
     <Compile Include="Configuration\ProcessorConfiguration.cs" />
+    <Compile Include="Configuration\ProcessorConfigurationValidator.cs" />
     <Compile Include="DirectoryScannerFactory.cs" />
     <Compile Include="IFileWatcher.cs" />
     <Compile Include="ILogger.cs" />
