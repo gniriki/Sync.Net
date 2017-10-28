@@ -169,7 +169,7 @@ namespace Sync.Net.Tests
 
             Assert.AreEqual(4, progressUpdates.Count);
 
-            Assert.AreEqual(4, progressUpdates[0].TotalFiles);
+            Assert.AreEqual(4, progressUpdates[0].FilesLeft);
             Assert.AreEqual(1, progressUpdates[0].ProcessedFiles);
             Assert.AreEqual(2, progressUpdates[1].ProcessedFiles);
             Assert.AreEqual(3, progressUpdates[2].ProcessedFiles);

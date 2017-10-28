@@ -9,6 +9,7 @@ namespace Sync.Net.UI.Utils
         public LocalFileWatcher()
         {
             _watcher = new FileSystemWatcher();
+            _watcher.IncludeSubdirectories = true;
         }
 
         public event FileSystemEventHandler Changed

@@ -30,6 +30,8 @@ namespace Sync.Net.UI.Utils
 
             cb.RegisterType<ConfigurationProvider>().As<IConfigurationProvider>();
 
+            cb.RegisterType<ProcessorConfigurationValidator>().As<IProcessorConfigurationValidator>();
+
             ILogger logger = new Logger();
             cb.RegisterInstance(logger).As<ILogger>();
         }

@@ -25,11 +25,13 @@ namespace Sync.Net.Processing
         void Queue(ITask task);
         event TaskQueueDelegate TaskStarting;
         event TaskQueueDelegate TaskCompleted;
+        int Count { get; }
     }
 
     public abstract class TaskQueue : ITaskQueue
     {
         public abstract void Queue(ITask task);
+        public abstract int Count { get; }
 
         public event TaskQueueDelegate TaskStarting;
         public event TaskQueueDelegate TaskCompleted;
@@ -58,6 +60,8 @@ namespace Sync.Net.Processing
             _tasks.Add(task);
             OnTaskCompleted(task);
         }
+
+        public override int Count => _tasks.Count;
 
         public void StartProcessing()
         {

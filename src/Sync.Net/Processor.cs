@@ -10,24 +10,14 @@ namespace Sync.Net
 {
     public class SyncNetProgressChangedEventArgs : EventArgs
     {
-        public int ProcessedFiles;
-        public int TotalFiles;
-        public long TotalBytes { get; set; }
-        public long ProcessedBytes { get; set; }
-        public IFileObject CurrentFile { get; set; }
+        public int FilesLeft;
     }
 
 
     public class Processor : IProcessor
     {
-        private readonly List<IFileObject> _filesToBackup = new List<IFileObject>();
-
         private readonly IDirectoryObject _sourceDirectory;
         private readonly IDirectoryObject _targetDirectory;
-        private long _processedBytes;
-        private int _processedFiles;
-        private long _totalBytes;
-        private int _totalFiles;
 
         private ITaskQueue _queue;
 
@@ -36,11 +26,18 @@ namespace Sync.Net
             _sourceDirectory = sourceDirectory;
             _targetDirectory = targetDirectory;
             _queue = queue;
+            _queue.TaskStarting += _queue_TaskStarting;
             _queue.TaskCompleted += _queue_TaskCompleted;
+        }
+
+        private void _queue_TaskStarting(TaskQueueEventArgs eventArgs)
+        {
+            StaticLogger.Log("Starting task: " + eventArgs.Task);
         }
 
         private void _queue_TaskCompleted(TaskQueueEventArgs eventArgs)
         {
+            StaticLogger.Log("Completed task: " + eventArgs.Task);
             FileProcessingCompleted(eventArgs.Task.File);
         }
 
@@ -52,10 +49,6 @@ namespace Sync.Net
             var scanner = new DirectoryScanner(_sourceDirectory, _targetDirectory);
             var files = scanner.GetFilesToCopy();
             StaticLogger.Log($"Found {files.Count} new files.");
-            foreach (var file in files)
-            {
-                UpdateProgressQueue(file);
-            }
             foreach (var file in files)
             {
                 CopyFile(file);
@@ -70,10 +63,6 @@ namespace Sync.Net
             var files = scanner.GetFilesToCopy();
             foreach (var file in files)
             {
-                UpdateProgressQueue(file);
-            }
-            foreach (var file in files)
-            {
                 CopyFile(file);
             }
         }
@@ -82,16 +71,13 @@ namespace Sync.Net
         {
             var targetDirectory = GetTargetDirectory(file.FullName);
             var copyFileTask = new CopyFileTask(file, targetDirectory);
-            _queue.Queue(copyFileTask);
+            QueueTask(copyFileTask);
         }
 
-        private void UpdateProgressQueue(IFileObject fileObject)
+        private void QueueTask(ITask task)
         {
-            if (_filesToBackup.All(x => x.FullName != fileObject.FullName))
-                _filesToBackup.Add(fileObject);
-
-            _totalFiles = _filesToBackup.Count;
-            _totalBytes = _filesToBackup.Sum(file => file.Size);
+            StaticLogger.Log($"Adding task to queue: {task}");
+            _queue.Queue(task);
         }
 
         private IDirectoryObject GetTargetDirectory(string path)
@@ -122,19 +108,13 @@ namespace Sync.Net
 
         private void FileProcessingCompleted(IFileObject currentFile)
         {
-            _processedFiles++;
-            _processedBytes += currentFile.Size;
             OnProgressChanged(
                 new SyncNetProgressChangedEventArgs
                 {
-                    ProcessedFiles = _processedFiles,
-                    TotalFiles = _totalFiles,
-                    ProcessedBytes = _processedBytes,
-                    TotalBytes = _totalBytes,
-                    CurrentFile = currentFile
+                    FilesLeft = _queue.Count,
                 });
 
-            StaticLogger.Log($"Processing file {_processedFiles}/{_totalFiles}. Current file: {currentFile.FullName}");
+            StaticLogger.Log($"{_queue.Count} files left to process.");
         }
 
         protected virtual void OnProgressChanged(SyncNetProgressChangedEventArgs e)

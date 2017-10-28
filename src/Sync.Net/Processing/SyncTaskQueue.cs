@@ -14,5 +14,7 @@ namespace Sync.Net.Processing
             task.Execute();
             OnTaskCompleted(task);
         }
+
+        public override int Count => 0;
     }
 }

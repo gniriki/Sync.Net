@@ -47,5 +47,10 @@ namespace Sync.Net.Processing
         }
 
         public IFileObject File => _file;
+
+        public override string ToString()
+        {
+            return $"Copy file {_file.FullName} to {_targetDirectory.FullName}";
+        }
     }
 }
