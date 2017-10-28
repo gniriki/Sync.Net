@@ -23,11 +23,10 @@ namespace Sync.Net.IntegrationTests
         public void WritesFileToLocalFileSystem()
         {
             var directoryInfo = new DirectoryInfo(_testDirectory);
-            if (!directoryInfo.Exists)
-                directoryInfo.Create();
-            else
+            if (directoryInfo.Exists)
                 directoryInfo.Delete(true);
 
+            directoryInfo.Create();
             var targetDirectory = new LocalDirectoryObject(directoryInfo);
 
             var sourceDirectory = new MemoryDirectoryObject("integrationTests")

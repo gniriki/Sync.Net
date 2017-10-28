@@ -11,15 +11,22 @@ namespace Sync.Net.Tests
     {
         private readonly string _configLocalDirectory = "testLocal";
         private readonly string _configS3Bucket = "testBucket";
-        private Mock<IConfigFile>_configFile;
+        private Mock<IConfigFile> _configFile;
+        private Mock<IProcessorConfigurationValidator> _validator;
         private ConfigurationProvider _configurationProvider;
 
         [TestInitialize]
         public void Init()
         {
             _configFile = new Mock<IConfigFile>();
+            _validator = new Mock<IProcessorConfigurationValidator>();
             _configFile.Setup(x => x.GetStream()).Returns(new MemoryStream());
-            _configurationProvider = new ConfigurationProvider(_configFile.Object);
+            _validator.Setup(x => x.Validate(It.IsAny<ProcessorConfiguration>()))
+                .Returns(new ProcessorConfigurationValidationResult
+                {
+                    IsValid = false
+                });
+            _configurationProvider = new ConfigurationProvider(_configFile.Object, _validator.Object);
 
         }
 
@@ -58,7 +65,7 @@ namespace Sync.Net.Tests
         [ExpectedException(typeof(ConfigurationLoadException))]
         public void LoadThrowsErrorWhenStreamIsEmpty()
         {
-            var configuration = _configurationProvider.Current;
+            var configuration = _configurationProvider.Load();
         }
     }
 }

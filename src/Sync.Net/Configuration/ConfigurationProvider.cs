@@ -55,7 +55,7 @@ namespace Sync.Net.Configuration
             }
         }
 
-        private ProcessorConfiguration Load()
+        public ProcessorConfiguration Load()
         {
             if (!_configFile.Exists())
                 throw new ConfigurationLoadException("No configuration file found!");
