@@ -46,5 +46,10 @@ namespace Sync.Net.IO
         {
             return new LocalDirectoryObject(Path.Combine(_directoryInfo.FullName, name));
         }
+
+        public void Rename(string newName)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

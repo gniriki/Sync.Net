@@ -10,8 +10,9 @@ namespace Sync.Net.IO
     {
         private readonly string _bucketName;
         private readonly IAmazonS3 _s3Client;
-        private readonly S3DirectoryInfo _s3DirectoryInfo;
+        private S3DirectoryInfo _s3DirectoryInfo;
         private string key;
+        private string _key;
 
         public S3DirectoryObject(string bucketName)
             : this(new AmazonS3Client(), bucketName)
@@ -34,6 +35,7 @@ namespace Sync.Net.IO
         public S3DirectoryObject(IAmazonS3 s3Client, string bucketName, string key) :
             this(s3Client, new S3DirectoryInfo(s3Client, bucketName, key))
         {
+            _key = key;
         }
 
         public string Name => _s3DirectoryInfo.Name;
@@ -65,6 +67,21 @@ namespace Sync.Net.IO
             return new S3DirectoryObject(_s3Client,
                 _bucketName,
                 GetSubKey(name));
+        }
+
+        public void Rename(string newName)
+        {
+            var newKey = _key.Replace(Name, newName);
+            var newDirectory = new S3DirectoryInfo(_s3Client, _bucketName, newKey);
+            if(!newDirectory.Exists)
+                newDirectory.Create();
+            foreach (var s3FileInfo in _s3DirectoryInfo.GetFiles())
+            {
+                s3FileInfo.MoveTo(newDirectory);
+            }
+
+            _s3DirectoryInfo.Delete();
+            _s3DirectoryInfo = newDirectory;
         }
 
         private string GetSubKey(string key)

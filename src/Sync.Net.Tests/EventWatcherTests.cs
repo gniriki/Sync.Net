@@ -62,13 +62,6 @@ namespace Sync.Net.Tests
             var watcher = new EventWatcher(_processor.Object, _configurationProvider.Object, _fileWatcher.Object);
             watcher.Start();
 
-            //_processor.Setup(x => x.RenameFile(It.IsAny<IFileObject>(), It.IsAny<string>()))
-            //    .Callback<IFileObject, string>((file, name) =>
-            //    {
-            //        var test = file;
-            //        var test2 = name;
-            //    });
-
             _fileWatcher.Raise(x => x.Renamed += null,
                 new RenamedEventArgs(WatcherChangeTypes.Renamed, _configuration.LocalDirectory, "newName.txt", "oldName.txt"));
 
@@ -77,6 +70,29 @@ namespace Sync.Net.Tests
             _processor.Verify(x => x.RenameFile(
                 It.Is<IFileObject>(f => f.FullName == oldFullPath), 
                 "newName.txt"));
+        }
+
+        [TestMethod]
+        public void RenamesDirectory()
+        {
+            var newName = "newName";
+            var oldName = "oldName";
+
+            _configuration.LocalDirectory = "c:\\dir";
+
+            _fileWatcher.Setup(x => x.IsDirectory(It.IsAny<string>())).Returns(true);
+
+            var watcher = new EventWatcher(_processor.Object, _configurationProvider.Object, _fileWatcher.Object);
+            watcher.Start();
+
+            _fileWatcher.Raise(x => x.Renamed += null,
+                new RenamedEventArgs(WatcherChangeTypes.Renamed, _configuration.LocalDirectory, newName, oldName));
+
+            var oldFullPath = Path.Combine(_configuration.LocalDirectory, oldName);
+
+            _processor.Verify(x => x.RenameDirectory(
+                It.Is<IDirectoryObject>(f => f.FullName == oldFullPath),
+                newName));
         }
 
         [TestMethod]

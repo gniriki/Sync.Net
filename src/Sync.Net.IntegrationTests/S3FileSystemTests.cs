@@ -67,5 +67,25 @@ namespace Sync.Net.IntegrationTests
             Assert.IsTrue(fileInfos.Any(x => x.Name == "newName.txt"));
             Assert.IsFalse(fileInfos.Any(x => x.Name == fileToRename.Name));
         }
+
+        [TestMethod]
+        public void RenameDirectoryOnS3FileSystem()
+        {
+            var syncNet = new Processor(_sourceObject, _targetDirectory, new SyncTaskQueue());
+            syncNet.ProcessSourceDirectory();
+
+            var directoryToRename = _sourceObject.GetDirectories().First();
+            syncNet.RenameDirectory(directoryToRename, "newName");
+
+            var directories = _s3DirectoryInfo.GetDirectories();
+
+            Assert.IsTrue(directories.Any(x => x.Name == "newName"));
+            Assert.IsFalse(directories.Any(x => x.Name == directoryToRename.Name));
+
+            var renamedDirectory = _s3DirectoryInfo.GetDirectory("newName");
+            var files = renamedDirectory.GetFiles();
+
+            Assert.AreEqual(2, files.Count());
+        }
     }
 }

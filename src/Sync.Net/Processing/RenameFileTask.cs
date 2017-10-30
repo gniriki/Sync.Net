@@ -27,5 +27,10 @@ namespace Sync.Net.Processing
         {
             return Task.Run(() => Execute());
         }
+
+        public override string ToString()
+        {
+            return $"Rename file {File.FullName} to {NewName}";
+        }
     }
 }

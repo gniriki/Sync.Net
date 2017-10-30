@@ -105,6 +105,7 @@
     <Compile Include="Processing\ITask.cs" />
     <Compile Include="Processing\AsyncTaskQueue.cs" />
     <Compile Include="Processing\ManualTaskQueue.cs" />
+    <Compile Include="Processing\RenameDirectoryTask.cs" />
     <Compile Include="Processing\RenameFileTask.cs" />
     <Compile Include="Processing\SyncTaskQueue.cs" />
     <Compile Include="Processor.cs" />

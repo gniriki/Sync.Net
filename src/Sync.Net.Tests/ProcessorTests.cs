@@ -125,6 +125,29 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
+        public void RenamesDirectory()
+        {
+            IDirectoryObject sourceDirectory = DirectoryHelper.CreateFullDirectory();
+
+            IDirectoryObject targetDirectory = new MemoryDirectoryObject("targetDir");
+
+            var mock = new Mock<ITaskQueue>();
+
+            var syncNet = new Processor(sourceDirectory, targetDirectory, mock.Object);
+            syncNet.ProcessSourceDirectory();
+
+            var newName = "newName";
+            var subDirectory = sourceDirectory.GetDirectories().First();
+
+            syncNet.RenameDirectory(subDirectory, newName);
+
+            var targetFile = targetDirectory.GetDirectories().First();
+            mock.Verify(x => x.Queue(
+                It.Is<RenameDirectoryTask>(t => t.Directory.FullName == targetFile.FullName && t.NewName == newName))
+            );
+        }
+
+        [TestMethod]
         public void CountsFilesLeft()
         {
             var sourceDirectory = DirectoryHelper.CreateFullDirectory();

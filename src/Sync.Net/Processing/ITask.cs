@@ -7,6 +7,6 @@ namespace Sync.Net.Processing
     {
         void Execute();
         Task ExecuteAsync();
-        IFileObject File { get; }
+        //IFileObject File { get; }
     }
 }

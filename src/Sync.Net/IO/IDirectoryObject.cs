@@ -12,5 +12,6 @@ namespace Sync.Net.IO
         IEnumerable<IDirectoryObject> GetDirectories();
         void Create();
         IDirectoryObject GetDirectory(string name);
+        void Rename(string newName);
     }
 }

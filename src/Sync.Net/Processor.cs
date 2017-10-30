@@ -38,7 +38,7 @@ namespace Sync.Net
         private void _queue_TaskCompleted(TaskQueueEventArgs eventArgs)
         {
             StaticLogger.Log("Completed task: " + eventArgs.Task);
-            FileProcessingCompleted(eventArgs.Task.File);
+            FileProcessingCompleted();
         }
 
         public event SyncNetProgressChangedDelegate ProgressChanged;
@@ -106,7 +106,7 @@ namespace Sync.Net
             return !string.IsNullOrEmpty(fileName) && !fileName.StartsWith(".");
         }
 
-        private void FileProcessingCompleted(IFileObject currentFile)
+        private void FileProcessingCompleted()
         {
             OnProgressChanged(
                 new SyncNetProgressChangedEventArgs
@@ -126,6 +126,13 @@ namespace Sync.Net
         {
             var fileObject = GetTargetFile(fileToRename);
             QueueTask(new RenameFileTask(fileObject, newName));
+        }
+
+        public void RenameDirectory(IDirectoryObject directoryToRename, string newName)
+        {
+            var directory = GetTargetDirectory(directoryToRename.FullName)
+                .GetDirectory(directoryToRename.Name);
+            QueueTask(new RenameDirectoryTask(directory, newName));
         }
 
         private IFileObject GetTargetFile(IFileObject file)

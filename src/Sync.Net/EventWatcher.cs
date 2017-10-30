@@ -38,7 +38,16 @@ namespace Sync.Net
 
             _fileWatcher.Renamed += (sender, args) =>
             {
-                _processor.RenameFile(new LocalFileObject(args.OldFullPath), args.Name);
+                if (_fileWatcher.IsDirectory(args.FullPath))
+                {
+                    StaticLogger.Log($"Directory renamed: {args.FullPath}, processing...");
+                    _processor.RenameDirectory(new LocalDirectoryObject(args.OldFullPath), args.Name);
+                }
+                else
+                {
+                    StaticLogger.Log($"File renamed: {args.FullPath}, processing...");
+                    _processor.RenameFile(new LocalFileObject(args.OldFullPath), args.Name);
+                }
             };
 
             _fileWatcher.WatchForChanges(_configuration.LocalDirectory);

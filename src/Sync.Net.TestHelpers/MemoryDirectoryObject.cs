@@ -50,6 +50,11 @@ namespace Sync.Net.TestHelpers
             return directory;
         }
 
+        public void Rename(string newName)
+        {
+            Name = newName;
+        }
+
         public IFileObject GetFile(string name)
         {
             MemoryFileObject file = null;
