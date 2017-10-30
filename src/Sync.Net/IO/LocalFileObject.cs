@@ -42,6 +42,11 @@ namespace Sync.Net.IO
             }
         }
 
+        public void Rename(string newName)
+        {
+            throw new NotImplementedException();
+        }
+
         public string FullName => _fileInfo.FullName;
     }
 }

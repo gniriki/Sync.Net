@@ -121,5 +121,18 @@ namespace Sync.Net
         {
             ProgressChanged?.Invoke(this, e);
         }
+
+        public void RenameFile(IFileObject fileToRename, string newName)
+        {
+            var fileObject = GetTargetFile(fileToRename);
+            QueueTask(new RenameFileTask(fileObject, newName));
+        }
+
+        private IFileObject GetTargetFile(IFileObject file)
+        {
+            var directory = GetTargetDirectory(file.FullName);
+            var fileObject = directory.GetFile(file.Name);
+            return fileObject;
+        }
     }
 }

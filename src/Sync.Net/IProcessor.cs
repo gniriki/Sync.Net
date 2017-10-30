@@ -11,5 +11,6 @@ namespace Sync.Net
         void ProcessSourceDirectory();
         void CopyFile(IFileObject file);
         void ProcessDirectory(IDirectoryObject directory);
+        void RenameFile(IFileObject fileToRename, string newName);
     }
 }

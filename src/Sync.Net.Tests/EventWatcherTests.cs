@@ -55,6 +55,31 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
+        public void RenamesFile()
+        {
+            _configuration.LocalDirectory = "c:\\dir";
+
+            var watcher = new EventWatcher(_processor.Object, _configurationProvider.Object, _fileWatcher.Object);
+            watcher.Start();
+
+            //_processor.Setup(x => x.RenameFile(It.IsAny<IFileObject>(), It.IsAny<string>()))
+            //    .Callback<IFileObject, string>((file, name) =>
+            //    {
+            //        var test = file;
+            //        var test2 = name;
+            //    });
+
+            _fileWatcher.Raise(x => x.Renamed += null,
+                new RenamedEventArgs(WatcherChangeTypes.Renamed, _configuration.LocalDirectory, "newName.txt", "oldName.txt"));
+
+            var oldFullPath = Path.Combine(_configuration.LocalDirectory, "oldName.txt");
+
+            _processor.Verify(x => x.RenameFile(
+                It.Is<IFileObject>(f => f.FullName == oldFullPath), 
+                "newName.txt"));
+        }
+
+        [TestMethod]
         public void UploadsDirectoryWhenCreated()
         {
             _configuration.LocalDirectory = "dir";

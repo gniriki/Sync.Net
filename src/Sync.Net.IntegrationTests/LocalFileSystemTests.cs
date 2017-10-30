@@ -60,6 +60,7 @@ namespace Sync.Net.IntegrationTests
 
             if (!Directory.Exists(subDirectorPath))
                 Directory.CreateDirectory(subDirectorPath);
+
             File.WriteAllText(Path.Combine(_testDirectory, _subDirectoryName, _subFileName),
                 _contents);
 
@@ -68,20 +69,20 @@ namespace Sync.Net.IntegrationTests
             var targetDirectory = new MemoryDirectoryObject("dir");
 
             var syncNet = new Processor(sourceDirectory, targetDirectory, new SyncTaskQueue());
-                        syncNet.CopyFile(
-                            new LocalFileObject(sourceDirectory.FullName + "\\" + _subDirectoryName + "\\" + _subFileName));
-            
-                        var subDirectory = targetDirectory.GetDirectories().First();
-            
-                        Assert.AreEqual(_subDirectoryName, subDirectory.Name);
-            
-                        var fileObject = subDirectory.GetFiles().First();
-            
-                        Assert.AreEqual(_subFileName, fileObject.Name);
-                        using (var sr = new StreamReader(fileObject.GetStream()))
-                        {
-                            Assert.AreEqual(_contents, sr.ReadToEnd().Replace("\0", string.Empty));
-                        }
+            syncNet.CopyFile(
+                new LocalFileObject(sourceDirectory.FullName + "\\" + _subDirectoryName + "\\" + _subFileName));
+
+            var subDirectory = targetDirectory.GetDirectories().First();
+
+            Assert.AreEqual(_subDirectoryName, subDirectory.Name);
+
+            var fileObject = subDirectory.GetFiles().First();
+
+            Assert.AreEqual(_subFileName, fileObject.Name);
+            using (var sr = new StreamReader(fileObject.GetStream()))
+            {
+                Assert.AreEqual(_contents, sr.ReadToEnd().Replace("\0", string.Empty));
+            }
         }
     }
 }

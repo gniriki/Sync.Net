@@ -1,6 +1,4 @@
-using Sync.Net.TestHelpers;
-
-namespace Sync.Net.Tests
+namespace Sync.Net.TestHelpers
 {
     public class DirectoryHelper
     {

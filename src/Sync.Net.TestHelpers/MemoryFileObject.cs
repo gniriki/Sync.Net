@@ -49,6 +49,11 @@ namespace Sync.Net.TestHelpers
             Exists = true;
         }
 
+        public void Rename(string newName)
+        {
+            Name = newName;
+        }
+
         public string FullName { get; set; }
 
         public void SetPath(string path)

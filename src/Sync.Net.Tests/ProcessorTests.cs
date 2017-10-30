@@ -102,6 +102,29 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
+        public void RenamesFile()
+        {
+            IDirectoryObject sourceDirectory = DirectoryHelper.CreateDirectoryWithFile();
+
+            IDirectoryObject targetDirectory = new MemoryDirectoryObject("targetDir");
+
+            var mock = new Mock<ITaskQueue>();
+
+            var syncNet = new Processor(sourceDirectory, targetDirectory, mock.Object);
+            syncNet.ProcessSourceDirectory();
+
+            var newName = "newName.txt";
+            var sourceFile = sourceDirectory.GetFiles().First();
+
+            syncNet.RenameFile(sourceFile, newName);
+
+            var targetFile = targetDirectory.GetFiles().First();
+            mock.Verify(x => x.Queue(
+                It.Is<RenameFileTask>(t => t.File.FullName == targetFile.FullName && t.NewName == newName))
+                );
+        }
+
+        [TestMethod]
         public void CountsFilesLeft()
         {
             var sourceDirectory = DirectoryHelper.CreateFullDirectory();
