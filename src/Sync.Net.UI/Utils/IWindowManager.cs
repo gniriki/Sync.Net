@@ -1,4 +1,6 @@
-﻿namespace Sync.Net.UI.Utils
+﻿using Sync.Net.Processing;
+
+namespace Sync.Net.UI.Utils
 {
     public interface IWindowManager
     {
@@ -7,5 +9,6 @@
         void ShowMessage(string message);
         void ShowConfiguration();
         void RestartApplication();
+        void ShowTaskError(TaskQueueErrorEventArgs eventArgs);
     }
 }

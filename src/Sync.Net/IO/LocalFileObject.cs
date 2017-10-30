@@ -48,5 +48,36 @@ namespace Sync.Net.IO
         }
 
         public string FullName => _fileInfo.FullName;
+
+        public bool IsReady
+        {
+            get
+            {
+                try
+                {
+                    using (FileStream inputStream =
+                        File.Open(_fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.None))
+                    {
+                        if (inputStream.Length > 0)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+        }
+
+        public override string ToString()
+        {
+            return FullName;
+        }
     }
 }

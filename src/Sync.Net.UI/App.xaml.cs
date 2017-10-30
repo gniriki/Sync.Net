@@ -19,6 +19,7 @@ namespace Sync.Net.UI
         private IProcessor _processor;
         private EventWatcher _watcher;
         private AsyncTaskQueue _asyncTaskQueue = new AsyncTaskQueue();
+        private IWindowManager _windowManager;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -26,19 +27,19 @@ namespace Sync.Net.UI
             StaticLogger.Logger = AppContainer.Container.Resolve<ILogger>();
 
             var configurationProvider = AppContainer.Container.Resolve<IConfigurationProvider>();
-            var windowManager = AppContainer.Container.Resolve<IWindowManager>();
+            _windowManager = AppContainer.Container.Resolve<IWindowManager>();
 
             if (_configFile.Exists())
             {
-                StartProcessing(configurationProvider.Current);
-                ShowMainWindow();
                 CreateTaskbarIcon();
+                ShowMainWindow();
+                StartProcessing(configurationProvider.Current);
             }
             else
             {
                 App.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
                 configurationProvider.Create();
-                windowManager.ShowConfiguration();
+                _windowManager.ShowConfiguration();
             }
 
             base.OnStartup(e);
@@ -46,6 +47,7 @@ namespace Sync.Net.UI
 
         private void StartProcessing(ProcessorConfiguration configuration)
         {
+            _asyncTaskQueue.TaskError += _asyncTaskQueue_TaskError;
             _asyncTaskQueue.StartProcessing();
 
             var processorFactory = new ProcessorFactory();
@@ -60,6 +62,15 @@ namespace Sync.Net.UI
             _watcher.Start();
 
             StaticLogger.Log("Ready.");
+        }
+
+        private void _asyncTaskQueue_TaskError(TaskQueueErrorEventArgs eventArgs)
+        {
+            _windowManager.ShowTaskError(eventArgs);
+            if (eventArgs.TaskQueueErrorResponse == TaskQueueErrorResponse.Abort)
+            {
+                this.Dispatcher.InvokeShutdown();
+            }
         }
 
         private void CreateTaskbarIcon()

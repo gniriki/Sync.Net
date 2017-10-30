@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using Ookii.Dialogs.Wpf;
+using Sync.Net.Processing;
 
 namespace Sync.Net.UI.Utils
 {
@@ -23,6 +25,26 @@ namespace Sync.Net.UI.Utils
         {
             System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
             Application.Current.Shutdown();
+        }
+
+        public void ShowTaskError(TaskQueueErrorEventArgs eventArgs)
+        {
+            var result = MessageBox
+                .Show($"Error while processing task {eventArgs.Task}.\nDetails: {eventArgs.ThrownException}\nRetry?", "Error", MessageBoxButton.YesNoCancel);
+            switch (result)
+            {
+                case MessageBoxResult.Cancel:
+                    eventArgs.TaskQueueErrorResponse = TaskQueueErrorResponse.Abort;
+                    break;
+                case MessageBoxResult.Yes:
+                    eventArgs.TaskQueueErrorResponse = TaskQueueErrorResponse.Retry;
+                    break;
+                case MessageBoxResult.No:
+                    eventArgs.TaskQueueErrorResponse = TaskQueueErrorResponse.Skip;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public void ShowMessage(string message)

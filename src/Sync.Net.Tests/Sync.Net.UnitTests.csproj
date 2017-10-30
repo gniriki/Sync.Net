@@ -61,6 +61,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AssertEx.cs" />
+    <Compile Include="CopyFileTaskTests.cs" />
     <Compile Include="DirectoryScannerTests.cs" />
     <Compile Include="ProcessorFullDirectoryTests.cs" />
     <Compile Include="ProcessorDirectoryAsyncTests.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="ProcessorFileAsyncTests.cs" />
     <Compile Include="ConfigurationProviderTests.cs" />
     <Compile Include="EventWatcherTests.cs" />
+    <Compile Include="TaskQueueTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sync.Net.TestHelpers\Sync.Net.TestHelpers.csproj">

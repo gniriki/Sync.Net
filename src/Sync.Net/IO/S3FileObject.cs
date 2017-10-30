@@ -52,6 +52,8 @@ namespace Sync.Net.IO
             _s3FileInfo = _s3FileInfo.MoveTo(_bucketName, newKey);
         }
 
+        public bool IsReady => true;
+
         public string FullName => _s3FileInfo.FullName;
     }
 }

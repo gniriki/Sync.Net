@@ -54,6 +54,8 @@ namespace Sync.Net.TestHelpers
             Name = newName;
         }
 
+        public bool IsReady { get; set; }
+
         public string FullName { get; set; }
 
         public void SetPath(string path)

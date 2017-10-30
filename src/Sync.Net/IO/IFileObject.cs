@@ -13,5 +13,6 @@ namespace Sync.Net.IO
         Stream GetStream();
         void Create();
         void Rename(string newName);
+        bool IsReady { get; }
     }
 }
