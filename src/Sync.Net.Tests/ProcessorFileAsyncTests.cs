@@ -10,16 +10,16 @@ namespace Sync.Net.Tests
         [TestMethod]
         public void UploadsFile()
         {
-            _syncNet.CopyFile(_sourceDirectory.GetFile(_fileName));
+            _syncNet.CopyFile(_sourceDirectory.GetFile(DirectoryHelper.FileName));
 
             var files = _targetDirectory.GetFiles();
-            Assert.AreEqual(_fileName, files.First().Name);
+            Assert.AreEqual(DirectoryHelper.FileName, files.First().Name);
         }
 
         [TestMethod]
         public void UploadFromSubfolderDoesntCreateAFileInMainDirectory()
         {
-            _syncNet.CopyFile(_sourceDirectory.GetDirectory(_subDirectoryName).GetFile(_subFileName));
+            _syncNet.CopyFile(_sourceDirectory.GetDirectory(DirectoryHelper.SubDirectoryName).GetFile(DirectoryHelper.SubFileName));
 
             var files = _targetDirectory.GetFiles();
 
@@ -29,12 +29,12 @@ namespace Sync.Net.Tests
         [TestMethod]
         public void UploadFromSubfolderCreatesASubDirectory()
         {
-            _syncNet.CopyFile(_sourceDirectory.GetDirectory(_subDirectoryName).GetFile(_subFileName));
+            _syncNet.CopyFile(_sourceDirectory.GetDirectory(DirectoryHelper.SubDirectoryName).GetFile(DirectoryHelper.SubFileName));
 
             var dirs = _targetDirectory.GetDirectories();
 
             Assert.IsTrue(dirs.Count() == 1);
-            Assert.AreEqual(_subFileName, dirs.First().GetFiles().First().Name);
+            Assert.AreEqual(DirectoryHelper.SubFileName, dirs.First().GetFiles().First().Name);
         }
     }
 }
