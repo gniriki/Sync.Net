@@ -13,7 +13,14 @@ namespace Sync.Net.Processing
 
         public void ExecuteNextTask()
         {
-            Execute(_queue.Dequeue());
+            if(_queue.Count > 0)
+                Execute(_queue.Dequeue());
+        }
+
+        public void ExecuteAll()
+        {
+            while (_queue.Count > 0)
+                Execute(_queue.Dequeue());
         }
 
         private void Execute(ITask task)

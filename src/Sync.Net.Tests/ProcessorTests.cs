@@ -144,7 +144,7 @@ namespace Sync.Net.Tests
         }
 
         [TestMethod]
-        public void CountsUploadedFiles()
+        public void CountsFilesLeft()
         {
             var sourceDirectory = new MemoryDirectoryObject("directory")
                 .AddFile(_fileName, _contents)
@@ -156,7 +156,8 @@ namespace Sync.Net.Tests
 
             IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
 
-            var syncNet = new Processor(sourceDirectory, targetDirectory, new SyncTaskQueue());
+            var queue = new ManualTaskQueue();
+            var syncNet = new Processor(sourceDirectory, targetDirectory, queue);
 
 
             var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
@@ -167,75 +168,11 @@ namespace Sync.Net.Tests
 
             syncNet.ProcessSourceDirectory();
 
-            Assert.AreEqual(4, progressUpdates.Count);
-
-            Assert.AreEqual(4, progressUpdates[0].FilesLeft);
-            Assert.AreEqual(1, progressUpdates[0].ProcessedFiles);
-            Assert.AreEqual(2, progressUpdates[1].ProcessedFiles);
-            Assert.AreEqual(3, progressUpdates[2].ProcessedFiles);
-            Assert.AreEqual(4, progressUpdates[3].ProcessedFiles);
-        }
-
-        [TestMethod]
-        public void CountsUploadedData()
-        {
-            var bytes = Encoding.UTF8.GetBytes(_contents).Length;
-            var sourceDirectory = new MemoryDirectoryObject("directory")
-                .AddFile(_fileName, _contents)
-                .AddFile(_fileName2, _contents);
-
-            sourceDirectory.AddDirectory(new MemoryDirectoryObject(_subDirectoryName, sourceDirectory.FullName)
-                .AddFile(_subFileName, _contents)
-                .AddFile(_subFileName2, _contents));
-
-            IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
-
-            var syncNet = new Processor(sourceDirectory, targetDirectory, new SyncTaskQueue());
-
-
-            var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
-            syncNet.ProgressChanged += delegate (Processor sender, SyncNetProgressChangedEventArgs e)
-            {
-                progressUpdates.Add(e);
-            };
-
-            syncNet.ProcessSourceDirectory();
-
-            Assert.AreEqual(4, progressUpdates.Count);
-
-            Assert.AreEqual(4 * bytes, progressUpdates[0].TotalBytes);
-            Assert.AreEqual(bytes, progressUpdates[0].ProcessedBytes);
-            Assert.AreEqual(2 * bytes, progressUpdates[1].ProcessedBytes);
-            Assert.AreEqual(3 * bytes, progressUpdates[2].ProcessedBytes);
-            Assert.AreEqual(4 * bytes, progressUpdates[3].ProcessedBytes);
-        }
-
-        [TestMethod]
-        public void ReportsCurrentlyUploadedFileName()
-        {
-            var sourceDirectory = new MemoryDirectoryObject("directory")
-                .AddFile(_fileName, _contents)
-                .AddFile(_fileName2, _contents);
-
-            sourceDirectory.AddDirectory(new MemoryDirectoryObject(_subDirectoryName, sourceDirectory.FullName)
-                .AddFile(_subFileName, _contents)
-                .AddFile(_subFileName2, _contents));
-
-            IDirectoryObject targetDirectory = new MemoryDirectoryObject("directory");
-
-            var syncNet = new Processor(sourceDirectory, targetDirectory, new SyncTaskQueue());
-
-            var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
-            syncNet.ProgressChanged += delegate (Processor sender, SyncNetProgressChangedEventArgs e)
-            {
-                progressUpdates.Add(e);
-            };
-            syncNet.ProcessSourceDirectory();
-
-            Assert.AreEqual(_fileName, progressUpdates[0].CurrentFile.Name);
-            Assert.AreEqual(_fileName2, progressUpdates[1].CurrentFile.Name);
-            Assert.AreEqual(_subFileName, progressUpdates[2].CurrentFile.Name);
-            Assert.AreEqual(_subFileName2, progressUpdates[3].CurrentFile.Name);
+            queue.ExecuteAll();
+            Assert.AreEqual(3, progressUpdates[0].FilesLeft);
+            Assert.AreEqual(2, progressUpdates[1].FilesLeft);
+            Assert.AreEqual(1, progressUpdates[2].FilesLeft);
+            Assert.AreEqual(0, progressUpdates[3].FilesLeft);
         }
     }
 }
