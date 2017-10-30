@@ -20,6 +20,9 @@ namespace Sync.Net.Processing
 
         public void Execute()
         {
+            if(!_file.Exists)
+                return;
+            
             if (!_targetDirectory.Exists)
                 _targetDirectory.Create();
 

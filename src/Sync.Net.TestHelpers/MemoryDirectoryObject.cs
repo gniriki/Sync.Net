@@ -57,7 +57,7 @@ namespace Sync.Net.TestHelpers
             {
                 file = new MemoryFileObject(name);
                 file.SetPath(FullName);
-                AddFile(file);
+                Files.Add(file.Name, file);
             }
             else
             {
@@ -79,8 +79,8 @@ namespace Sync.Net.TestHelpers
 
         private void AddFile(MemoryFileObject memoryFileObject)
         {
-            memoryFileObject.SetPath(FullName);
             memoryFileObject.Exists = true;
+            memoryFileObject.SetPath(FullName);
             Files.Add(memoryFileObject.Name, memoryFileObject);
         }
 

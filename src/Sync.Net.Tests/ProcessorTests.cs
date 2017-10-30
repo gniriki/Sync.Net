@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Sync.Net.IO;
 using Sync.Net.Processing;
 using Sync.Net.TestHelpers;
@@ -111,7 +112,7 @@ namespace Sync.Net.Tests
             var syncNet = new Processor(sourceDirectory, targetDirectory, queue);
 
             var progressUpdates = new List<SyncNetProgressChangedEventArgs>();
-            syncNet.ProgressChanged += delegate (Processor sender, SyncNetProgressChangedEventArgs e)
+            syncNet.ProgressChanged += delegate(Processor sender, SyncNetProgressChangedEventArgs e)
             {
                 progressUpdates.Add(e);
             };
@@ -123,6 +124,28 @@ namespace Sync.Net.Tests
             Assert.AreEqual(2, progressUpdates[1].FilesLeft);
             Assert.AreEqual(1, progressUpdates[2].FilesLeft);
             Assert.AreEqual(0, progressUpdates[3].FilesLeft);
+        }
+
+        [TestMethod]
+        public void RemovesFileFromQueueWhenDeleted()
+        {
+            var sourceDirectory = DirectoryHelper.CreateDirectoryWithFiles();
+
+            var targetDirectory = new MemoryDirectoryObject("targetDirectory");
+
+            var queue = new ManualTaskQueue();
+            var syncNet = new Processor(sourceDirectory, targetDirectory, queue);
+            syncNet.ProcessSourceDirectory();
+
+            var fileToDelete = sourceDirectory.GetFiles().First();
+            (fileToDelete as MemoryFileObject).Exists = false;
+
+            queue.ExecuteAll();
+
+            var fileObjects = targetDirectory.GetFiles().Where(x => x.Exists);
+
+            Assert.AreEqual(1, fileObjects.Count());
+            Assert.AreEqual(DirectoryHelper.FileName2, fileObjects.First().Name);
         }
     }
 }
