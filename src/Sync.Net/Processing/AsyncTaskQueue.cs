@@ -56,9 +56,7 @@ namespace Sync.Net.Processing
 
         public override void Queue(ITask task)
         {
-            OnTaskStarting(task);
             _tasks.Add(task);
-            OnTaskCompleted(task);
         }
 
         public override int Count => _tasks.Count;
@@ -72,7 +70,9 @@ namespace Sync.Net.Processing
                     try
                     {
                         var task = _tasks.Take(_cancellationTokenSource.Token);
+                        OnTaskStarting(task);
                         task.Execute();
+                        OnTaskCompleted(task);
                     }
                     catch (OperationCanceledException)
                     {
