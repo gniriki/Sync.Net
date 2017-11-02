@@ -12,6 +12,7 @@ namespace Sync.Net.TestHelpers
         public MemoryFileObject(string name)
         {
             Name = name;
+            IsReady = true;
         }
 
         public MemoryFileObject(string name, string contents) : this(name)
