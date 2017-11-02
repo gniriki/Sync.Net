@@ -10,5 +10,6 @@
         event TaskQueueDelegate TaskCompleted;
         int Count { get; }
         event TaskQueueErrorDelegate TaskError;
+        event TaskProgressEventHandler TaskProgress;
     }
 }

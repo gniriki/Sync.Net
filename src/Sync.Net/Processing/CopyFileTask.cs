@@ -45,9 +45,20 @@ namespace Sync.Net.Processing
 
                 using (var stream = _file.GetStream())
                 {
+                    var totalBytes = stream.Length;
                     using (var destination = targetFile.GetStream())
                     {
-                        stream.CopyTo(destination);
+                        long bufferSize = 10 * 1024 * 1024;
+                        byte[] buffer = new byte[bufferSize];
+                        int progress = 0;
+                        int read;
+                        while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            destination.Write(buffer, 0, read);
+                            destination.Flush();
+                            progress += read;
+                            OnTaskProgress(new TaskProgressEventArgs(totalBytes, progress));
+                        }
                     }
                 }
 
@@ -76,11 +87,18 @@ namespace Sync.Net.Processing
             return Task.Run(() => Execute());
         }
 
+        public event TaskProgressEventHandler TaskProgress;
+
         public IFileObject File => _file;
 
         public override string ToString()
         {
             return $"Copy file {_file.FullName} to {_targetDirectory.FullName}";
+        }
+
+        protected virtual void OnTaskProgress(TaskProgressEventArgs eventargs)
+        {
+            TaskProgress?.Invoke(eventargs);
         }
     }
 }

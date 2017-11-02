@@ -33,7 +33,7 @@ namespace Sync.Net.UI
             {
                 CreateTaskbarIcon();
                 ShowMainWindow();
-                StartProcessing(configurationProvider.Current);
+                Task.Run(() => StartProcessing(configurationProvider.Current));
             }
             else
             {

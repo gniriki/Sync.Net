@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Sync.Net.UI.Utils
 {
@@ -12,6 +13,8 @@ namespace Sync.Net.UI.Utils
             var newLine = $"{DateTime.Now.ToLongTimeString()} {line}\n";
             Contents += newLine;
             OnLogUpdated(newLine);
+            if(Debugger.IsAttached)
+                Debug.WriteLine(newLine);
         }
 
         protected virtual void OnLogUpdated(string newline)

@@ -28,6 +28,18 @@ namespace Sync.Net
             _queue = queue;
             _queue.TaskStarting += _queue_TaskStarting;
             _queue.TaskCompleted += _queue_TaskCompleted;
+            _queue.TaskProgress += _queue_TaskProgress;
+            _queue.TaskError += _queue_TaskError;
+        }
+
+        private void _queue_TaskError(TaskQueueErrorEventArgs eventArgs)
+        {
+            StaticLogger.Log($"Error while processing file. {eventArgs.ThrownException}");
+        }
+
+        private void _queue_TaskProgress(TaskProgressEventArgs eventArgs)
+        {
+            StaticLogger.Log($"{(eventArgs.Percentage * 100):F1}% done.");
         }
 
         private void _queue_TaskStarting(TaskQueueEventArgs eventArgs)

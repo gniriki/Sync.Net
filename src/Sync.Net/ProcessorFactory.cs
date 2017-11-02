@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Amazon;
 using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
@@ -18,9 +19,21 @@ namespace Sync.Net
             var localDirectoryObject = new LocalDirectoryObject(configuration.LocalDirectory);
 
             var amazonS3Client = _amazonS3ClientFactory.GetS3Client(configuration);
+            amazonS3Client.BeforeRequestEvent += AmazonS3Client_BeforeRequestEvent;
+            amazonS3Client.AfterResponseEvent += AmazonS3Client_AfterResponseEvent;
             var s3DirectoryObject = new S3DirectoryObject(amazonS3Client, configuration.S3Bucket);
 
             return new Processor(localDirectoryObject, s3DirectoryObject, taskQueue);
+        }
+
+        private void AmazonS3Client_AfterResponseEvent(object sender, ResponseEventArgs e)
+        {
+            Debug.WriteLine("After: " + e);
+        }
+
+        private void AmazonS3Client_BeforeRequestEvent(object sender, RequestEventArgs e)
+        {
+            Debug.WriteLine("Before: " + e);
         }
     }
 }

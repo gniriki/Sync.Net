@@ -10,6 +10,7 @@ namespace Sync.Net.Processing
         public event TaskQueueDelegate TaskStarting;
         public event TaskQueueDelegate TaskCompleted;
         public event TaskQueueErrorDelegate TaskError;
+        public event TaskProgressEventHandler TaskProgress;
 
         protected virtual void OnTaskCompleted(ITask task)
         {
@@ -30,12 +31,15 @@ namespace Sync.Net.Processing
         {
             try
             {
+                task.TaskProgress += Task_TaskProgress;
                 OnTaskStarting(task);
                 task.Execute();
                 OnTaskCompleted(task);
+                task.TaskProgress -= Task_TaskProgress;
             }
             catch (Exception e)
             {
+                task.TaskProgress -= Task_TaskProgress;
                 var eventArgs = new TaskQueueErrorEventArgs(task, e);
                 OnTaskError(eventArgs);
                 if (eventArgs.TaskQueueErrorResponse == TaskQueueErrorResponse.Retry)
@@ -45,9 +49,19 @@ namespace Sync.Net.Processing
             }
         }
 
+        private void Task_TaskProgress(TaskProgressEventArgs eventArgs)
+        {
+            OnTaskProgress(eventArgs);
+        }
+
         public virtual void RetryTask(ITask task)
         {
             ExecuteTask(task);
+        }
+
+        protected virtual void OnTaskProgress(TaskProgressEventArgs eventargs)
+        {
+            TaskProgress?.Invoke(eventargs);
         }
     }
 }
